@@ -1,0 +1,45 @@
+\subsubsection{Boltzmann machines}
+TODO \cite{ackley1985learning}
+
+TODO: Read and cite from Hinton's original article. 
+
+(Wiki) A Boltzmann machine is a type of stochastic recurrent neural network invented by Geoffrey Hinton and Terry Sejnowski. Boltzmann machines can be seen as the stochastic, generative counterpart of Hopfield nets. They were one of the first examples of a neural network capable of learning internal representations, and are able to represent and (given sufficient time) solve difficult combinatoric problems. If the connectivity is constrained, the learning can be made efficient enough to be useful for practical problems.
+
+A Boltzmann machine, like a Hopfield network, is a network of units with an "energy" defined for the network. It also has binary units, but unlike Hopfield nets, Boltzmann machine units are stochastic. The global energy, $E$, in a Boltzmann machine is identical in form to that of a Hopfield network:
+
+$$E = -\sum_{i<j} w_{ij} \, s_i \, s_j - \sum_i \theta_i \, s_i.$$
+
+Where:
+\begin{itemize}
+    \item $w_{ij}$ is the connection strength between unit $j$ and unit $i$.
+    \item $s_i$ is the state, $s_i \in \{0,1\}$, of unit $i$
+    \item $\theta_i$ is the threshold of unit $i$.
+\end{itemize}
+
+The connections in a Boltzmann machine have two restrictions:
+\begin{itemize}
+    \item $w_{ii}=0\qquad \forall i$. (No unit has a connection with itself.)
+    \item $w_{ij}=w_{ji}\qquad \forall i,j$. (All connections are symmetric.)
+\end{itemize}
+
+Often the weights are represented in matrix form with a symmetric matrix $W$, with zeros along the diagonal.
+
+\paragraph{Hopfield nets.}
+
+TODO: Read and cite from Hopfields's original article. (Storkey, Amos. "Increasing the capacity of a Hopfield network without sacrificing functionality." Artificial Neural Networks—ICANN'97 (1997): 451-456.)
+
+(Wiki) A Hopfield network is a form of recurrent artificial neural network invented by John Hopfield. Hopfield nets serve as content-addressable memory systems with binary threshold nodes. They are guaranteed to converge to a local minimum, but convergence to a false pattern (wrong local minimum) rather than the stored pattern (expected local minimum) can occur. Hopfield networks also provide a model for understanding human memory.
+
+\paragraph{Boltzmann distribution.}
+
+TODO:  Landau, Lev Davidovich; and Lifshitz, Evgeny Mikhailovich (1980) [1976]. Statistical Physics. 5 (3 ed.). Oxford: Pergamon Press. ISBN 0-7506-3372-7. Translated by J.B. Sykes and M.J. Kearsley. See section 28
+
+(Wiki) The Boltzmann distribution for the fractional number of particles $Ni / N$ occupying a set of states $i$ possessing energy $E_i$ is:
+
+    $${N_i \over N} = {g_i e^{-E_i/(k_BT)} \over Z(T)}.$$
+
+where $k_B$ is the Boltzmann constant, $T$ is temperature (assumed to be a well-defined quantity), $g_i$ is the degeneracy (meaning, the number of levels having energy $E_i$; sometimes, the more general \'states\' are used instead of levels, to avoid using degeneracy in the equation), $N$ is the total number of particles and $Z(T)$ is the partition function.
+
+    $$N=\sum_i N_i,$$
+
+    $$Z(T)=\sum_i g_i e^{-E_i/(k_BT)}. $$

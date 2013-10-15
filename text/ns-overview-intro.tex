@@ -1,0 +1,65 @@
+\subsection{Motivation}
+
+\paragraph{Feature detector.}
+Neural networks have proven their quality as feature detectors of statistical sets. They can extract and create features which represent individual inputs. This is mostly used in image recognition. 
+
+\paragraph{Autoencoder.}
+The purpose of an encoder network is to learn good \textit{codes} in the intermediate, hidden units. If for, example, there are less hidden units than input units, an encdoer network will perform data-compression  \cite{hinton1988learning}. Autoencoder is also called autoassociator \cite{bengio2009learning}.
+
+\paragraph{Classifier.}
+Aim of classification tasks is to classify individul inputs into a finite number of classes. For example classifying medical results into positive or negative. 
+
+\paragraph{Principal component analysis.}
+Goal of PCA analysis is to get main components which can be lineary combined to individual parts of the original image. The resulting components can be treated as features or used for compression. 
+
+\subsection{Standard notation}
+
+\paragraph{Network.}
+In general we can define a neural network as a directed weighted graph. Each \emph{unit} (vertex) has its \emph{activation} and usually it changes in discrete time. The \emph{state} of a neural network are current \emph{weights} of edges and current activations. 
+
+\paragraph{Net inuput.}
+Each unit $i$ has its \emph{net input} $\eta_i$ defined as:
+$$\eta_i = \sum_j w_{ji}x_j,$$
+where $w_{ji}$ is the weight of edge from unit $j$ to unit $i$ and $x_j$ is the activation of unit $j$.
+
+\paragraph{Activation.}
+Usually the activation of unit $i$ is computed as:
+$$x_i = \sigma(\eta_i),$$
+where $\sigma$ is a bounded\footnote{
+Usually in bounds of interval [0,1].
+} nonlinear monotonic differentiable function. In most cases the logistic function is chosen:
+$$\sigma(x) = \frac{1}{1 + e^{-x}}.$$
+
+\paragraph{Error function.}
+Error function express how much the output of the neural network differs from the \emph{target} output\footnote{
+So it should have a lower bound. 
+}. The most simple error function is the quadratic error function:
+$E = \sum_j \frac{1}{2}(t_j-y_j)^2,$
+where $y_j$ are the activations on output units and $t_j$ are the target values.
+
+\paragraph{Learning rule.}
+As soon as the error function is defined for the network we can derive an easy rule which applies gradient descent: 
+$$\frac{\delta E}{\delta w_{ji}}$$
+for each weight. The learning rule describes how to change weights to decrease the error functions.
+
+\paragraph{Input layer.}
+Subset of units on which the input values are \emph{clamped}. If the input value for unit $x_i$ is $s_i$ then the activation for unit $x_i$ is simply $s_i$. 
+
+\paragraph{Output layer.}
+Similary as the input layer, output layer is a subset of units which activations we treat as the output. 
+
+\paragraph{Hidden layer.}
+Set of units which are both not input or output. 
+
+\paragraph{Treshold unit.}
+Threshold unit $\theta$ is a form of bias. We can see it as an activator. If the treshold value is high then the activity of the corresponding unit is high and if the treshold value is low then the activity of the corresponding unit is low. 
+
+The treshold term can be elimated by giving every unit an extra input connection whose activity level is fixed at 1. The weight on this special connection is the negative of the treshold, and it can be learned in just the same way as the other weights  \cite{hinton1988learning}.
+
+This method is usually assumed in all papers. 
+
+\paragraph{Training.}
+We \emph{train} neural networks on \emph{training sets} of input-output data. For each input we calculate the activation on output layer and compute the error with our error function. Then we apply the learning rule on all weights. This way we iterate through the whole training set. One \emph{epoch} is one iteration through all training values. We repeat training for dozens of epoch with respect to the error function. \emph{Over-fitting} and \emph{under-fitting} must be taken into account.   
+
+\paragraph{Batch update.}
+Instead of updateing the weights after activation of each input, the weight changes are accumulated and weights are updated only after all the inputs were fed into the network. 

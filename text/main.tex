@@ -1,0 +1,144 @@
+%pracu piseme dvoma farbami:
+%ciernou piseme veci, ktore vedia citatela
+%modrou detaily
+%Matici sa staruju len aby predali spravnost, Informatici aj motivaciu.
+
+%\documentclass[12pt,a4paper,twoside]{report}
+\documentclass[12pt,a4paper]{article}
+
+
+\usepackage[slovak]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{a4wide}
+\usepackage{tabularx}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{epsfig}
+\usepackage{color}
+\usepackage{mathrsfs}
+\usepackage{verbatim}
+\usepackage{hyperref}
+\usepackage{subfigure}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{listings}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{pdfpages}
+\usepackage{lastpage}
+\usepackage{fancyhdr}
+\usepackage{url}
+\usepackage[small,bf]{caption}
+\usepackage[T1]{fontenc}   
+
+                                  
+\hypersetup{%  http://www.tug.org/applications/hyperref/
+    bookmarksnumbered,
+    pdfstartview={FitH},
+    %linkcolor=black,
+    %citecolor=black,
+    colorlinks=true
+}
+
+\let\stdsection\section{}
+\renewcommand\section{\newpage\stdsection}
+
+%%%%%%%%%%%%%%%%%%%%%%%%% CUSTOMIZACIA BEGIN %%%%%%%%%%%%%%%
+\setlength{\textheight}{24cm}
+\setlength{\textwidth}{15.5cm}
+\addtolength{\voffset}{-1.2cm}
+\addtolength{\hoffset}{0.0cm}
+\setlength{\parindent}{0.5cm}
+\setlength{\parskip}{0in}
+\setlength{\headheight}{16pt}
+\linespread{1.5}
+
+\hypersetup{
+    colorlinks=true,       % false: boxed links; true: colored links
+%    linkcolor=black,          % color of internal links
+%    citecolor=black,        % color of links to bibliography
+%    urlcolor=black,           % color of external links
+%    linkbordercolor=black, % 	color of frame around internal links (if colorlinks=false)
+%    citebordercolor=black, %	color of frame around citations
+%    urlbordercolor=black, %	color of frame around URL links
+}
+
+%\setlength{\topmargin}{-10mm}
+%\setlength{\textwidth}{16truecm}
+%\setlength{\textheight}{24truecm}
+%\setlength{\oddsidemargin}{0mm}
+%\setlength{\evensidemargin}{0mm}
+%%%%%%%%%%%%%%%%%%%%%%%%% CUSTOMIZACIA END %%%%%%%%%%%%%%%
+
+\begin{document}
+
+\setcounter{page}{1}
+\pagenumbering{roman}
+\thispagestyle{empty}
+
+    \input{obal}
+    
+\newpage
+\thispagestyle{empty}
+%\addtolength{\hoffset}{4mm}
+%\setlength{\oddsidemargin}{-5mm}
+%\setlength{\evensidemargin}{5mm}
+
+    \input{titulka}
+    
+\newpage
+\thispagestyle{empty}
+
+    \input{zadanie}
+
+\newpage
+%\thispagestyle{empty}
+\thispagestyle{plain}
+
+    \input{podakovanie}
+
+\newpage
+%\thispagestyle{empty}
+
+    \input{abstrakt}
+
+\newpage
+%\thispagestyle{empty}
+
+    \input{abstract}
+    
+\newpage
+\setcounter{page}{1}
+\pagenumbering{arabic}
+\pagestyle{fancy}
+
+\tableofcontents
+
+%    \listoffigures
+%    \listoftables
+    
+\newpage
+    
+    \input{uvod}
+    
+\newpage
+    
+    \input{jadro} 
+   
+\newpage
+    
+    \input{zaver}
+    
+\newpage
+    
+    \input{slovnik}
+
+\newpage
+    
+    \include{literatura}
+    
+\newpage
+    \input{appendixa}
+
+\end{document}
