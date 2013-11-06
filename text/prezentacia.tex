@@ -49,8 +49,7 @@ DIPLOMA THESIS
   \item GeneRec (O'Reilly 1996) je model neurónovej siete výpočtovou silou rovnaký Backpropagation-u. Navyše je 'prirodzený' 
 %\footnote{Anglicky biologically-plausible}
   a pomerne málo skúmaný.   
-  \item Deep architectures (Bengion 2009) je novou paradigmou v oblasti neurónových sietí. 
-  \item Našim cieľom je spojiť tieto dva modely, analyzovať takto získaný model a ďalej ho vylepšovať o ďalšie idei z oboru strojového učenia. 
+  \item V posledných rokoch sa vytvorilo viacero úspešných modelov neúronových sietí. Tieto nové pohľady by sme radi doplnili a skúmali na O'Reilly-ho modele. 
   \item Našou hlavnou motiváciou je 'prirodzenosť' a 'novosť' takéhoto modelu, ktorý by sme ďalej implementovali a skúmali v oblasti robotiky priamo na správaní nášho robota. 
   \end{itemize}
   \begin{center}
@@ -60,9 +59,9 @@ DIPLOMA THESIS
 
 \begin{frame}{Úvod do problematiky - Modely predchádzajúce GeneRec}
   \begin{itemize}
-    \item \textbf{Backpropagation} (Rumelhart 1986). Najpoužívanejší model. 'Neprirodzený', keďže propaguje chybu smerom nazad. 
+    \item \textbf{Backpropagation} (Rumelhart 1986). Najpoužívanejší model. 'Neprirodzený', keďže propaguje chybu pomocou aktivácií. 
     \item \textbf{Almeida-Pineda algorithm} (Pineda 1987, Almeida 1987). Zovšeobecnenie Backpropagation na rekurentné siete.
-    \item \textbf{Recirculation algorithm} (Hinton 1988). Namiesto toho aby sa chyba propagovala nazad, chyba sa počíta lokálne z aktivácie z oboch smerov. Formálne tak vznikajú dynamické systémy. 
+    \item \textbf{Recirculation algorithm} (Hinton 1988). Namiesto toho, aby sa chyba propagovala nazad, chyba sa počíta lokálne z aktivácie z oboch smerov. Formálne tak vznikajú dynamické systémy. 
 %    \item \textbf{Boltzmann machines} (Ackley 1985). Všeobecný stochastický model s Energiou. Boltzmann distribution: 
 %    $$Z(T)=\sum_i g_i e^{-E_i/(k_BT)}. $$ 
 %    \item \textbf{Contrastive Hebbian Learning} (Peterson 1987). Špecializácia Boltzmann machines ako praktické NS.
@@ -107,24 +106,36 @@ Je zmesou Backpropagation, Almeida-Pineda a Recirculation algorithm. Učenie poz
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Úvod do problematiky - Deep architectures}
+\begin{frame}{Úvod do problematiky - Model BAL}
   \begin{itemize}
-  \item Je dokázané, že pre Backpropagation stačí jedna skrytá vrstva v na naučenie sa ľubovoľného zobrazenia. 
-  \item V súčastnosti sa ukazuje, že využitím súčasnej výpočtovej sily a viacerých vrstiev sa dosahujú lepšie výsledky. Hypotéza odôvodnenia je, že 'hlbšia' reprezentácia dokáže vytvárať črty 'vyššieho' stupňa 'prirodzenejšie'.  
+    \item BAL := Bidirectional Activation-based Neural Network Learning Algorithm (Farkaš and Rebrová, 2013).
+    \item Je symetrickou verziou GeneRec.
   \end{itemize}
+  
   \begin{center}
-  \includegraphics[scale=0.2]{img/deep.png}
-  \end{center}
-  \footnote{Bengio, Learning deep architectures for AI, 2009}
+    \includegraphics[scale=0.5]{img/bal_table.png}
+  \end{center}  
 \end{frame}
 
-\begin{frame}{Čo už je? - Prehľad predchádzajúcich modelov}
+%\begin{frame}{Úvod do problematiky - Deep architectures}
+%  \begin{itemize}
+%  \item Je dokázané, že pre Backpropagation stačí jedna skrytá vrstva v na naučenie sa ľubovoľného zobrazenia. 
+%  \item V súčastnosti sa ukazuje, že využitím súčasnej výpočtovej sily a viacerých vrstiev sa dosahujú lepšie výsledky. Hypotéza odôvodnenia je, že 'hlbšia' reprezentácia dokáže vytvárať črty 'vyššieho' stupňa 'prirodzenejšie'.  
+%  \end{itemize}
+%  \begin{center}
+%  \includegraphics[scale=0.2]{img/deep.png}
+%  \end{center}
+%  \footnote{Bengio, Learning deep architectures for AI, 2009}
+%\end{frame}
+
+\begin{frame}{Čo sme už urobili? - Prehľad predchádzajúcich modelov}
   \begin{itemize}
     \item Videli sme na posledných slide-och. 
+    \item Okrem toho preskúmaných zopár modelov ako Deep neural nets, Dropout, Ballard a iné. 
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Čo už je? - Implementácia}
+\begin{frame}{Čo už sme urobili? - Implementácia}
   \begin{itemize}
     \item Implementácia GeneRec podľa originálneho článku v jazyku C++ bez externých knižníc. 
     \item Rozšírenie GeneRec na viacero vrstiev a jej implementácia. 
@@ -136,9 +147,13 @@ Je zmesou Backpropagation, Almeida-Pineda a Recirculation algorithm. Učenie poz
 %  \footnote{\url{https://www.kaggle.com/c/digit-recognizer}}
 %  \includegraphics[scale=0.4]{img/impl.png}
 %  \footnote{Csiba, 2013}
+
+  \begin{itemize}
+    \item Implementácia (Java) a krátka analýza zovšeobecnenia GeneRec na BAL. 
+  \end{itemize}
 \end{frame}
 
-\begin{frame}{Čo už je? - Merania}
+\begin{frame}{Čo sme už urobili? - Merania GeneRec}
   \begin{itemize}
     \item Trénovacia sada: 42000 obrázkov $28 \times 28$ ručne napísaných číslic 0 až 9.  
     \item Cieľom bolo overiť korektnosť našej implementácie. 
@@ -165,18 +180,17 @@ Je zmesou Backpropagation, Almeida-Pineda a Recirculation algorithm. Učenie poz
 % Hidden: 100 
 % Epoch: 10 Alpha: 0.075
 
-
-\begin{frame}{Čo už je? - Viacero vrstiev}
+\begin{frame}{Čo sme už urobili? - Viacero vrstiev}
 \begin{itemize}
   \item Hlavný problém: Kedy aplikovať sigma funkciu?
   \item Použité triviálne riešenie: Vypočíta sa aktivácia bez sigmy a potom sa na jednotlivých vrstvách aktivácie z oboch strán sčítajú a aplikuje sa sigma. 
   \item Dosiahnutých 43.2214\% na dvoch skrytých vrstvách s veľkosťami 300 a 50 pri 50 epochách a alfe 0.03 . 
-  \item Dôsledok: Táto generalizácia má potenciál, ale pravdepodobne existuje lepšia. 
+  \item Dôsledok: Toto zovšeobecnenie má potenciál, ale pravdepodobne existuje lepší model. 
 \end{itemize} 
 
 \end{frame}
 
-\begin{frame}{Čo už je? - Spätné zobrazenia čísel}
+\begin{frame}{Čo sme už urobili? - Spätné zobrazenia čísel}
   Spätné zobrazenia čísel - spätná aktivácia možných výstupov.
 %  \includegraphics[scale=1.0]{img/feature_digits.png}
 
@@ -211,20 +225,67 @@ Je zmesou Backpropagation, Almeida-Pineda a Recirculation algorithm. Učenie poz
 %  \includegraphics[scale=1.0]{img/feature_high.png}
 \end{frame}
 
-\begin{frame}{Čo bude ďalej? - Modifikácie modelu GeneRec}
+
+\begin{frame}{Čo sme už urobili? - Analýza BAL}
   \begin{itemize}
-    \item Iné verzie aplikovania sigmy vo viacvrstvovom rozšírení: 
-    \begin{itemize}
-      \item Pridať mínus fázu opačným smerom a skombinovať tieto aktivácie v plus fáze. Tj. simulovať paralelnú aktiváciu zo vstupu aj výstupu. Tak by sa sigma použila dvakrát na každej skrytej vrstve. 
-      \item Nájsť vhodnú kombinačnú funkciu doprednej a spätnej aktivácie. Zovšeobecnenie predošlého prístupu.
-      \item Iné. 
-    \end{itemize} 
+    \item Trénovacia sada: Autoasociatívna úloha 4-2-4. Lambda: 0.01, epôch: 1,000,000. 
+    \item Cieľom je zistiť dôvody nekonvergencie algoritmu BAL na tejto jednoduchej úlohe.
+  \end{itemize} 
+
+  \textbf{Použité metriky:}
+
+  \begin{itemize}
+    \item textbf{h\_dist} : Priemerná vzdialenosť interných reprezentácií.   
+    \item textbf{h\_f\_b\_dist} : Vzdialenosť interných reprezentácií doprednej a spätnej aktivácie. 
+    \item textbf{m\_avg\_w}  : Priemerná váha siete. 
+    \item textbf{m\_sim} : Rozdiel hodnôt matíc (IH, OH) a (HI, HO). 
+  \end{itemize} 
+\end{frame}
+  
+\begin{frame}{Čo sme už urobili? - Analýza BAL - Merania}
+  \textbf{Vývoj metrík v prípade konvergencie:}
+    \begin{center}
+      \includegraphics[scale=0.5]{img/bal_measure_0_norm.png}
+    \end{center} 
+  \textbf{Vývoj metrík v prípade nekonvergencie:}
+    \begin{center}
+      \includegraphics[scale=0.5]{img/bal_measure_4_norm.png}
+    \end{center} 
+\end{frame}
+
+\begin{frame}{Čo sme už urobili? - Analýza BAL - Merania}
+  \textbf{Normálna inicializácia:}
+    \begin{center}
+      \includegraphics[scale=0.5]{img/bal_stats_0.png}
+    \end{center} 
+  \textbf{5 * Normálna inicializácia:}
+    \begin{center}
+      \includegraphics[scale=0.5]{img/bal_stats_5.png}
+    \end{center} 
+  \textbf{25 * Normálna inicializácia:}
+    \begin{center}
+      \includegraphics[scale=0.5]{img/bal_stats_25.png}
+    \end{center} 
+
+\end{frame}
+
+
+\begin{frame}{Čo bude ďalej? - BAL a Modifikácie modelu GeneRec}
+  \begin{itemize}
+    \item Ďalej analyzovať dôvody nekonvergencie BAL.
+    \item Budeme pokračovať najjednoduchším prípadom úlohy autoasociácie 4-2-4. 
+%    \item Iné verzie aplikovania sigmy vo viacvrstvovom rozšírení: 
+%    \begin{itemize}
+%      \item Pridať mínus fázu opačným smerom a skombinovať tieto aktivácie v plus fáze. Tj. simulovať paralelnú aktiváciu zo vstupu aj výstupu. Tak by sa sigma použila dvakrát na každej skrytej vrstve. 
+%      \item Nájsť vhodnú kombinačnú funkciu doprednej a spätnej aktivácie. Zovšeobecnenie predošlého prístupu.
+%      \item Iné. 
+%    \end{itemize} 
     \item \textbf{Regression} (Hinton 1988). Momentum učenia. 
     $$y_i(2) = \lambda y_i(0) + (1-\lambda)x_i(2)$$
-    \item \textbf{Merging layers} (Ballard 1987). Spájanie vstupných a skrytých vrstiev rôznych uzavretých NS. \\
-    \begin{center}
-      \includegraphics[scale=0.3]{img/ballard.png}
-    \end{center} 
+%    \item \textbf{Merging layers} (Ballard 1987). Spájanie vstupných a skrytých vrstiev rôznych uzavretých NS. \\
+%    \begin{center}
+%      \includegraphics[scale=0.3]{img/ballard.png}
+%    \end{center} 
   \end{itemize}
 \end{frame}
 
@@ -253,7 +314,7 @@ Je zmesou Backpropagation, Almeida-Pineda a Recirculation algorithm. Učenie poz
   \vspace{3cm}
   
   \begin{center}
-  \small{Ospravedlňujeme sa za kvalitu obrázkov.}
+  \small{P.S. Ospravedlňujeme sa za kvalitu obrázkov.}
   \end{center}
 \end{frame}
 
