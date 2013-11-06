@@ -1,0 +1,138 @@
+Prve stretnutie 11.11.2012
+!! zapisovat, zapisovat – hned ten isty den (Misof, PG)
+
+Geofrey Hinton – department of computer science Toronto, aplikacny
+Randall O'Reilly – department of psychology Pittsburgh, prehlad, snazi sa simulovat ludsky mozog
+v USA su takyto vedci vzdelany vseobecnym prehladom
+
+ukazal som mu kaggle, 
+andrew ng,
+amsterdam – ML oriented
+
+dal mi prefotene clanky – kde ich sakra mam? 
+
+Oni sa na katedre zaoberaju nasadenim existujucich na ich problemy.
+Ma jednu sikovnu doktorantku. 
+
+Ma dobre skusenosti so spolupracou s teoretickymi informatikmi.
+
+Moja predstava je trocha teorie – skumanie novych sieti, zistovanie domen, modifikovanie a znovuskumanie. Implementacie su (a preto nie su problem) 
+
+!!Slubil som mu, ze o tyzden. dat si to ako buduco tyzdnovu prioritu
+
+Neuronove siete su netrivialnymi zobrazeniami medzi domenami, je tam vela matiky a teorie a preto je tam co skumat / dokazovat / vymyslat
+
+Mojim cielom bola praca na rozhrani vyskumu a implementacie pre vhodnu mnozinu praktickych problemov. 
+
+24.10.2012
+misof diplomovy seminar
+prilis univerzalne kladivo (ked uz ine postupy zlyhavaju)
+google ich ale pouzil na naozaj velkych datach a zacali funogvat dobre (napr. Youtube videa obsahujuce macky) 
+najdolezitejsie je vediet dokazat vlastny prinos, ktory vyzadoval netrivialne mentalne usilie
+
+7.11.2012
+--15 stran v skuskovom s zakladnym prehladom tematiky – kvalita je na garantovi, prvy dojem na rovanovi 
+UI – vela malych elementov co dava dokopy
+formalizmus ak prinesie novy pohlad je super vec
+
+14.11.2012 (Misof)
+Ako pisat?
+Latex
+Vedieť dokázať vlastný prínos a netriviálne úsilie vedúce k nemu. 
+Odvolávať sa na existujúcu lieteratúru. 
+21.11.2012 nie
+
+27.11.2012
+https://www.ideals.illinois.edu/handle/2142/32512 – improve performance: Using feature construction to improve the performance of neural networks/1993: 149
+
+predpoved ceny
+data ming: harvesting reviews and grouping 
+http://archive.ics.uci.edu/ml/ 
+
+
+koncept:
+zobrat existujuci model
+potweakovat
+
+12.12.2012
+Hinton2012: 
+
+Snazi riesit problem overfittingu na relativne malych problemoch
+
+Je prevenciou co-adaptation a simuluje model viacerych neuronovych sieti natrenovanych na rovnaky problem
+
+?Softmax output layer for computing the probabilities
+
+-best result 160 errors from 10000 on test set
+--130 with 50% dropout on hidden layer
+--110 futher with 20% dropout on input set
+Deep boltzman machine with dropout is the best result so far. 
+
+?convolutional neural network
+?pre-training extract useful features
+?deep boltzman machine 
+?hidden markov models
+?viterbi algorithm
+?max-pooling layer
+?mixture of experts
+?bayesian model averaging
+?markov chain monte carlo
+?mean net
+
+We use the standard, stochastic gradient descent procedure for training the dropout neural 
+networks on mini-batches of training cases, but we modify the penalty term that is normally 
+used to prevent the weights from growing too large. Instead of penalizing the squared length 
+(L2 norm) of the whole weight vector, we set an upper bound on the L2 norm of the incoming 
+weight vector for each individual hidden unit. If a weight-update violates this constraint, we 
+renormalize the weights of the hidden unit by division. Using a constraint rather than a penalty 
+prevents weights from growing very large no matter how large the proposed weight-update is. 
+This makes it possible to start with a very large learning rate which decays during learning, 
+thus allowing a far more thorough search of the weight-space than methods that start with small 
+weights and use a small learning rate. 
+
+Performance on the test set can be greatly improved by
+enhancing the training data with transformed images (3) or by wiring knowledge about spatial
+transformations into a convolutional neural network (4) or by using generative pre-training to
+extract useful features from the training images without using the labels (5).
+
+Speech recognition systems use hidden Markov models (HMMs) to
+deal with temporal variability and they need an acoustic model that determines how well a frame
+of coefﬁcients extracted from the acoustic input ﬁts each possible state of each hidden Markov
+model. 
+
+For fully connected layers, dropout in all hidden layers works
+better than dropout in only one hidden layer and more extreme probabilities tend to be worse,
+which is why we have used 0.5 throughout this paper.
+
+Zaujimave: For datasets in which the required input-output mapping has a
+number of fairly different regimes, performance can probably be further improved by making
+the dropout probabilities be a learned function of the input, thus creating a statistically efﬁcient
+“mixture of experts” (13) in which there are combinatorially many experts, but each parameter
+gets adapted on a large fraction of the training data.
+
+Diplomovy seminar 12.12.2012
+
+Too jitteri, dobra prezentacia, zabudol som meno skolitela, 
+Super, ze to funguje. Zaujimava je este otazka preco to vlastne funguje – feature detectors. 
+
+Prvy slide: nazov, meno, skolitel
+Druhy slide : obsah
+Dalsie slide-i: sucasny stav problematiky
+Slide: co este porobime
+5-7min = proof of work , uvod, 
+
+Dat aktualny stav na web
+
+
+================ Marec 2013 ====================
+implementovany generec v C++ 
+
+================ Jul 2013 ======================
+Multilayer generec 42% - je to v slideoch
+
+================ Oktober 2013 ==================
+-implementovany BAL (zabudnute bias neuron, inicialicia divna)
+-zrekonstruovane vysledky z clanku 
+-meranie vlastnosti BAL (hidden layer distance, matrix similarity, ... ) /bal/data/... 
+-experimentovanie s init vahami aby sa zvysil predpoklad uspechu 
+  data a grafy v /bal/data/...
