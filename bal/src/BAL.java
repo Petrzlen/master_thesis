@@ -1,7 +1,11 @@
-//TODO kvazi momentum -> odtlacanie hidden reprezentacii
-//TODO m_sim, h_f_b_dist -> jeden nasobkom druheho
-//TODO bipolarna sigmoida (preferujeme unipolarnu)
+//TODO kvazi momentum -> odtlacanie hidden reprezentacii, -\delta w(t-1) 
+//TODO m_sim, h_f_b_dist -> jeden nasobkom druheho bias
+//TODO bipolarna [-1, 1] vstupy
 //TODO dropout? 
+//TODO pocet epoch potrebnych na konvergenciu
+//TODO nie autoassoc ale permutovat vystupy (napr. 1000 na 0100)
+//TODO vyssi rozmer tasku (8-3-8), (16-4-16) 
+//TODO reprezentacia SUC/ERR
 //h_size = 3 => [9,10,1] for errors [0.0, 1.0, 2.0] 
 
 import java.io.FileNotFoundException;
@@ -24,12 +28,16 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
 public class BAL {
-	private RealMatrix IH; 
-	private RealMatrix HO;  
-	private RealMatrix OH; 
-	private RealMatrix HI;
 
-	public static final String[] MEASURE_HEADINGS = {"epoch","err","h_dist","h_f_b_dist","m_avg_w","m_sim", "first_second", "sigma", "lambda"}; 
+	public static final String INPUT_FILEPATH = "auto4.in"; 
+	public static final String OUTPUT_FILEPATH = "auto4.in"; 
+	public static final int INIT_HIDDEN_LAYER_SIZE = 3; 
+	
+	public static final int INIT_MAX_EPOCHS = 30000;
+	public static final int INIT_RUNS = 10000; 
+	public static final int INIT_CANDIDATES_COUNT = 100;
+	
+	public static final String[] MEASURE_HEADINGS = {"epoch","err","h_dist","h_f_b_dist","m_avg_w","m_sim", "first_second", "sigma", "lambda", "o_f_b_dist"}; 
 	
 	//TODO activation on hidden networks 
 	//epoch
@@ -45,6 +53,7 @@ public class BAL {
 	//avg distance between forward and backward activations on hidden layer
 	public static final int MEASURE_HIDDEN_FOR_BACK_DIST = 3;
 	
+	
 	//avg weight of matrixes 
 	public static final int MEASURE_MATRIX_AVG_W = 4;
 	
@@ -58,24 +67,22 @@ public class BAL {
 	public static final int MEASURE_LAMBDA = 8; 
 	//public static final int MEASURE_NOISE_SPAN = 9; 
 	//public static final int MEASURE_MULTIPLY_WEIGHTS = 9; 
+
+	//avg distance between forward and backward activations on their output layers (forward layer 2, backward layer 0) 
+	public static final int MEASURE_OUTPUT_FOR_BACK_DIST = 9;
 	
-	public static final int MEASURE_COUNT = 9; 
+	public static final int MEASURE_COUNT = 10; 
 	
 	public static final int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA};
 	public static final int MEASURE_GROUP_BY = MEASURE_ERROR;  
 	
 	public static final double NORMAL_DISTRIBUTION_SPAN = 15; 
-
-	public static final String INPUT_FILEPATH = "auto4.in"; 
-	public static final String OUTPUT_FILEPATH = "auto4.in"; 
-	public static final int INIT_HIDDEN_LAYER_SIZE = 2; 
-	public static final int INIT_MAX_EPOCHS = 30000;
-	public static final int INIT_RUNS = 1000; 
+	
 	public static final double INIT_NORMAL_DISTRIBUTION_MU = 0; 
-	public static final double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {2.3}; 
-	//public static final double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {1.5, 1.7, 1.9, 2.1, 2.3, 2.5}; 
-	public static final double TRY_LAMBDA[] = {0.7}; 
-	//public static final double TRY_LAMBDA[] = {0.001, 0.003, 0.01, 0.03, 0.1, 0.3}; 
+	//public static final double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {2.3}; 
+	public static final double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2}; 
+	//public static final double TRY_LAMBDA[] = {0.7}; 
+	public static final double TRY_LAMBDA[] = {0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2}; 
 	//public static final double TRY_LAMBDA[] = {0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5}; 
 	//public static final double TRY_NOISE_SPAN[] = {0.0, 0.003, 0.01, 0.03, 0.1, 0.3}; 
 	//public static final double TRY_MULTIPLY_WEIGHTS[] = {1.0, 1.00001, 1.00003, 1.0001, 1.0003, 1.001}; 
@@ -93,6 +100,11 @@ public class BAL {
 
 	public static ArrayList<double[]> pre_measure = new ArrayList<double[]>();
 	public static ArrayList<double[]> post_measure = new ArrayList<double[]>();
+
+	private RealMatrix IH; 
+	private RealMatrix HO;  
+	private RealMatrix OH; 
+	private RealMatrix HI;
 	
 	public static void run(){
 		BAL.INIT_NORMAL_DISTRIBUTION_SIGMA = BAL.TRY_NORMAL_DISTRIBUTION_SIGMA[random.nextInt(BAL.TRY_NORMAL_DISTRIBUTION_SIGMA.length)]; 
@@ -106,8 +118,20 @@ public class BAL {
 		
 		RealMatrix inputs = BAL.loadFromFile(BAL.INPUT_FILEPATH);
 		RealMatrix outputs = BAL.loadFromFile(BAL.OUTPUT_FILEPATH);
+
+		//select the network with the biggest hidden distance 
+		double mav=0.0; 
+		BAL network = null; 
+		for(int i=0; i<BAL.INIT_CANDIDATES_COUNT; i++){
+			BAL N = new BAL(inputs.getColumnDimension(), h_size, outputs.getColumnDimension()); 
+			double[] measure = N.measure(0, inputs, outputs); 
+			double hd =  measure[BAL.MEASURE_HIDDEN_DIST];
+			if(hd > mav){
+				mav = hd;
+				network = N; 
+			}
+		}
 		
-		BAL network = new BAL(inputs.getColumnDimension(), h_size, outputs.getColumnDimension()); 
 		//System.out.println(network.printNetwork()); 
 		
 		ArrayList<Integer> order = new ArrayList<Integer>(inputs.getRowDimension());
@@ -135,7 +159,6 @@ public class BAL {
 		//print each input output activations 
 		for(int i=0 ; i<4; i++){
 			RealVector[] forward = network.forwardPass(inputs.getRowVector(i));
-			RealVector[] backward = network.backwardPass(inputs.getRowVector(i));
 			
 			System.out.println("Forward pass:");
 			for(int j=0; j<forward.length; j++){
@@ -153,9 +176,15 @@ public class BAL {
 				System.out.print(BAL.printVector(backward[j]));
 			}*/
 		}
-		
-		System.out.println(network.evaluate(inputs, outputs));
-		System.out.println("=========================================================");
+		//print each input output activations 
+		for(int i=0 ; i<4; i++){
+			RealVector[] backward = network.backwardPass(inputs.getRowVector(i));
+			
+			System.out.println("Backward pass:");
+			for(int j=0; j<3; j++){
+				System.out.print(BAL.printVector(backward[j]));
+			}
+		}
 		
 		post_measure.add(network.measure(max_epoch, inputs, outputs));
 		//System.out.println(network.printNetwork());
@@ -163,15 +192,27 @@ public class BAL {
 		if(BAL.MEASURE_SAVE_AFTER_EACH_RUN){
 			network.saveMeasures("data/measure_" + ((int)network.evaluate(inputs, outputs)) + "_" + (System.currentTimeMillis() / 1000L) + ".dat");
 		}
+		
+		System.out.println(network.evaluate(inputs, outputs));
+		System.out.println("=========================================================");
 	}
 	
 	//interpret activations on the output layer 
 	//for example map continuous [0,1] data to discrete {0, 1} 
 	public void postprocessOutput(RealVector out){
+		
+		//normal sigmoid 
 		//[0.5,\=+\infty] -> 1.0, else 0.0
 		for(int i=0; i<out.getDimension() ;i++){
 			out.setEntry(i, (out.getEntry(i) >= 0.50) ? 1.0 : 0.0); 
 		}
+		
+		/*
+		//bipolar sigmoid 
+		//[0.0,\=+\infty] -> 1.0, else 0.0
+		for(int i=0; i<out.getDimension() ;i++){
+			out.setEntry(i, (out.getEntry(i) >= 0.00) ? 1.0 : 0.0); 
+		}*/
 		
 		/*
 		//maximum
@@ -239,7 +280,8 @@ public class BAL {
 	private void applyNonlinearity(RealVector vector){
 		for(int i=0; i<vector.getDimension() ; i++){
 			double n = vector.getEntry(i); 
-			vector.setEntry(i, 1 / (1 + Math.exp(-n)));
+			vector.setEntry(i, 1 / (1 + Math.exp(-n)));  //normal sigmoid 
+			//vector.setEntry(i, 1 - (2 / (1 + Math.exp(-n)))); //bipolar sigmoid 
 		}
 	}
 	
@@ -362,7 +404,8 @@ public class BAL {
 		double n = in.getRowDimension(); 
 		
 		double hidden_dist = 0.0;
-		double for_back_dist = 0.0;
+		double hidden_for_back_dist = 0.0;
+		double output_for_back_dist = 0.0;
 		double matrix_avg_w = 0.0;
 		double matrix_similarity = 0.0;
 
@@ -381,7 +424,9 @@ public class BAL {
 			RealVector[] forward = this.forwardPass(in.getRowVector(i));
 			RealVector[] backward = this.backwardPass(target.getRowVector(i));
 			
-			for_back_dist += forward[1].getDistance(backward[1]) / n; 
+			hidden_for_back_dist += forward[1].getDistance(backward[1]) / n; 
+			output_for_back_dist += forward[2].getDistance(backward[0]) / n; 
+			
 			forward_hiddens.add(forward[1]);
 			
 			double[] output_arr = forward[2].toArray();
@@ -390,7 +435,8 @@ public class BAL {
 				first_second_sum += output_arr[output_arr.length-1] / output_arr[output_arr.length-2];
 			}
 		}
-		this.measures[MEASURE_HIDDEN_FOR_BACK_DIST].add(for_back_dist); 
+		this.measures[MEASURE_HIDDEN_FOR_BACK_DIST].add(hidden_for_back_dist); 
+		this.measures[MEASURE_OUTPUT_FOR_BACK_DIST].add(output_for_back_dist); 
 		this.measures[MEASURE_FIRST_SECOND_RATIO].add(first_second_sum); 
 
 		for(int i=0; i<forward_hiddens.size() ; i++){
@@ -588,6 +634,7 @@ public class BAL {
 	//manage IO and run BAL 
 	public static void main(String[] args) {
 		for(int i=0 ; i<BAL.INIT_RUNS ; i++){
+			System.out.println("======== " + i + "/" + BAL.INIT_RUNS + " ==============");
 			BAL.run(); 
 		}
 
@@ -628,7 +675,7 @@ public class BAL {
 		pre_writer.close();
 		post_writer.close();
 		
-		BAL.measureGroupBY(post_measure); 
+		BAL.measureGroupBY(pre_measure); 
 	}
 		
 }

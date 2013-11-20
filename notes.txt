@@ -134,5 +134,11 @@ Multilayer generec 42% - je to v slideoch
 -implementovany BAL (zabudnute bias neuron, inicialicia divna)
 -zrekonstruovane vysledky z clanku 
 -meranie vlastnosti BAL (hidden layer distance, matrix similarity, ... ) /bal/data/... 
+  reprezentacie na hidden absolutne rovnake (forward, backward), matice rozne: f_h_dist_0_m_sim_not_0.txt
 -experimentovanie s init vahami aby sa zvysil predpoklad uspechu 
   data a grafy v /bal/data/...
+
+-vyzera to tak, ze model pracuje lepsie ked init reprezentacie su dalej od seba (rapidminer/bal1_diagram) 
+  -bipolarna sigmoida nepomaha
+  -vybratie siete s veacsim hdist pomaha (62% - 70%) 
+  
