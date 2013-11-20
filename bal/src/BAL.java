@@ -20,9 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.Set;
 
-import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -31,13 +29,26 @@ public class BAL {
 
 	public static final String INPUT_FILEPATH = "auto4.in"; 
 	public static final String OUTPUT_FILEPATH = "auto4.in"; 
-	public static final int INIT_HIDDEN_LAYER_SIZE = 3; 
+	public static final int INIT_HIDDEN_LAYER_SIZE = 2 ; 
 	
+	public static final double CONVERGENCE_EPSILON = 0.0; 
 	public static final int INIT_MAX_EPOCHS = 30000;
-	public static final int INIT_RUNS = 10000; 
-	public static final int INIT_CANDIDATES_COUNT = 100;
 	
-	public static final String[] MEASURE_HEADINGS = {"epoch","err","h_dist","h_f_b_dist","m_avg_w","m_sim", "first_second", "sigma", "lambda", "o_f_b_dist"}; 
+	public static final int INIT_RUNS = 1000; 
+	public static final int INIT_CANDIDATES_COUNT = 100;
+
+	public static final double NORMAL_DISTRIBUTION_SPAN = 15; 
+	
+	public static final double INIT_NORMAL_DISTRIBUTION_MU = 0; 
+	public static final double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {2.3}; 
+	//public static final double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2}; 
+	public static final double TRY_LAMBDA[] = {0.7}; 
+	//public static final double TRY_LAMBDA[] = {0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2}; 
+	//public static final double TRY_LAMBDA[] = {0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5}; 
+	//public static final double TRY_NOISE_SPAN[] = {0.0, 0.003, 0.01, 0.03, 0.1, 0.3}; 
+	//public static final double TRY_MULTIPLY_WEIGHTS[] = {1.0, 1.00001, 1.00003, 1.0001, 1.0003, 1.001}; 
+	
+	public static final String[] MEASURE_HEADINGS = {"epoch","err","h_dist","h_f_b_dist","m_avg_w","m_sim", "first_second", "sigma", "lambda", "o_f_b_dist", "conv_epoch"}; 
 	
 	//TODO activation on hidden networks 
 	//epoch
@@ -52,8 +63,7 @@ public class BAL {
 	
 	//avg distance between forward and backward activations on hidden layer
 	public static final int MEASURE_HIDDEN_FOR_BACK_DIST = 3;
-	
-	
+
 	//avg weight of matrixes 
 	public static final int MEASURE_MATRIX_AVG_W = 4;
 	
@@ -76,24 +86,13 @@ public class BAL {
 	public static final int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA};
 	public static final int MEASURE_GROUP_BY = MEASURE_ERROR;  
 	
-	public static final double NORMAL_DISTRIBUTION_SPAN = 15; 
-	
-	public static final double INIT_NORMAL_DISTRIBUTION_MU = 0; 
-	//public static final double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {2.3}; 
-	public static final double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2}; 
-	//public static final double TRY_LAMBDA[] = {0.7}; 
-	public static final double TRY_LAMBDA[] = {0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2}; 
-	//public static final double TRY_LAMBDA[] = {0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5}; 
-	//public static final double TRY_NOISE_SPAN[] = {0.0, 0.003, 0.01, 0.03, 0.1, 0.3}; 
-	//public static final double TRY_MULTIPLY_WEIGHTS[] = {1.0, 1.00001, 1.00003, 1.0001, 1.0003, 1.001}; 
-	
 	public static Random random = new Random(); 
 	public static double INIT_NORMAL_DISTRIBUTION_SIGMA = 1.25; 
 	public static double INIT_LAMBDA = 0.03; 
 	//public static double INIT_NOISE_SPAN = 0.00; 
 	//public static double INIT_MULTIPLY_WEIGHTS = 1.001; 
 
-	public static final int MEASURE_RECORD_EACH = 1000; 
+	public static final int MEASURE_RECORD_EACH = 1000;
 	public static boolean MEASURE_SAVE_AFTER_EACH_RUN = false; 
 	
 	private ArrayList<Double>[] measures = null; 
@@ -141,17 +140,26 @@ public class BAL {
 
 		pre_measure.add(network.measure(0, inputs, outputs));
 		
-		for(int e=0; e<max_epoch ; e++){
-			if(MEASURE_SAVE_AFTER_EACH_RUN && e % BAL.MEASURE_RECORD_EACH == 0){
+		int epochs=0; 
+		for(epochs=0; epochs<max_epoch ; epochs++){
+			if(MEASURE_SAVE_AFTER_EACH_RUN && epochs % BAL.MEASURE_RECORD_EACH == 0){
 				//System.out.println(network.evaluate(inputs, outputs));
-				network.measure(e, inputs, outputs);
+				network.measure(epochs, inputs, outputs);
 			}
 			
+			double avg_change = 0.0; 
 			java.util.Collections.shuffle(order);
+			
 			for(int order_i = 0; order_i < order.size() ; order_i++){
 				RealVector in = inputs.getRowVector(order_i);
 				RealVector out = outputs.getRowVector(order_i);
-				network.learn(in, out, lambda); 
+				avg_change += network.learn(in, out, lambda);
+			}
+			
+			avg_change /= (double) (order.size()); 
+			if(avg_change < BAL.CONVERGENCE_EPSILON){
+				System.out.println("Training stopped at epoch=" + epochs + " with avg_change=" + avg_change);
+				break;
 			}
 		}
 		 
@@ -186,7 +194,7 @@ public class BAL {
 			}
 		}
 		
-		post_measure.add(network.measure(max_epoch, inputs, outputs));
+		post_measure.add(network.measure(epochs, inputs, outputs));
 		//System.out.println(network.printNetwork());
 		
 		if(BAL.MEASURE_SAVE_AFTER_EACH_RUN){
@@ -322,29 +330,35 @@ public class BAL {
 	//learns on a weight matrix, other parameters are activations on needed layers 
 	//\delta w_{pq}^F = \lambda a_p^{F}(a_q^{B} - a_q^{F})
 	//\delta w_ij = lamda * a_pre * (a_post_other - a_post_self)  
-	private void subLearn(RealMatrix w, RealVector a_pre, RealVector a_post_other, RealVector a_post_self, double lambda){
+	private double subLearn(RealMatrix w, RealVector a_pre, RealVector a_post_other, RealVector a_post_self, double lambda){
+		double avg_change = 0.0; 
+		
 		for(int i = 0 ; i < w.getRowDimension() ; i++){
 			for(int j = 0 ; j < w.getColumnDimension() ; j++){
 				double w_value = w.getEntry(i, j); 
 				double dw = lambda * a_pre.getEntry(i) * (a_post_other.getEntry(j) - a_post_self.getEntry(j));
-				if(dw != 0){
-					w.setEntry(i, j, w_value + dw);
-				}
+				w.setEntry(i, j, w_value + dw);
+				avg_change += Math.abs(dw / w_value); 
 			}
 		}
+		
+		return avg_change / ((double)(w.getRowDimension() * w.getColumnDimension()));
 	}
 	
-	//learn on one input-output mapping 
-	public void learn(RealVector in, RealVector target, double lambda){
+	//learn on one input-output mapping
+	// returns avg weight change 
+	public double learn(RealVector in, RealVector target, double lambda){
 		//forward and backward activation
 		RealVector[] forward = this.forwardPass(in);
 		RealVector[] backward = this.backwardPass(target);
+		double avg_change_ih = 0.0; 
+		double avg_change_oh = 0.0; 
 		
 		//learn 
-		subLearn(this.IH, forward[0], backward[1], forward[1], lambda); 
-		subLearn(this.HO, forward[1], backward[2], forward[2], lambda); 
-		subLearn(this.OH, backward[2], forward[1], backward[1], lambda); 
-		subLearn(this.HI, backward[1], forward[0], backward[0], lambda); 
+		avg_change_ih += subLearn(this.IH, forward[0], backward[1], forward[1], lambda); 
+		avg_change_oh += subLearn(this.HO, forward[1], backward[2], forward[2], lambda); 
+		avg_change_ih += subLearn(this.OH, backward[2], forward[1], backward[1], lambda); 
+		avg_change_oh += subLearn(this.HI, backward[1], forward[0], backward[0], lambda); 
 		
 		//this.addNoise(this.OH, BAL.INIT_MULTIPLY_WEIGHTS);
 		//this.addNoise(this.HI, BAL.INIT_MULTIPLY_WEIGHTS); 
@@ -360,6 +374,10 @@ public class BAL {
 		}*/
 		//System.out.print(BAL.printVector(forward[1]));
 		//System.out.println(BAL.printVector(backward[1]));
+		
+		double size_ih = this.IH.getColumnDimension() * this.IH.getRowDimension();
+		double size_oh = this.OH.getColumnDimension() * this.OH.getRowDimension(); 
+		return (avg_change_ih * size_ih + avg_change_oh * size_oh) / (size_ih + size_oh); 
 	}
 	
 	//evaluates performance on one input-output mapping 
@@ -505,11 +523,24 @@ public class BAL {
 		for(Entry<String, Integer> entry : counts_child.entrySet()){
 			Integer child_count = entry.getValue();
 			Integer parent_count = counts_parent.get(child2parent.get(entry.getKey())); 
-			result.add(entry.getKey() + child_count + "/" + parent_count + " " + 100.0*((double)child_count / (double)parent_count) + "%");
+			result.add(entry.getKey() + child_count + "/" + parent_count + " " + 100.0*((double)child_count / (double)parent_count));
 		}
 		Collections.sort(result); 
 		for(String s : result){
 			System.out.println(s);
+		}
+	}
+
+	private static void measureAverages(ArrayList<double[]> measures) {
+		double[] sum = new double[measures.get(0).length]; 
+		for(int i=0; i<measures.size() ; i++){
+			for(int j=0; j<measures.get(i).length ; j++){
+				sum[j] += measures.get(i)[j]; 
+			}
+		}
+
+		for(int j=0; j<measures.get(0).length ; j++){
+			System.out.println("avg("+BAL.MEASURE_HEADINGS[j]+")=" + (sum[j] / ((double)measures.size())));
 		}
 	}
 	
@@ -676,6 +707,7 @@ public class BAL {
 		post_writer.close();
 		
 		BAL.measureGroupBY(pre_measure); 
+		BAL.measureAverages(post_measure); 
 	}
 		
 }
