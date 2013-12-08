@@ -34,3 +34,13 @@
 *.dat
 *.class
 *.jar
+generec/pic* 
+bal/data*
+bal/.* 
+*.pdf
+bal/.classpath
+bal/.metadata/
+bal/.project
+dizasrc/
+generec/*
+text/obojstranne/
