@@ -35,16 +35,21 @@ public class BAL {
 	public static final boolean MEASURE_IS = true; 
 	public static boolean MEASURE_SAVE_AFTER_EACH_RUN = false; 
 	public static final int MEASURE_RECORD_EACH = 1000;
-	
+
 	public static final String INPUT_FILEPATH = "auto4.in"; 
 	public static final String OUTPUT_FILEPATH = "auto4.in"; 
 	public static final int INIT_HIDDEN_LAYER_SIZE = 2 ; 
 
-	public static final double CONVERGENCE_EPSILON = 0.0; 
+	public static final double CONVERGENCE_WEIGHT_EPSILON = 0.0; 
+	//there was no change in given outputs for last CONVERGENCE_NO_CHANGE_FOR
+	public static final int CONVERGENCE_NO_CHANGE_FOR = 10; 
+	public static final double CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
 	public static final int INIT_MAX_EPOCHS = 30000;
 
 	public static final int INIT_RUNS = 100; 
 	public static final int INIT_CANDIDATES_COUNT = 100;
+
+	public static final boolean PRINT_NETWORK_IS = false; 
 
 	public static final double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {2.3}; 
 	//public static final double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2}; 
@@ -159,57 +164,86 @@ public class BAL {
 			pre_measure.add(network.measure(0, inputs, outputs));
 		}
 
-		int epochs=0; 
+		//HISTORY, INPUT_ID, VECTOR_ENTRY
+		RealVector[][] given = new RealVector[CONVERGENCE_NO_CHANGE_FOR][outputs.getRowDimension()];
+		int epochs=0;
+
 		for(epochs=0; epochs<max_epoch ; epochs++){
 			if(MEASURE_IS && (MEASURE_SAVE_AFTER_EACH_RUN && epochs % BAL.MEASURE_RECORD_EACH == 0)){
 				//System.out.println(network.evaluate(inputs, outputs));
 				network.measure(epochs, inputs, outputs);
 			}
 
-			double avg_change = 0.0; 
+			//TODO Consider as a MEASURE (avg_weight_change) 
+			double avg_weight_change = 0.0; 
 			java.util.Collections.shuffle(order);
 
 			for(int order_i = 0; order_i < order.size() ; order_i++){
 				RealVector in = inputs.getRowVector(order_i);
 				RealVector out = outputs.getRowVector(order_i);
-				avg_change += network.learn(in, out, lambda);
+
+				avg_weight_change += network.learn(in, out, lambda);
+				given[epochs % CONVERGENCE_NO_CHANGE_FOR][order_i] = network.forwardPass(in)[2]; 
 			}
 
-			avg_change /= (double) (order.size()); 
-			if(avg_change < BAL.CONVERGENCE_EPSILON){
-				System.out.println("Training stopped at epoch=" + epochs + " with avg_change=" + avg_change);
+			//no weight change
+			avg_weight_change /= (double) (order.size()); 
+			if(avg_weight_change < BAL.CONVERGENCE_WEIGHT_EPSILON){
+				System.out.println("Training stopped at epoch=" + epochs + " with avg_weight_change=" + avg_weight_change);
+				break;
+			}
+
+			//no output change
+			boolean output_change = true; 
+			if(epochs >= CONVERGENCE_NO_CHANGE_FOR){
+				int a = epochs % CONVERGENCE_NO_CHANGE_FOR;
+				int b = (epochs + 1) % CONVERGENCE_NO_CHANGE_FOR; 
+				double max_diff = 0.0;
+
+				for(int j=0; j<given[0].length; j++){
+					for(int k=0; k<given[0][0].getDimension() ; k++){
+						max_diff = Math.max(max_diff, Math.abs(given[a][j].getEntry(k) - given[b][j].getEntry(k)));
+					}
+				}
+				
+				output_change = (max_diff > CONVERGENCE_NO_CHANGE_EPSILON); 
+				//System.out.println("  max_diff=" + max_diff);
+			}
+			if(!output_change){
+				System.out.println("Training stopped at epoch=" + epochs + " as no output change occured in last " + CONVERGENCE_NO_CHANGE_FOR + "epochs");
 				break;
 			}
 		}
 
-		System.out.println(network.printNetwork());
+		if(PRINT_NETWORK_IS){
+			System.out.println(network.printNetwork());
+		}
+
 		//print each input output activations 
 		for(int i=0 ; i<4; i++){
 			RealVector[] forward = network.forwardPass(inputs.getRowVector(i));
 
-			System.out.println("Forward pass:");
-			for(int j=0; j<forward.length; j++){
-				System.out.print(BAL.printVector(forward[j]));
+			if(PRINT_NETWORK_IS){
+				System.out.println("Forward pass:");
+				for(int j=0; j<forward.length; j++){
+					System.out.print(BAL.printVector(forward[j]));
+				}
 			}
 
 			network.postprocessOutput(forward[2]);
 			System.out.print("Given:   " + BAL.printVector(forward[2]));
 			System.out.print("Expected:" + BAL.printVector(outputs.getRowVector(i)));
-
-
-			/*
-			System.out.println("Backward pass:");
-			for(int j=0; j<3; j++){
-				System.out.print(BAL.printVector(backward[j]));
-			}*/
+			System.out.println();
 		}
 		//print each input output activations 
-		for(int i=0 ; i<4; i++){
-			RealVector[] backward = network.backwardPass(inputs.getRowVector(i));
+		if(PRINT_NETWORK_IS){
+			for(int i=0 ; i<4; i++){
+				RealVector[] backward = network.backwardPass(inputs.getRowVector(i));
 
-			System.out.println("Backward pass:");
-			for(int j=0; j<3; j++){
-				System.out.print(BAL.printVector(backward[j]));
+				System.out.println("Backward pass:");
+				for(int j=0; j<3; j++){
+					System.out.print(BAL.printVector(backward[j]));
+				}
 			}
 		}
 

@@ -704,4 +704,6 @@ public static final double NORMAL_DISTRIBUTION_SPAN = 15;
 4.0 2.5 0.3 1/110 0.9090909090909091%
 
 
-
+================= 09-12-2013 =========================
+Convergence which depends on average weight change does not work. 
+Max diff implemented. Convergence with similar results on average of 900 epochs (TODO measure more exactly)/
