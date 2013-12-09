@@ -32,7 +32,7 @@ import org.apache.commons.math3.linear.RealVector;
 
 public class BAL {
 	private static PrintWriter log = null; 
-	
+
 	public static  boolean MEASURE_IS = true; 
 	public static boolean MEASURE_SAVE_AFTER_EACH_RUN = false; 
 	public static  int MEASURE_RECORD_EACH = 1000;
@@ -64,7 +64,7 @@ public class BAL {
 	public static  double INIT_NORMAL_DISTRIBUTION_MU = 0;
 	public static  double NORMAL_DISTRIBUTION_SPAN = 15; 
 
-	public static  String[] MEASURE_HEADINGS = {"epoch","err","h_dist","h_f_b_dist","m_avg_w","m_sim", "first_second", "sigma", "lambda", "o_f_b_dist", "momentum"}; 
+	public static  String[] MEASURE_HEADINGS = {"epoch", "err", "sigma", "lambda", "momentum", "h_dist","h_f_b_dist","m_avg_w","m_sim", "first_second", "o_f_b_dist"}; 
 
 	//TODO activation on hidden networks 
 	//epoch
@@ -73,31 +73,32 @@ public class BAL {
 	//error function (RMSE) 
 	public static  int MEASURE_ERROR = 1;
 
+	public static  int MEASURE_SIGMA = 2; 
+	public static  int MEASURE_LAMBDA = 3; 
+
+	public static  int MEASURE_MOMENTUM = 4;
+
 	//avg of dist(h_i - h_j) i \neq j where h_i is a hidden activation for input i
 	//intuitively: internal representation difference 
-	public static  int MEASURE_HIDDEN_DIST = 2;
+	public static  int MEASURE_HIDDEN_DIST = 5;
 
 	//avg distance between forward and backward activations on hidden layer
-	public static  int MEASURE_HIDDEN_FOR_BACK_DIST = 3;
+	public static  int MEASURE_HIDDEN_FOR_BACK_DIST = 6;
 
 	//avg weight of matrixes 
-	public static  int MEASURE_MATRIX_AVG_W = 4;
+	public static  int MEASURE_MATRIX_AVG_W = 7;
 
 	//sum of |a_{ij} - b_{ij}| per pairs (HO, HI) and (OH, IH) 
-	public static  int MEASURE_MATRIX_SIMILARITY = 5;
+	public static  int MEASURE_MATRIX_SIMILARITY = 8;
 
 	//ratio of (a_1, a_2) where a_i is the i-th biggest output 
-	public static  int MEASURE_FIRST_SECOND_RATIO = 6;
+	public static  int MEASURE_FIRST_SECOND_RATIO = 9;
 
-	public static  int MEASURE_SIGMA = 7; 
-	public static  int MEASURE_LAMBDA = 8; 
 	//public static  int MEASURE_NOISE_SPAN = 9; 
 	//public static  int MEASURE_MULTIPLY_WEIGHTS = 9; 
 
 	//avg distance between forward and backward activations on their output layers (forward layer 2, backward layer 0) 
-	public static  int MEASURE_OUTPUT_FOR_BACK_DIST = 9;
-
-	public static  int MEASURE_MOMENTUM = 10;
+	public static  int MEASURE_OUTPUT_FOR_BACK_DIST = 10;
 
 	public static  int MEASURE_COUNT = 11; 
 
@@ -126,7 +127,7 @@ public class BAL {
 	private double[][] MOM_HO;  
 	private double[][] MOM_OH; 
 	private double[][] MOM_HI;
-	
+
 	private static String RUN_ID = null;  
 
 	public static void run(){
@@ -145,7 +146,7 @@ public class BAL {
 
 		//select the network with the biggest hidden distance 
 		double mav=0.0; 
-		BAL network = null; 
+		BAL network = new BAL(inputs.getColumnDimension(), h_size, outputs.getColumnDimension()); 
 		for(int i=0; i<BAL.INIT_CANDIDATES_COUNT; i++){
 			BAL N = new BAL(inputs.getColumnDimension(), h_size, outputs.getColumnDimension()); 
 			double[] measure = N.measure(0, inputs, outputs); 
@@ -208,7 +209,7 @@ public class BAL {
 						max_diff = Math.max(max_diff, Math.abs(given[a][j].getEntry(k) - given[b][j].getEntry(k)));
 					}
 				}
-				
+
 				output_change = (max_diff > CONVERGENCE_NO_CHANGE_EPSILON); 
 				//log.println("  max_diff=" + max_diff);
 			}
@@ -219,24 +220,24 @@ public class BAL {
 		}
 
 		double network_result = network.evaluate(inputs, outputs);
-		
+
 		//print only "bad results" 
 		if(network_result > 0.0){
 			if(PRINT_NETWORK_IS){
 				log.println(network.printNetwork());
 			}
-	
+
 			//print each input output activations 
 			for(int i=0 ; i<inputs.getRowDimension(); i++){
 				RealVector[] forward = network.forwardPass(inputs.getRowVector(i));
-	
+
 				if(PRINT_NETWORK_IS){
 					log.println("Forward pass:");
 					for(int j=0; j<forward.length; j++){
 						log.print(BAL.printVector(forward[j]));
 					}
 				}
-	
+
 				network.postprocessOutput(forward[2]);
 				log.print("Given:   " + BAL.printVector(forward[2]));
 				log.print("Expected:" + BAL.printVector(outputs.getRowVector(i)));
@@ -246,7 +247,7 @@ public class BAL {
 			if(PRINT_NETWORK_IS){
 				for(int i=0 ; i<outputs.getRowDimension(); i++){
 					RealVector[] backward = network.backwardPass(outputs.getRowVector(i));
-	
+
 					log.println("Backward pass:");
 					for(int j=0; j<3; j++){
 						log.print(BAL.printVector(backward[j]));
@@ -494,59 +495,70 @@ public class BAL {
 	public double[] measure(int epoch, RealMatrix in, RealMatrix target){
 		double n = in.getRowDimension(); 
 
-		double hidden_dist = 0.0;
-		double hidden_for_back_dist = 0.0;
-		double output_for_back_dist = 0.0;
-		double matrix_avg_w = 0.0;
-		double matrix_similarity = 0.0;
 
-		this.measures[MEASURE_EPOCH].add((double)epoch); 
-		this.measures[MEASURE_SIGMA].add(BAL.INIT_NORMAL_DISTRIBUTION_SIGMA); 
-		this.measures[MEASURE_LAMBDA].add(BAL.INIT_LAMBDA); 
-		this.measures[MEASURE_MOMENTUM].add(BAL.INIT_MOMENTUM); 
+		if(MEASURE_EPOCH < MEASURE_COUNT) this.measures[MEASURE_EPOCH].add((double)epoch); 
+		if(MEASURE_SIGMA < MEASURE_COUNT) this.measures[MEASURE_SIGMA].add(BAL.INIT_NORMAL_DISTRIBUTION_SIGMA); 
+		if(MEASURE_LAMBDA < MEASURE_COUNT) this.measures[MEASURE_LAMBDA].add(BAL.INIT_LAMBDA); 
+		if(MEASURE_MOMENTUM < MEASURE_COUNT) this.measures[MEASURE_MOMENTUM].add(BAL.INIT_MOMENTUM); 
 		//this.measures[MEASURE_NOISE_SPAN].add(BAL.INIT_NOISE_SPAN); 
 		//this.measures[MEASURE_MULTIPLY_WEIGHTS].add(BAL.INIT_MULTIPLY_WEIGHTS - 1); 
 
-		this.measures[MEASURE_ERROR].add(this.evaluate(in, target)); 
+		if(MEASURE_ERROR < MEASURE_COUNT) this.measures[MEASURE_ERROR].add(this.evaluate(in, target)); 
 
-		ArrayList<RealVector> forward_hiddens = new ArrayList<RealVector>(); 
+		if(MEASURE_HIDDEN_FOR_BACK_DIST < MEASURE_COUNT 
+				|| MEASURE_OUTPUT_FOR_BACK_DIST < MEASURE_COUNT 
+				|| MEASURE_FIRST_SECOND_RATIO < MEASURE_COUNT 
+				|| MEASURE_HIDDEN_DIST < MEASURE_COUNT ){
+			ArrayList<RealVector> forward_hiddens = new ArrayList<RealVector>(); 
+			double hidden_dist = 0.0;
+			double hidden_for_back_dist = 0.0;
+			double output_for_back_dist = 0.0;
 
-		double first_second_sum = 0.0; 
-		for(int i=0; i<in.getRowDimension(); i++){
-			RealVector[] forward = this.forwardPass(in.getRowVector(i));
-			RealVector[] backward = this.backwardPass(target.getRowVector(i));
+			double first_second_sum = 0.0; 
+			for(int i=0; i<in.getRowDimension(); i++){
+				RealVector[] forward = this.forwardPass(in.getRowVector(i));
+				RealVector[] backward = this.backwardPass(target.getRowVector(i));
 
-			hidden_for_back_dist += forward[1].getDistance(backward[1]) / n; 
-			output_for_back_dist += forward[2].getDistance(backward[0]) / n; 
+				hidden_for_back_dist += forward[1].getDistance(backward[1]) / n; 
+				output_for_back_dist += forward[2].getDistance(backward[0]) / n; 
 
-			forward_hiddens.add(forward[1]);
+				forward_hiddens.add(forward[1]);
 
-			double[] output_arr = forward[2].toArray();
-			if(output_arr.length > 1){
-				Arrays.sort(output_arr); 
-				first_second_sum += output_arr[output_arr.length-1] / output_arr[output_arr.length-2];
+				double[] output_arr = forward[2].toArray();
+				if(output_arr.length > 1){
+					Arrays.sort(output_arr); 
+					first_second_sum += output_arr[output_arr.length-1] / output_arr[output_arr.length-2];
+				}
+			}
+			if(MEASURE_HIDDEN_FOR_BACK_DIST < MEASURE_COUNT) this.measures[MEASURE_HIDDEN_FOR_BACK_DIST].add(hidden_for_back_dist); 
+			if(MEASURE_OUTPUT_FOR_BACK_DIST < MEASURE_COUNT) this.measures[MEASURE_OUTPUT_FOR_BACK_DIST].add(output_for_back_dist); 
+			if(MEASURE_FIRST_SECOND_RATIO < MEASURE_COUNT) this.measures[MEASURE_FIRST_SECOND_RATIO].add(first_second_sum); 
+
+			if(MEASURE_HIDDEN_DIST < MEASURE_COUNT){
+				for(int i=0; i<forward_hiddens.size() ; i++){
+					for(int j=i+1; j<forward_hiddens.size() ; j++){
+						hidden_dist += forward_hiddens.get(i).getDistance(forward_hiddens.get(j)) / (forward_hiddens.size() * (forward_hiddens.size() + 1) / 2); 
+					}
+				}
+
+				this.measures[MEASURE_HIDDEN_DIST].add(hidden_dist);  
 			}
 		}
-		this.measures[MEASURE_HIDDEN_FOR_BACK_DIST].add(hidden_for_back_dist); 
-		this.measures[MEASURE_OUTPUT_FOR_BACK_DIST].add(output_for_back_dist); 
-		this.measures[MEASURE_FIRST_SECOND_RATIO].add(first_second_sum); 
 
-		for(int i=0; i<forward_hiddens.size() ; i++){
-			for(int j=i+1; j<forward_hiddens.size() ; j++){
-				hidden_dist += forward_hiddens.get(i).getDistance(forward_hiddens.get(j)) / (forward_hiddens.size() * (forward_hiddens.size() + 1) / 2); 
-			}
+		if(MEASURE_MATRIX_AVG_W < MEASURE_COUNT){
+			double matrix_avg_w = 0.0;
+			matrix_avg_w = (sumAbsoluteValuesOfMatrixEntries(this.IH) + sumAbsoluteValuesOfMatrixEntries(this.HO) + sumAbsoluteValuesOfMatrixEntries(this.OH) + sumAbsoluteValuesOfMatrixEntries(this.IH)) / (this.IH.getColumnDimension()*this.IH.getRowDimension() + this.HO.getColumnDimension()*this.HO.getRowDimension()+ this.OH.getColumnDimension()*this.OH.getRowDimension()+ this.HI.getColumnDimension()*this.HI.getRowDimension()); 
+			this.measures[MEASURE_MATRIX_AVG_W].add(matrix_avg_w);
 		}
 
-		this.measures[MEASURE_HIDDEN_DIST].add(hidden_dist);  
-
-		matrix_avg_w = (sumAbsoluteValuesOfMatrixEntries(this.IH) + sumAbsoluteValuesOfMatrixEntries(this.HO) + sumAbsoluteValuesOfMatrixEntries(this.OH) + sumAbsoluteValuesOfMatrixEntries(this.IH)) / (this.IH.getColumnDimension()*this.IH.getRowDimension() + this.HO.getColumnDimension()*this.HO.getRowDimension()+ this.OH.getColumnDimension()*this.OH.getRowDimension()+ this.HI.getColumnDimension()*this.HI.getRowDimension()); 
-		this.measures[MEASURE_MATRIX_AVG_W].add(matrix_avg_w);   
-
-		if(MEASURE_MATRIX_SIMILARITY >= 0 && this.HO.getColumnDimension() == this.HI.getColumnDimension() && this.HO.getRowDimension() == this.HI.getRowDimension()){
-			RealMatrix diff_HO_HI = this.HO.subtract(this.HI); 
-			RealMatrix diff_OH_IH = this.OH.subtract(this.IH);
-			matrix_similarity = (sumAbsoluteValuesOfMatrixEntries(diff_HO_HI) + sumAbsoluteValuesOfMatrixEntries(diff_OH_IH)) / (this.IH.getColumnDimension()*this.IH.getRowDimension() + this.HI.getColumnDimension()*this.HI.getRowDimension());   
-			this.measures[MEASURE_MATRIX_SIMILARITY].add(matrix_similarity);
+		if(MEASURE_MATRIX_SIMILARITY < MEASURE_COUNT){
+			double matrix_similarity = 0.0;
+			if(MEASURE_MATRIX_SIMILARITY >= 0 && this.HO.getColumnDimension() == this.HI.getColumnDimension() && this.HO.getRowDimension() == this.HI.getRowDimension()){
+				RealMatrix diff_HO_HI = this.HO.subtract(this.HI); 
+				RealMatrix diff_OH_IH = this.OH.subtract(this.IH);
+				matrix_similarity = (sumAbsoluteValuesOfMatrixEntries(diff_HO_HI) + sumAbsoluteValuesOfMatrixEntries(diff_OH_IH)) / (this.IH.getColumnDimension()*this.IH.getRowDimension() + this.HI.getColumnDimension()*this.HI.getRowDimension());   
+				this.measures[MEASURE_MATRIX_SIMILARITY].add(matrix_similarity);
+			}
 		}
 
 		double[] result = new double[MEASURE_COUNT]; 
@@ -788,21 +800,21 @@ public class BAL {
 
 	//manage IO and run BAL 
 	public static void main(String[] args) throws FileNotFoundException {
-		for(int h=3; h<17; h++){
-			initMultidimensional("k3", h);
+		for(int h=8; h<144; h += h/8 + 1){
+			initMultidimensional("k12", h);
 			experiment();
 		}
 	}
-	
+
 	public static void experiment() throws FileNotFoundException{
-		RUN_ID = (System.currentTimeMillis() / 1000L) + "_" + INIT_HIDDEN_LAYER_SIZE;
+		RUN_ID = INPUT_FILEPATH.substring(0, INPUT_FILEPATH.indexOf('.')) + "_" + (System.currentTimeMillis() / 1000L) + "_" + INIT_HIDDEN_LAYER_SIZE;
 
 		pre_measure = new ArrayList<double[]>();
 		post_measure = new ArrayList<double[]>();
-		
+
 		String filename = "data/" + RUN_ID + ".log"; 
 		log = new PrintWriter(filename);
-		
+
 		for(int i=0 ; i<BAL.INIT_RUNS ; i++){
 			log.println("======== " + i + "/" + BAL.INIT_RUNS + " ==============");
 			System.out.println("======== " + i + "/" + BAL.INIT_RUNS + " ==============");
@@ -816,22 +828,22 @@ public class BAL {
 	public static void initMultidimensional(String input_prefix, int hidden_size){
 		MEASURE_IS = true; 
 		MEASURE_SAVE_AFTER_EACH_RUN = false; 
-		MEASURE_RECORD_EACH = 1000;
+		MEASURE_RECORD_EACH = 50;
 
 		INPUT_FILEPATH = input_prefix + ".in"; 
 		OUTPUT_FILEPATH = input_prefix + ".out"; 
 		INIT_HIDDEN_LAYER_SIZE = hidden_size; 
 
 		CONVERGENCE_WEIGHT_EPSILON = 0.0; 
-		
+
 		CONVERGENCE_NO_CHANGE_FOR = 10; 
 		CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
-		INIT_MAX_EPOCHS = 5000;
+		INIT_MAX_EPOCHS = 1000;
 
-		INIT_RUNS = 1000; 
-		INIT_CANDIDATES_COUNT = 1;
+		INIT_RUNS = 20; 
+		INIT_CANDIDATES_COUNT = 0;
 
-		PRINT_NETWORK_IS = true; 
+		PRINT_NETWORK_IS = false; 
 
 		TRY_NORMAL_DISTRIBUTION_SIGMA = new double[] {2.3}; 
 		TRY_LAMBDA = new double[] {0.7}; 
