@@ -707,3 +707,57 @@ public static final double NORMAL_DISTRIBUTION_SPAN = 15;
 ================= 09-12-2013 =========================
 Convergence which depends on average weight change does not work. 
 Max diff implemented. Convergence with similar results on average of 900 epochs (TODO measure more exactly)/
+
+======== MORE-DIMENSIONAL STUFF =====================
+		MEASURE_IS = true; 
+		MEASURE_SAVE_AFTER_EACH_RUN = false; 
+		MEASURE_RECORD_EACH = 1000;
+
+		INPUT_FILEPATH = "k3.in"; 
+		OUTPUT_FILEPATH = "k3.out"; 
+		INIT_HIDDEN_LAYER_SIZE = 3; 
+
+		CONVERGENCE_WEIGHT_EPSILON = 0.0; 
+		
+		CONVERGENCE_NO_CHANGE_FOR = 10; 
+		CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
+		INIT_MAX_EPOCHS = 5000;
+
+		INIT_RUNS = 1000; 
+		INIT_CANDIDATES_COUNT = 1;
+
+		PRINT_NETWORK_IS = true; 
+
+		TRY_NORMAL_DISTRIBUTION_SIGMA = new double[] {2.3}; 
+		TRY_LAMBDA = new double[] {0.7}; 
+		TRY_MOMENTUM = new double[] {0.0}; 
+		
+=========== HIDDEN SIZE=3 =================
+err sigma lambda momentum success sample_ratio
+0.0 2.3 0.7 0.0 78.0 780/1000
+10.0 2.3 0.7 0.0 0.2 2/1000
+12.0 2.3 0.7 0.0 6.4 64/1000
+13.0 2.3 0.7 0.0 0.1 1/1000
+16.0 2.3 0.7 0.0 3.5999999999999996 36/1000
+19.0 2.3 0.7 0.0 0.1 1/1000
+2.0 2.3 0.7 0.0 0.1 1/1000
+20.0 2.3 0.7 0.0 0.5 5/1000
+24.0 2.3 0.7 0.0 2.7 27/1000
+32.0 2.3 0.7 0.0 0.2 2/1000
+4.0 2.3 0.7 0.0 1.7000000000000002 17/1000
+40.0 2.3 0.7 0.0 0.2 2/1000
+44.0 2.3 0.7 0.0 0.1 1/1000
+51.0 2.3 0.7 0.0 0.1 1/1000
+8.0 2.3 0.7 0.0 6.0 60/1000
+avg(epoch)=933.643
+avg(err)=2.933
+avg(h_dist)=0.42573918722267723
+avg(h_f_b_dist)=0.0014230196293236975
+avg(m_avg_w)=4.079729455929891
+avg(m_sim)=8.894754415196523
+avg(first_second)=16.864511811967937
+avg(sigma)=2.2999999999999914
+avg(lambda)=0.7000000000000064
+avg(o_f_b_dist)=1.6882676057992914
+avg(momentum)=0.0
+

@@ -31,77 +31,78 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
 public class BAL {
-
-	public static final boolean MEASURE_IS = true; 
+	private static PrintWriter log = null; 
+	
+	public static  boolean MEASURE_IS = true; 
 	public static boolean MEASURE_SAVE_AFTER_EACH_RUN = false; 
-	public static final int MEASURE_RECORD_EACH = 1000;
+	public static  int MEASURE_RECORD_EACH = 1000;
 
-	public static final String INPUT_FILEPATH = "auto4.in"; 
-	public static final String OUTPUT_FILEPATH = "auto4.in"; 
-	public static final int INIT_HIDDEN_LAYER_SIZE = 2 ; 
+	public static  String INPUT_FILEPATH = "auto4.in"; 
+	public static  String OUTPUT_FILEPATH = "auto4.in"; 
+	public static  int INIT_HIDDEN_LAYER_SIZE = 2 ; 
 
-	public static final double CONVERGENCE_WEIGHT_EPSILON = 0.0; 
+	public static  double CONVERGENCE_WEIGHT_EPSILON = 0.0; 
 	//there was no change in given outputs for last CONVERGENCE_NO_CHANGE_FOR
-	public static final int CONVERGENCE_NO_CHANGE_FOR = 10; 
-	public static final double CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
-	public static final int INIT_MAX_EPOCHS = 30000;
+	public static  int CONVERGENCE_NO_CHANGE_FOR = 10; 
+	public static  double CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
+	public static  int INIT_MAX_EPOCHS = 30000;
 
-	public static final int INIT_RUNS = 100; 
-	public static final int INIT_CANDIDATES_COUNT = 100;
+	public static  int INIT_RUNS = 100; 
+	public static  int INIT_CANDIDATES_COUNT = 100;
 
-	public static final boolean PRINT_NETWORK_IS = false; 
+	public static  boolean PRINT_NETWORK_IS = false; 
 
-	public static final double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {2.3}; 
-	//public static final double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2}; 
-	public static final double TRY_LAMBDA[] = {0.7}; 
-	//public static final double TRY_LAMBDA[] = {0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2}; 
-	//public static final double TRY_LAMBDA[] = {0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5}; 
-	//public static final double TRY_NOISE_SPAN[] = {0.0, 0.003, 0.01, 0.03, 0.1, 0.3}; 
-	//public static final double TRY_MULTIPLY_WEIGHTS[] = {1.0, 1.00001, 1.00003, 1.0001, 1.0003, 1.001}; 
-	public static final double TRY_MOMENTUM[] = {-1, -0.3, -0.1, -0.03, -0.01, -0.003, -0.001, 0.0, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1}; 
+	public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {2.3}; 
+	//public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2}; 
+	public static  double TRY_LAMBDA[] = {0.7}; 
+	//public static  double TRY_LAMBDA[] = {0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2}; 
+	//public static  double TRY_LAMBDA[] = {0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5}; 
+	//public static  double TRY_NOISE_SPAN[] = {0.0, 0.003, 0.01, 0.03, 0.1, 0.3}; 
+	//public static  double TRY_MULTIPLY_WEIGHTS[] = {1.0, 1.00001, 1.00003, 1.0001, 1.0003, 1.001}; 
+	public static  double TRY_MOMENTUM[] = {-1, -0.3, -0.1, -0.03, -0.01, -0.003, -0.001, 0.0, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1}; 
 
-	public static final double INIT_NORMAL_DISTRIBUTION_MU = 0;
-	public static final double NORMAL_DISTRIBUTION_SPAN = 15; 
+	public static  double INIT_NORMAL_DISTRIBUTION_MU = 0;
+	public static  double NORMAL_DISTRIBUTION_SPAN = 15; 
 
-	public static final String[] MEASURE_HEADINGS = {"epoch","err","h_dist","h_f_b_dist","m_avg_w","m_sim", "first_second", "sigma", "lambda", "o_f_b_dist", "momentum"}; 
+	public static  String[] MEASURE_HEADINGS = {"epoch","err","h_dist","h_f_b_dist","m_avg_w","m_sim", "first_second", "sigma", "lambda", "o_f_b_dist", "momentum"}; 
 
 	//TODO activation on hidden networks 
 	//epoch
-	public static final int MEASURE_EPOCH = 0; 
+	public static  int MEASURE_EPOCH = 0; 
 
 	//error function (RMSE) 
-	public static final int MEASURE_ERROR = 1;
+	public static  int MEASURE_ERROR = 1;
 
 	//avg of dist(h_i - h_j) i \neq j where h_i is a hidden activation for input i
 	//intuitively: internal representation difference 
-	public static final int MEASURE_HIDDEN_DIST = 2;
+	public static  int MEASURE_HIDDEN_DIST = 2;
 
 	//avg distance between forward and backward activations on hidden layer
-	public static final int MEASURE_HIDDEN_FOR_BACK_DIST = 3;
+	public static  int MEASURE_HIDDEN_FOR_BACK_DIST = 3;
 
 	//avg weight of matrixes 
-	public static final int MEASURE_MATRIX_AVG_W = 4;
+	public static  int MEASURE_MATRIX_AVG_W = 4;
 
 	//sum of |a_{ij} - b_{ij}| per pairs (HO, HI) and (OH, IH) 
-	public static final int MEASURE_MATRIX_SIMILARITY = 5;
+	public static  int MEASURE_MATRIX_SIMILARITY = 5;
 
 	//ratio of (a_1, a_2) where a_i is the i-th biggest output 
-	public static final int MEASURE_FIRST_SECOND_RATIO = 6;
+	public static  int MEASURE_FIRST_SECOND_RATIO = 6;
 
-	public static final int MEASURE_SIGMA = 7; 
-	public static final int MEASURE_LAMBDA = 8; 
-	//public static final int MEASURE_NOISE_SPAN = 9; 
-	//public static final int MEASURE_MULTIPLY_WEIGHTS = 9; 
+	public static  int MEASURE_SIGMA = 7; 
+	public static  int MEASURE_LAMBDA = 8; 
+	//public static  int MEASURE_NOISE_SPAN = 9; 
+	//public static  int MEASURE_MULTIPLY_WEIGHTS = 9; 
 
 	//avg distance between forward and backward activations on their output layers (forward layer 2, backward layer 0) 
-	public static final int MEASURE_OUTPUT_FOR_BACK_DIST = 9;
+	public static  int MEASURE_OUTPUT_FOR_BACK_DIST = 9;
 
-	public static final int MEASURE_MOMENTUM = 10;
+	public static  int MEASURE_MOMENTUM = 10;
 
-	public static final int MEASURE_COUNT = 11; 
+	public static  int MEASURE_COUNT = 11; 
 
-	public static final int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_MOMENTUM};
-	public static final int MEASURE_GROUP_BY = MEASURE_ERROR;  
+	public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_MOMENTUM};
+	public static  int MEASURE_GROUP_BY = MEASURE_ERROR;  
 
 	public static Random random = new Random(); 
 	public static double INIT_NORMAL_DISTRIBUTION_SIGMA = 1.25; 
@@ -125,6 +126,8 @@ public class BAL {
 	private double[][] MOM_HO;  
 	private double[][] MOM_OH; 
 	private double[][] MOM_HI;
+	
+	private static String RUN_ID = null;  
 
 	public static void run(){
 		BAL.INIT_NORMAL_DISTRIBUTION_SIGMA = BAL.TRY_NORMAL_DISTRIBUTION_SIGMA[random.nextInt(BAL.TRY_NORMAL_DISTRIBUTION_SIGMA.length)]; 
@@ -153,7 +156,7 @@ public class BAL {
 			}
 		}
 
-		//System.out.println(network.printNetwork()); 
+		//log.println(network.printNetwork()); 
 
 		ArrayList<Integer> order = new ArrayList<Integer>(inputs.getRowDimension());
 		for(int i=0; i<inputs.getRowDimension() ; i++){
@@ -170,7 +173,7 @@ public class BAL {
 
 		for(epochs=0; epochs<max_epoch ; epochs++){
 			if(MEASURE_IS && (MEASURE_SAVE_AFTER_EACH_RUN && epochs % BAL.MEASURE_RECORD_EACH == 0)){
-				//System.out.println(network.evaluate(inputs, outputs));
+				//log.println(network.evaluate(inputs, outputs));
 				network.measure(epochs, inputs, outputs);
 			}
 
@@ -189,7 +192,7 @@ public class BAL {
 			//no weight change
 			avg_weight_change /= (double) (order.size()); 
 			if(avg_weight_change < BAL.CONVERGENCE_WEIGHT_EPSILON){
-				System.out.println("Training stopped at epoch=" + epochs + " with avg_weight_change=" + avg_weight_change);
+				log.println("Training stopped at epoch=" + epochs + " with avg_weight_change=" + avg_weight_change);
 				break;
 			}
 
@@ -207,42 +210,47 @@ public class BAL {
 				}
 				
 				output_change = (max_diff > CONVERGENCE_NO_CHANGE_EPSILON); 
-				//System.out.println("  max_diff=" + max_diff);
+				//log.println("  max_diff=" + max_diff);
 			}
 			if(!output_change){
-				System.out.println("Training stopped at epoch=" + epochs + " as no output change occured in last " + CONVERGENCE_NO_CHANGE_FOR + "epochs");
+				log.println("Training stopped at epoch=" + epochs + " as no output change occured in last " + CONVERGENCE_NO_CHANGE_FOR + "epochs");
 				break;
 			}
 		}
 
-		if(PRINT_NETWORK_IS){
-			System.out.println(network.printNetwork());
-		}
-
-		//print each input output activations 
-		for(int i=0 ; i<4; i++){
-			RealVector[] forward = network.forwardPass(inputs.getRowVector(i));
-
+		double network_result = network.evaluate(inputs, outputs);
+		
+		//print only "bad results" 
+		if(network_result > 0.0){
 			if(PRINT_NETWORK_IS){
-				System.out.println("Forward pass:");
-				for(int j=0; j<forward.length; j++){
-					System.out.print(BAL.printVector(forward[j]));
-				}
+				log.println(network.printNetwork());
 			}
-
-			network.postprocessOutput(forward[2]);
-			System.out.print("Given:   " + BAL.printVector(forward[2]));
-			System.out.print("Expected:" + BAL.printVector(outputs.getRowVector(i)));
-			System.out.println();
-		}
-		//print each input output activations 
-		if(PRINT_NETWORK_IS){
-			for(int i=0 ; i<4; i++){
-				RealVector[] backward = network.backwardPass(inputs.getRowVector(i));
-
-				System.out.println("Backward pass:");
-				for(int j=0; j<3; j++){
-					System.out.print(BAL.printVector(backward[j]));
+	
+			//print each input output activations 
+			for(int i=0 ; i<inputs.getRowDimension(); i++){
+				RealVector[] forward = network.forwardPass(inputs.getRowVector(i));
+	
+				if(PRINT_NETWORK_IS){
+					log.println("Forward pass:");
+					for(int j=0; j<forward.length; j++){
+						log.print(BAL.printVector(forward[j]));
+					}
+				}
+	
+				network.postprocessOutput(forward[2]);
+				log.print("Given:   " + BAL.printVector(forward[2]));
+				log.print("Expected:" + BAL.printVector(outputs.getRowVector(i)));
+				log.println();
+			}
+			//print each input output activations 
+			if(PRINT_NETWORK_IS){
+				for(int i=0 ; i<outputs.getRowDimension(); i++){
+					RealVector[] backward = network.backwardPass(outputs.getRowVector(i));
+	
+					log.println("Backward pass:");
+					for(int j=0; j<3; j++){
+						log.print(BAL.printVector(backward[j]));
+					}
 				}
 			}
 		}
@@ -250,13 +258,16 @@ public class BAL {
 		if(MEASURE_IS) {
 			post_measure.add(network.measure(epochs, inputs, outputs));
 		}
-		//System.out.println(network.printNetwork());
+		//log.println(network.printNetwork());
 
 		if(BAL.MEASURE_IS && BAL.MEASURE_SAVE_AFTER_EACH_RUN){
 			network.saveMeasures("data/measure_" + ((int)network.evaluate(inputs, outputs)) + "_" + (System.currentTimeMillis() / 1000L) + ".dat");
 		}
 
-		System.out.println(network.evaluate(inputs, outputs));
+		log.println("Result=" + network_result);
+		log.println("=========================================================");
+		System.out.println("Epochs=" + epochs);
+		System.out.println("Result=" + network_result);
 		System.out.println("=========================================================");
 	}
 
@@ -348,7 +359,7 @@ public class BAL {
 	private void applyNonlinearity(RealVector vector){
 		for(int i=0; i<vector.getDimension() ; i++){
 			double n = vector.getEntry(i); 
-			vector.setEntry(i, 1 / (1 + Math.exp(-n)));  //normal sigmoid 
+			vector.setEntry(i, 1.0 / (1.0 + Math.exp(-n)));  //normal sigmoid 
 			//vector.setEntry(i, 1 - (2 / (1 + Math.exp(-n)))); //bipolar sigmoid 
 		}
 	}
@@ -426,16 +437,16 @@ public class BAL {
 		//this.addNoise(this.HI, BAL.INIT_MULTIPLY_WEIGHTS); 
 
 		/*
-		System.out.println("Forward pass:");
+		log.println("Forward pass:");
 		for(int i=0; i<3; i++){
-			System.out.print(BAL.printVector(forward[i]));
+			log.print(BAL.printVector(forward[i]));
 		}
-		System.out.println("Backward pass:");
+		log.println("Backward pass:");
 		for(int i=0; i<3; i++){
-			System.out.print(BAL.printVector(backward[2-i]));
+			log.print(BAL.printVector(backward[2-i]));
 		}*/
-		//System.out.print(BAL.printVector(forward[1]));
-		//System.out.println(BAL.printVector(backward[1]));
+		//log.print(BAL.printVector(forward[1]));
+		//log.println(BAL.printVector(backward[1]));
 
 		double size_ih = this.IH.getColumnDimension() * this.IH.getRowDimension();
 		double size_oh = this.OH.getColumnDimension() * this.OH.getRowDimension(); 
@@ -578,10 +589,10 @@ public class BAL {
 		}
 
 		for(int j=0; j<m; j++){
-			if(j != 0) System.out.print(" ");
-			System.out.print(BAL.MEASURE_HEADINGS[BAL.MEASURE_GROUP_BY_COLS[j]]);
+			if(j != 0) log.print(" ");
+			log.print(BAL.MEASURE_HEADINGS[BAL.MEASURE_GROUP_BY_COLS[j]]);
 		}
-		System.out.println(" success sample_ratio");
+		log.println(" success sample_ratio");
 
 		List<String> result = new ArrayList<String>(); 
 		for(Entry<String, Integer> entry : counts_child.entrySet()){
@@ -591,7 +602,7 @@ public class BAL {
 		}
 		Collections.sort(result); 
 		for(String s : result){
-			System.out.println(s);
+			log.println(s);
 		}
 	}
 
@@ -605,7 +616,7 @@ public class BAL {
 		}
 
 		for(int j=0; j<measures.get(0).length ; j++){
-			System.out.println("avg("+BAL.MEASURE_HEADINGS[j]+")=" + (sum[j] / ((double)measures.size())));
+			log.println("avg("+BAL.MEASURE_HEADINGS[j]+")=" + (sum[j] / ((double)measures.size())));
 		}
 	}
 
@@ -737,8 +748,8 @@ public class BAL {
 		PrintWriter pre_writer;
 		PrintWriter post_writer;
 		try {
-			pre_writer = new PrintWriter("data/pre_measure_" + (System.currentTimeMillis() / 1000L) + ".dat", "UTF-8");
-			post_writer = new PrintWriter("data/post_measure_" + (System.currentTimeMillis() / 1000L) + ".dat", "UTF-8");
+			pre_writer = new PrintWriter("data/pre_measure_" + RUN_ID + ".dat", "UTF-8");
+			post_writer = new PrintWriter("data/post_measure_" + RUN_ID + ".dat", "UTF-8");
 		} catch (Exception e) {
 			return; 
 		} 
@@ -776,13 +787,51 @@ public class BAL {
 	}
 
 	//manage IO and run BAL 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
+		for(int h=3; h<17; h++){
+			initMultidimensional("k3", h);
+			experiment();
+		}
+	}
+	
+	public static void experiment() throws FileNotFoundException{
+		RUN_ID = (System.currentTimeMillis() / 1000L) + "_" + INIT_HIDDEN_LAYER_SIZE;
+		
+		String filename = "data/" + RUN_ID + ".log"; 
+		log = new PrintWriter(filename);
+		
 		for(int i=0 ; i<BAL.INIT_RUNS ; i++){
+			log.println("======== " + i + "/" + BAL.INIT_RUNS + " ==============");
 			System.out.println("======== " + i + "/" + BAL.INIT_RUNS + " ==============");
 			BAL.run(); 
 		}
 
-		printPreAndPostMeasures(); 
+		printPreAndPostMeasures();
+		log.close(); 
 	}
 
+	public static void initMultidimensional(String input_prefix, int hidden_size){
+		MEASURE_IS = true; 
+		MEASURE_SAVE_AFTER_EACH_RUN = false; 
+		MEASURE_RECORD_EACH = 1000;
+
+		INPUT_FILEPATH = input_prefix + ".in"; 
+		OUTPUT_FILEPATH = input_prefix + ".out"; 
+		INIT_HIDDEN_LAYER_SIZE = hidden_size; 
+
+		CONVERGENCE_WEIGHT_EPSILON = 0.0; 
+		
+		CONVERGENCE_NO_CHANGE_FOR = 10; 
+		CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
+		INIT_MAX_EPOCHS = 5000;
+
+		INIT_RUNS = 1000; 
+		INIT_CANDIDATES_COUNT = 1;
+
+		PRINT_NETWORK_IS = true; 
+
+		TRY_NORMAL_DISTRIBUTION_SIGMA = new double[] {2.3}; 
+		TRY_LAMBDA = new double[] {0.7}; 
+		TRY_MOMENTUM = new double[] {0.0}; 
+	}
 }
