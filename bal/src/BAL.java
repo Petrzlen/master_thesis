@@ -113,8 +113,8 @@ public class BAL {
 
 	private ArrayList<Double>[] measures = null; 
 
-	public static ArrayList<double[]> pre_measure = new ArrayList<double[]>();
-	public static ArrayList<double[]> post_measure = new ArrayList<double[]>();
+	public static ArrayList<double[]> pre_measure = null;
+	public static ArrayList<double[]> post_measure = null; 
 
 	private RealMatrix IH; 
 	private RealMatrix HO;  
@@ -796,6 +796,9 @@ public class BAL {
 	
 	public static void experiment() throws FileNotFoundException{
 		RUN_ID = (System.currentTimeMillis() / 1000L) + "_" + INIT_HIDDEN_LAYER_SIZE;
+
+		pre_measure = new ArrayList<double[]>();
+		post_measure = new ArrayList<double[]>();
 		
 		String filename = "data/" + RUN_ID + ".log"; 
 		log = new PrintWriter(filename);
