@@ -1,4 +1,4 @@
-//TODO datasety z clanku  
+//TODO datasety z clanku (TODO: naozaj funguje kod? - otestovat nie stvorcove data)   
 //TODO graf skrytych reprezentacii v priebehu (mozno 3d ciary)
 //TODO dropout? 
 //TODO matematicky pohlad - o'really clanok aproximacia gradientu chyby
@@ -16,6 +16,7 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,10 +45,10 @@ public class BAL {
 	public static  double CONVERGENCE_WEIGHT_EPSILON = 0.0; 
 	//there was no change in given outputs for last CONVERGENCE_NO_CHANGE_FOR
 	public static  int CONVERGENCE_NO_CHANGE_FOR = 10; 
-	public static  double CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
+	public static  double CONVERGENCE_NO_CHANGE_EPSILON = 0.005;
 	public static  int INIT_MAX_EPOCHS = 30000;
 
-	public static  int INIT_RUNS = 100; 
+	public static  int INIT_RUNS = 5; 
 	public static  int INIT_CANDIDATES_COUNT = 100;
 
 	public static  boolean PRINT_NETWORK_IS = false; 
@@ -117,6 +118,11 @@ public class BAL {
 	public static ArrayList<double[]> pre_measure = null;
 	public static ArrayList<double[]> post_measure = null; 
 
+	public static boolean HIDDEN_REPRESENTATION_IS = true;
+	public static int HIDDEN_REPRESENTATION_EACH = 1; 
+	public static ArrayList<ArrayList<RealVector[]>> hidden_repre_all = null;
+	public static ArrayList<RealVector[]> hidden_repre_cur = null; 
+
 	private RealMatrix IH; 
 	private RealMatrix HO;  
 	private RealMatrix OH; 
@@ -143,6 +149,10 @@ public class BAL {
 
 		RealMatrix inputs = BAL.loadFromFile(BAL.INPUT_FILEPATH);
 		RealMatrix outputs = BAL.loadFromFile(BAL.OUTPUT_FILEPATH);
+
+		if(HIDDEN_REPRESENTATION_IS){
+			hidden_repre_cur = new ArrayList<RealVector[]>();
+		}
 
 		//select the network with the biggest hidden distance 
 		double mav=0.0; 
@@ -178,16 +188,31 @@ public class BAL {
 				network.measure(epochs, inputs, outputs);
 			}
 
+			RealVector[] hr = null; 
+			if(HIDDEN_REPRESENTATION_IS && epochs % HIDDEN_REPRESENTATION_EACH == 0){
+				hr = new RealVector[order.size()]; 
+			}
+
 			//TODO Consider as a MEASURE (avg_weight_change) 
 			double avg_weight_change = 0.0; 
 			java.util.Collections.shuffle(order);
 
-			for(int order_i = 0; order_i < order.size() ; order_i++){
+			//TODO Shuffle! 
+			for(int order_i : order){
 				RealVector in = inputs.getRowVector(order_i);
 				RealVector out = outputs.getRowVector(order_i);
 
 				avg_weight_change += network.learn(in, out, lambda);
-				given[epochs % CONVERGENCE_NO_CHANGE_FOR][order_i] = network.forwardPass(in)[2]; 
+
+				RealVector[] forward_pass = network.forwardPass(in); 
+				given[epochs % CONVERGENCE_NO_CHANGE_FOR][order_i] = forward_pass[2]; 
+				if(HIDDEN_REPRESENTATION_IS && epochs % HIDDEN_REPRESENTATION_EACH == 0){
+					hr[order_i] = forward_pass[1]; 
+				}
+			}
+
+			if(HIDDEN_REPRESENTATION_IS && epochs % HIDDEN_REPRESENTATION_EACH == 0){
+				hidden_repre_cur.add(hr); 
 			}
 
 			//no weight change
@@ -259,17 +284,20 @@ public class BAL {
 		if(MEASURE_IS) {
 			post_measure.add(network.measure(epochs, inputs, outputs));
 		}
+		if(HIDDEN_REPRESENTATION_IS){
+			hidden_repre_all.add(hidden_repre_cur); 
+		}
+
 		//log.println(network.printNetwork());
 
 		if(BAL.MEASURE_IS && BAL.MEASURE_SAVE_AFTER_EACH_RUN){
 			network.saveMeasures("data/measure_" + ((int)network.evaluate(inputs, outputs)) + "_" + (System.currentTimeMillis() / 1000L) + ".dat");
 		}
 
+		log.println("Epochs=" + epochs);
 		log.println("Result=" + network_result);
-		log.println("=========================================================");
 		System.out.println("Epochs=" + epochs);
 		System.out.println("Result=" + network_result);
-		System.out.println("=========================================================");
 	}
 
 	//interpret activations on the output layer 
@@ -337,6 +365,7 @@ public class BAL {
 
 	//Creates a BAL network with layer sizes [in_size, h_size, out_size] 
 	public BAL(int in_size, int h_size, int out_size) {
+		log.println("Creating BAL of size ["+in_size + ","+h_size + ","+out_size + "]");
 		//+1 stands for biases 
 		//we use matrix premultiply and vertical vectors A*v 
 		this.IH = createInitMatrix(in_size+1, h_size);
@@ -760,8 +789,8 @@ public class BAL {
 		PrintWriter pre_writer;
 		PrintWriter post_writer;
 		try {
-			pre_writer = new PrintWriter("data/pre_measure_" + RUN_ID + ".dat", "UTF-8");
-			post_writer = new PrintWriter("data/post_measure_" + RUN_ID + ".dat", "UTF-8");
+			pre_writer = new PrintWriter("data/" + RUN_ID + "_pre.dat", "UTF-8");
+			post_writer = new PrintWriter("data/" + RUN_ID + "_post.dat", "UTF-8");
 		} catch (Exception e) {
 			return; 
 		} 
@@ -798,30 +827,68 @@ public class BAL {
 		BAL.measureAverages(post_measure); 
 	}
 
-	//manage IO and run BAL 
-	public static void main(String[] args) throws FileNotFoundException {
-		for(int h=8; h<144; h += h/8 + 1){
-			initMultidimensional("k12", h);
-			experiment();
+	public static void printHiddenRepresentations() throws FileNotFoundException, UnsupportedEncodingException{
+		if(!HIDDEN_REPRESENTATION_IS){
+			return;
+		}
+
+		for(int i=0; i<hidden_repre_all.size() ; i++){
+			ArrayList<RealVector[]> priebeh = hidden_repre_all.get(i);
+			long run_id = (System.currentTimeMillis() / 10000L + System.currentTimeMillis() % 1000L);
+			
+			for(int k=0; k < priebeh.get(0).length ; k++){
+				String filename = "data/hr/" + ((pre_measure.get(i)[MEASURE_ERROR] == 0.0) ? "good" : "bad") + "/" + run_id + "_" + k + ".dat";
+				PrintWriter hr_writer = new PrintWriter(filename, "UTF-8");
+				for(RealVector[] vectors : priebeh){
+					RealVector v = vectors[k]; 
+					for(int a =0 ; a < v.getDimension() - 1 ; a++ ){ // -1 stands for bias 
+						if(a != 0) hr_writer.print(' ');
+						hr_writer.print(v.getEntry(a)); 
+					}
+					hr_writer.println(); 
+				}
+				hr_writer.close(); 
+			}
 		}
 	}
 
-	public static void experiment() throws FileNotFoundException{
+	//manage IO and run BAL 
+	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
+		/*
+		for(int h=8; h<144; h += h/8 + 1){
+			/nitMultidimensional("k12", h);
+			experiment();
+		} */
+		experiment(); 
+	}
+
+	public static void experiment() throws FileNotFoundException, UnsupportedEncodingException{
 		RUN_ID = INPUT_FILEPATH.substring(0, INPUT_FILEPATH.indexOf('.')) + "_" + (System.currentTimeMillis() / 1000L) + "_" + INIT_HIDDEN_LAYER_SIZE;
 
 		pre_measure = new ArrayList<double[]>();
 		post_measure = new ArrayList<double[]>();
+		if(HIDDEN_REPRESENTATION_IS){
+			hidden_repre_all = new ArrayList<ArrayList<RealVector[]>>(); 
+		}
 
 		String filename = "data/" + RUN_ID + ".log"; 
 		log = new PrintWriter(filename);
 
 		for(int i=0 ; i<BAL.INIT_RUNS ; i++){
+			long start_time = System.currentTimeMillis(); 
+
 			log.println("======== " + i + "/" + BAL.INIT_RUNS + " ==============");
 			System.out.println("======== " + i + "/" + BAL.INIT_RUNS + " ==============");
+
 			BAL.run(); 
+
+			long run_time = (System.currentTimeMillis() - start_time); 
+			log.println("RunTime=" + run_time);
+			System.out.println("RunTime=" + run_time);
 		}
 
 		printPreAndPostMeasures();
+		printHiddenRepresentations(); 
 		log.close(); 
 	}
 
