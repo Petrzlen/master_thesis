@@ -1,6 +1,7 @@
 #! /bin/sh 
 gnuplot << EOF 
-set output 
+set xrange [0:1]
+set yrange [0:1]
 plot "./${1}0.dat" using 1:2 title '0' lt rgb "red",  \
      "./${1}1.dat" using 1:2 title '1' lt rgb "blue",  \
      "./${1}2.dat" using 1:2 title '2' lt rgb "green", \

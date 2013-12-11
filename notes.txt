@@ -1209,4 +1209,39 @@ avg(o_f_b_dist)=3.4224612192761077
 
 
 
+========================== 10-12-2013 =========================
+Printing 4-2-4 hidden representations 
+Generating plots bad/good
+
+good: look like a lichobeznik or symmetric
+138671883_.png - 3 on line
+138671920_.png - 4 border close
+138671944_.png - 3 corner close 
+138671948_.png - 2 very close
+138671986_.png - 4 left
+138672005_.png - 4 left border
+138672026_.png - 4 left top corner
+138672076_.png - 4 right bottom corner
+138672119_.png - 4 right top corner
+
+bad: looks static or usually one inside a triangle (non-convex 4gon) 
+138671976_.png - almost no diff with good
+138671983_.png - why not
+138671990_.png - 2 collision
+138672053_.png - big jump line
+138672070_.png - 2 zero 
+138672013_.png - non-convergent 
+138672133_.png - looks good 
+138672146_.png - 1 total static zero
+138672185_.png - 4 static looks good 
+138672212_.png - 4 line
+138672288_.png - 4 non-convergent
+138672302_.png - 4 close 
+138672376_.png - 4 top 
+138672401_.png - 4 left top
+13867_.png - 
+13867_.png - 
+13867_.png - 
+
+
 

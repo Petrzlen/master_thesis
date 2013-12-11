@@ -44,13 +44,18 @@ public class BAL {
 
 	public static  double CONVERGENCE_WEIGHT_EPSILON = 0.0; 
 	//there was no change in given outputs for last CONVERGENCE_NO_CHANGE_FOR
-	public static  int CONVERGENCE_NO_CHANGE_FOR = 10; 
-	public static  double CONVERGENCE_NO_CHANGE_EPSILON = 0.005;
+	public static  int CONVERGENCE_NO_CHANGE_FOR = 1000; 
+	public static  double CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
 	public static  int INIT_MAX_EPOCHS = 30000;
 
-	public static  int INIT_RUNS = 5; 
+	public static  int INIT_RUNS = 1000; 
 	public static  int INIT_CANDIDATES_COUNT = 100;
 
+	public static boolean HIDDEN_REPRESENTATION_IS = true;
+	public static int HIDDEN_REPRESENTATION_EACH = 1; 
+	public static int HIDDEN_REPRESENTATION_AFTER = 200;
+	public static int HIDDEN_REPRESENTATION_ONLY_EACH = 50;
+	
 	public static  boolean PRINT_NETWORK_IS = false; 
 
 	public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {2.3}; 
@@ -118,8 +123,6 @@ public class BAL {
 	public static ArrayList<double[]> pre_measure = null;
 	public static ArrayList<double[]> post_measure = null; 
 
-	public static boolean HIDDEN_REPRESENTATION_IS = true;
-	public static int HIDDEN_REPRESENTATION_EACH = 1; 
 	public static ArrayList<ArrayList<RealVector[]>> hidden_repre_all = null;
 	public static ArrayList<RealVector[]> hidden_repre_cur = null; 
 
@@ -189,7 +192,10 @@ public class BAL {
 			}
 
 			RealVector[] hr = null; 
-			if(HIDDEN_REPRESENTATION_IS && epochs % HIDDEN_REPRESENTATION_EACH == 0){
+			boolean is_hr = HIDDEN_REPRESENTATION_IS && ((epochs < HIDDEN_REPRESENTATION_AFTER) 
+					? epochs % HIDDEN_REPRESENTATION_EACH == 0 
+					: epochs % HIDDEN_REPRESENTATION_ONLY_EACH == 0); 
+			if(is_hr){
 				hr = new RealVector[order.size()]; 
 			}
 
@@ -206,12 +212,12 @@ public class BAL {
 
 				RealVector[] forward_pass = network.forwardPass(in); 
 				given[epochs % CONVERGENCE_NO_CHANGE_FOR][order_i] = forward_pass[2]; 
-				if(HIDDEN_REPRESENTATION_IS && epochs % HIDDEN_REPRESENTATION_EACH == 0){
+				if(is_hr){
 					hr[order_i] = forward_pass[1]; 
 				}
 			}
 
-			if(HIDDEN_REPRESENTATION_IS && epochs % HIDDEN_REPRESENTATION_EACH == 0){
+			if(is_hr){
 				hidden_repre_cur.add(hr); 
 			}
 
@@ -837,7 +843,7 @@ public class BAL {
 			long run_id = (System.currentTimeMillis() / 10000L + System.currentTimeMillis() % 1000L);
 			
 			for(int k=0; k < priebeh.get(0).length ; k++){
-				String filename = "data/hr/" + ((pre_measure.get(i)[MEASURE_ERROR] == 0.0) ? "good" : "bad") + "/" + run_id + "_" + k + ".dat";
+				String filename = "data/hr/" + ((post_measure.get(i)[MEASURE_ERROR] == 0.0) ? "good" : "bad") + "/" + run_id + "_" + k + ".dat";
 				PrintWriter hr_writer = new PrintWriter(filename, "UTF-8");
 				for(RealVector[] vectors : priebeh){
 					RealVector v = vectors[k]; 
