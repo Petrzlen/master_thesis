@@ -1181,6 +1181,8 @@ avg(m_sim)=2.4494895296666996
 avg(first_second)=104.03792905577318
 avg(o_f_b_dist)=3.4224612192761077
 
+
+
 =========== HIDDEN SIZE=19 =================
 
 =========== HIDDEN SIZE=22 =================
@@ -1204,6 +1206,42 @@ avg(o_f_b_dist)=3.4224612192761077
 =========== HIDDEN SIZE= =================
 
 =========== HIDDEN SIZE= =================
+
+1386588826_4.log:avg(err)=0.657
+1386588902_5.log:avg(err)=0.15
+1386588960_6.log:avg(err)=0.056
+1386589007_7.log:avg(err)=0.014
+1386589049_8.log:avg(err)=0.0040
+1386589086_9.log:avg(err)=0.0
+1386589123_10.log:avg(err)=0.0
+1386589158_11.log:avg(err)=0.0
+1386589191_12.log:avg(err)=0.0
+1386589225_13.log:avg(err)=0.0
+1386589258_14.log:avg(err)=0.0
+1386589290_15.log:avg(err)=0.0
+1386589323_16.log:avg(err)=0.0
+
+k12_1386591048_8.log:avg(err)=1486.35
+k12_1386591204_10.log:avg(err)=1542.65
+k12_1386591375_12.log:avg(err)=1582.25
+k12_1386591565_14.log:avg(err)=1608.45
+k12_1386591774_16.log:avg(err)=1622.95
+k12_1386592002_19.log:avg(err)=1634.15
+k12_1386592260_22.log:avg(err)=1583.85
+k12_1386592546_25.log:avg(err)=1585.2
+k12_1386592863_29.log:avg(err)=1471.15
+k12_1386593289_33.log:avg(err)=1435.15
+k12_1386593762_38.log:avg(err)=1339.3
+k12_1386594301_43.log:avg(err)=1270.1
+k12_1386594959_49.log:avg(err)=1149.35
+k12_1386595621_56.log:avg(err)=1036.15
+k12_1386596402_64.log:avg(err)=913.6
+k12_1386597286_73.log:avg(err)=811.75
+k12_1386598260_83.log:avg(err)=674.15
+k12_1386599314_94.log:avg(err)=587.25
+k12_1386600536_106.log:avg(err)=463.45
+k12_1386602166_120.log:avg(err)=375.9
+k12_1386603756_136.log:avg(err)=306.3
 
 
 
@@ -1243,5 +1281,8 @@ bad: looks static or usually one inside a triangle (non-convex 4gon)
 13867_.png - 
 13867_.png - 
 
+TODO pouzivam error pri uceni? 0.2, 0.8  
+TODO ako vyzeraju blizke body (moz
+TODO konverguje pri zlych? 
 
 

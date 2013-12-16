@@ -102,7 +102,11 @@ Je zmesou Backpropagation, Almeida-Pineda a Recirculation algorithm. Učenie poz
     \item \emph{Plusová fáza}. Objsmerná aktivácia, začína sa vstupom a požadovaným výstupom. 
     \item Pre každú dvojicu susedných vrstiev sa zmenia váhy: 
     $$\Delta w_{ij} = a_i^{-}(a_j^{+} - a_j^{-}).$$
-    \item Táto pomerne jednoduchá rovnica je aproximáciou dynamického systému, ktorá je odvodenná zo systému 'vyrovnania' vstupu a výstupu. 
+    \item Táto pomerne jednoduchá rovnica je aproximáciou dynamického systému, ktorá je odvodenná zo systému 'vyrovnania' vstupu a výstupu: 
+    $$y_j^{\inf} = \sigma'(n_j)\sum_k w_{kj}y_k^{\inf}$$
+    %TODO more equations
+    %= \sigma'(n_j)(\sum_k w_{kj}(t_k - o_k))$$
+    %= \sigma'(n_j)(\sum_k w_{kj}t_k - \sum_k w_{kj} o_k))$$
   \end{itemize}
 \end{frame}
 
@@ -128,28 +132,27 @@ Je zmesou Backpropagation, Almeida-Pineda a Recirculation algorithm. Učenie poz
 %  \footnote{Bengio, Learning deep architectures for AI, 2009}
 %\end{frame}
 
-\begin{frame}{Čo sme už urobili? - Prehľad predchádzajúcich modelov}
-  \begin{itemize}
-    \item Videli sme na posledných slide-och. 
-    \item Okrem toho preskúmaných zopár modelov ako Deep neural nets, Dropout, Ballard a iné. 
-  \end{itemize}
-\end{frame}
+%\begin{frame}{Čo sme už urobili? - Prehľad predchádzajúcich modelov}
+%  \begin{itemize}
+%    \item Videli sme na posledných slide-och. 
+%    \item Okrem toho preskúmaných zopár modelov ako Deep neural nets, Dropout, Ballard a iné. 
+%  \end{itemize}
+%\end{frame}
 
 \begin{frame}{Čo už sme urobili? - Implementácia}
   \begin{itemize}
     \item Implementácia GeneRec podľa originálneho článku v jazyku C++ bez externých knižníc. 
-    \item Rozšírenie GeneRec na viacero vrstiev a jej implementácia. 
-    \item Test korektnosti na probléme rozpoznávania rukopisu čísiel. 
+    \item Rozšírenie GeneRec na viacero vrstiev a jej implementácia a test na rukopise čísel. 
   \end{itemize}
-  \begin{center}
-  \includegraphics[scale=1.0]{img/digits.png}
-  \end{center}
+%  \begin{center}
+%  \includegraphics[scale=1.0]{img/digits.png}
+%  \end{center}
 %  \footnote{\url{https://www.kaggle.com/c/digit-recognizer}}
 %  \includegraphics[scale=0.4]{img/impl.png}
 %  \footnote{Csiba, 2013}
 
   \begin{itemize}
-    \item Implementácia (Java) a krátka analýza zovšeobecnenia GeneRec na BAL. 
+    \item Implementácia BAL v jazyku Java, test a jej analýza. 
   \end{itemize}
 \end{frame}
 
@@ -157,8 +160,7 @@ Je zmesou Backpropagation, Almeida-Pineda a Recirculation algorithm. Učenie poz
   \begin{itemize}
     \item Trénovacia sada: 42000 obrázkov $28 \times 28$ ručne napísaných číslic 0 až 9.  
     \item Cieľom bolo overiť korektnosť našej implementácie. 
-    \item Percentá znázorňujú koľko obrázkov z trénovacej sady rozoznala sieť správne po učení. 
-    \item V hranatých zátvorkách je počet epóch. 
+    \item Skúšali sme aj viacero skrytých vrstiev, ale bez úspechu. 
   \end{itemize} 
 
   \begin{tabular}{|c|c|c|c|}
@@ -174,114 +176,159 @@ Je zmesou Backpropagation, Almeida-Pineda a Recirculation algorithm. Učenie poz
     0.2 & 39.7286\% & & \\
     \hline
   \end{tabular}
+  
 \end{frame}
 
 % Success rate 38870/42000 92.5476%
 % Hidden: 100 
 % Epoch: 10 Alpha: 0.075
 
-\begin{frame}{Čo sme už urobili? - Viacero vrstiev}
-\begin{itemize}
-  \item Hlavný problém: Kedy aplikovať sigma funkciu?
-  \item Použité triviálne riešenie: Vypočíta sa aktivácia bez sigmy a potom sa na jednotlivých vrstvách aktivácie z oboch strán sčítajú a aplikuje sa sigma. 
-  \item Dosiahnutých 43.2214\% na dvoch skrytých vrstvách s veľkosťami 300 a 50 pri 50 epochách a alfe 0.03 . 
-  \item Dôsledok: Toto zovšeobecnenie má potenciál, ale pravdepodobne existuje lepší model. 
-\end{itemize} 
+%\begin{frame}{Čo sme už urobili? - Viacero vrstiev}
+%\begin{itemize}
+%  \item Hlavný problém: Kedy aplikovať sigma funkciu?
+%  \item Použité triviálne riešenie: Vypočíta sa aktivácia bez sigmy a potom sa na jednotlivých vrstvách aktivácie z oboch strán sčítajú a aplikuje sa sigma. 
+%  \item Dosiahnutých 43.2214\% na dvoch skrytých vrstvách s veľkosťami 300 a 50 pri 50 epochách a alfe 0.03 . 
+%  \item Dôsledok: Toto zovšeobecnenie má potenciál, ale pravdepodobne existuje lepší model. 
+%\end{itemize} 
 
-\end{frame}
+%\end{frame}
 
-\begin{frame}{Čo sme už urobili? - Spätné zobrazenia čísel}
-  Spätné zobrazenia čísel - spätná aktivácia možných výstupov.
+%\begin{frame}{Čo sme už urobili? - Spätné zobrazenia čísel}
+%  Spätné zobrazenia čísel - spätná aktivácia možných výstupov.
 %  \includegraphics[scale=1.0]{img/feature_digits.png}
 
-  \begin{center}
-    0:
-    \includegraphics[scale=1]{img/dig_0.png}
-    1:
-    \includegraphics[scale=1]{img/dig_1.png}
-    2:
-    \includegraphics[scale=1]{img/dig_2.png}
-    3:
-    \includegraphics[scale=1]{img/dig_3.png}
-    4:
-    \includegraphics[scale=1]{img/dig_4.png}
-    \\
-    5:
-    \includegraphics[scale=1]{img/dig_5.png}
-    6:
-    \includegraphics[scale=1]{img/dig_6.png}
-    7:
-    \includegraphics[scale=1]{img/dig_7.png}
-    8:
-    \includegraphics[scale=1]{img/dig_8.png}
-    9:
-    \includegraphics[scale=1]{img/dig_9.png}
-  \end{center}
+%  \begin{center}
+%    0:
+%    \includegraphics[scale=1]{img/dig_0.png}
+%    1:
+%    \includegraphics[scale=1]{img/dig_1.png}
+%    2:
+%    \includegraphics[scale=1]{img/dig_2.png}
+%   3:
+%    \includegraphics[scale=1]{img/dig_3.png}
+%    4:
+%    \includegraphics[scale=1]{img/dig_4.png}
+%    \\
+%    5:
+%    \includegraphics[scale=1]{img/dig_5.png}
+%    6:
+%    \includegraphics[scale=1]{img/dig_6.png}
+%    7:
+%    \includegraphics[scale=1]{img/dig_7.png}
+%    8:
+%    \includegraphics[scale=1]{img/dig_8.png}
+%    9:
+%    \includegraphics[scale=1]{img/dig_9.png}
+%  \end{center}
   
 %  Hlavné všeobecné features - spätná aktivácia jednotlivých skrytých neurónov.
 %  \includegraphics[scale=1.0]{img/feature_hidden.png}
   
 %  Higher level features - rovnako ako predošlé, len vyššie.
 %  \includegraphics[scale=1.0]{img/feature_high.png}
-\end{frame}
+%\end{frame}
 
-
-\begin{frame}{Čo sme už urobili? - Analýza BAL}
-  \begin{itemize}
-    \item Trénovacia sada: Autoasociatívna úloha 4-2-4. Lambda: 0.01, epôch: 1,000,000. 
-    \item Cieľom je zistiť dôvody nekonvergencie algoritmu BAL na tejto jednoduchej úlohe.
-  \end{itemize} 
-
-  \textbf{Použité metriky:}
-
-  \begin{itemize}
-    \item textbf{h\_dist} : Priemerná vzdialenosť interných reprezentácií.   
-    \item textbf{h\_f\_b\_dist} : Vzdialenosť interných reprezentácií doprednej a spätnej aktivácie. 
-    \item textbf{m\_avg\_w}  : Priemerná váha siete. 
-    \item textbf{m\_sim} : Rozdiel hodnôt matíc (IH, OH) a (HI, HO). 
-  \end{itemize} 
-\end{frame}
+\begin{frame}{Čo sme už urobili? - Test implementácie BAL}
+\begin{itemize}
+  \item Podarilo sa nám zrekonštruovať výsledky článku.
+  \item Vstup - výstup 16 - 16 neurónov. Tri aktívne bity. Injektívna úloha. 
   
-\begin{frame}{Čo sme už urobili? - Analýza BAL - Merania}
-  \textbf{Vývoj metrík v prípade konvergencie:}
+  \item 4=0.657
+  \item 5=0.15
+  \item 6=0.056
+  \item 7=0.014
+  \item 8=0.0040
+  \item 9=0.0
+  \item 10=0.0
+  \item 11=0.0
+  \item 12=0.0
+  \item 13=0.0
+  \item 14=0.0
+  \item 15=0.0
+  \item 16=0.0
+  \end{itemize} 
+\end{frame} 
+
+
+\begin{frame}{Čo sme už urobili? - Merania vlastností siete}
+\begin{itemize} 
+  \item Podarilo sa nám zvýšiť úspešnosť modelu na $4-2-4$ o 5\% predvyberaním siete s najväčšiou vzdialenosťou skrytých reprezentácií. 
+\item MEASURE\_ERROR 
+	\item MEASURE\_SIGMA 
+	\item MEASURE\_LAMBDA
+	\item MEASURE\_MOMENTUM
+	\item MEASURE\_HIDDEN\_DIST 
+	\item MEASURE\_HIDDEN\_FOR\_BACK\_DIST 
+	\item MEASURE\_MATRIX\_AVG\_W 
+	\item MEASURE\_MATRIX\_SIMILARITY 
+	\item MEASURE\_FIRST\_SECOND\_RATIO 
+	\item MEASURE\_OUTPUT\_FOR\_BACK\_DIST
+	\end{itemize} 
+\end{frame} 
+
+
+\begin{frame}{Čo sme už urobili? - Zobrazenie priebehu - Good}
     \begin{center}
-      \includegraphics[scale=0.5]{img/bal_measure_0_norm.png}
+      \includegraphics[scale=0.5]{img/nice.png}
     \end{center} 
-  \textbf{Vývoj metrík v prípade nekonvergencie:}
+\end{frame} 
+
+\begin{frame}{Čo sme už urobili? - Zobrazenie priebehu - Good}
     \begin{center}
-      \includegraphics[scale=0.5]{img/bal_measure_4_norm.png}
+      \includegraphics[scale=0.5]{img/right_top.png}
+    \end{center} 
+\end{frame}
+\begin{frame}{Čo sme už urobili? - Zobrazenie priebehu - Good}
+    \begin{center}
+      \includegraphics[scale=0.5]{img/left_top.png}
     \end{center} 
 \end{frame}
 
-\begin{frame}{Čo sme už urobili? - Analýza BAL - Merania}
-  \textbf{Normálna inicializácia:}
+    
+\begin{frame}{Čo sme už urobili? - Zobrazenie priebehu - Bad}
     \begin{center}
-      \includegraphics[scale=0.5]{img/bal_stats_0.png}
+      \includegraphics[scale=0.5]{img/tazisko.png}
     \end{center} 
-  \textbf{5 * Normálna inicializácia:}
-    \begin{center}
-      \includegraphics[scale=0.5]{img/bal_stats_5.png}
-    \end{center} 
-  \textbf{25 * Normálna inicializácia:}
-    \begin{center}
-      \includegraphics[scale=0.5]{img/bal_stats_25.png}
-    \end{center} 
-
 \end{frame}
+\begin{frame}{Čo sme už urobili? - Zobrazenie priebehu - Bad}
+    \begin{center}
+      \includegraphics[scale=0.5]{img/non-convergent.png}
+    \end{center} 
+\end{frame}
+\begin{frame}{Čo sme už urobili? - Zobrazenie priebehu - Bad}
+    \begin{center}
+      \includegraphics[scale=0.5]{img/close.png}
+    \end{center} 
+\end{frame}
+
+%\begin{frame}{Čo sme už urobili? - Analýza BAL - Merania}
+%  \textbf{Normálna inicializácia:}
+%    \begin{center}
+%      \includegraphics[scale=0.5]{img/bal_stats_0.png}
+%    \end{center} 
+%  \textbf{5 * Normálna inicializácia:}
+%    \begin{center}
+%      \includegraphics[scale=0.5]{img/bal_stats_5.png}
+%    \end{center} 
+%  \textbf{25 * Normálna inicializácia:}
+%    \begin{center}
+%      \includegraphics[scale=0.5]{img/bal_stats_25.png}
+%    \end{center} 
+%\end{frame}
 
 
 \begin{frame}{Čo bude ďalej? - BAL a Modifikácie modelu GeneRec}
   \begin{itemize}
-    \item Ďalej analyzovať dôvody nekonvergencie BAL.
-    \item Budeme pokračovať najjednoduchším prípadom úlohy autoasociácie 4-2-4. 
+    \item Budeme analyzovať siete s "neočakávanými" pribehmi. 
+    \item Matematicky popísať model BAL. Zistiť za akých podmienok systém konverguje.         
 %    \item Iné verzie aplikovania sigmy vo viacvrstvovom rozšírení: 
 %    \begin{itemize}
 %      \item Pridať mínus fázu opačným smerom a skombinovať tieto aktivácie v plus fáze. Tj. simulovať paralelnú aktiváciu zo vstupu aj výstupu. Tak by sa sigma použila dvakrát na každej skrytej vrstve. 
 %      \item Nájsť vhodnú kombinačnú funkciu doprednej a spätnej aktivácie. Zovšeobecnenie predošlého prístupu.
 %      \item Iné. 
 %    \end{itemize} 
-    \item \textbf{Regression} (Hinton 1988). Momentum učenia. 
-    $$y_i(2) = \lambda y_i(0) + (1-\lambda)x_i(2)$$
+%    \item \textbf{Regression} (Hinton 1988). Momentum učenia. 
+%    $$y_i(2) = \lambda y_i(0) + (1-\lambda)x_i(2)$$
 %    \item \textbf{Merging layers} (Ballard 1987). Spájanie vstupných a skrytých vrstiev rôznych uzavretých NS. \\
 %    \begin{center}
 %      \includegraphics[scale=0.3]{img/ballard.png}
@@ -290,14 +337,14 @@ Je zmesou Backpropagation, Almeida-Pineda a Recirculation algorithm. Učenie poz
 \end{frame}
 
 
-\begin{frame}{Čo bude ďalej? - Modifikácie modelu GeneRec}
-  \begin{itemize}
-    \item \textbf{Dropout} (Hinton 2012). Vynechávanie skrytých neurónov s $p=\frac{1}{2}$. 
-    \begin{center}
-      \includegraphics[scale=0.4]{img/dropout.png}
-    \end{center}
-  \end{itemize}
-\end{frame}
+%\begin{frame}{Čo bude ďalej? - Modifikácie modelu GeneRec}
+%  \begin{itemize}
+%    \item \textbf{Dropout} (Hinton 2012). Vynechávanie skrytých neurónov s $p=\frac{1}{2}$. 
+%    \begin{center}
+%      \includegraphics[scale=0.4]{img/dropout.png}
+%    \end{center}
+%  \end{itemize}
+%\end{frame}
 
 \begin{frame}{Priestor na otázky}
   \begin{center}

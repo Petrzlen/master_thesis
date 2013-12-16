@@ -1,5 +1,12 @@
-//TODO datasety z clanku (TODO: naozaj funguje kod? - otestovat nie stvorcove data)   
+//TODO datasety z clanku (TODO: naozaj funguje kod? - otestovat nie stvorcove data)
+//  TODO k12 ine parametre 
 //TODO graf skrytych reprezentacii v priebehu (mozno 3d ciary)
+//  TODO pridat vahy (zapameatat siet), pridat deliace ciary
+//  TODO ci blizke blizke
+//  TODO viackrat tu istu konfiguraciu spustit 
+//TODO inicializovat protilahle matice zavisle na sebe 
+//  
+//TODO measure min, max distance from target 
 //TODO dropout? 
 //TODO matematicky pohlad - o'really clanok aproximacia gradientu chyby
 //TODO rekonstrukcia (zmena zopar bitov, ci tam-speat da orig) 
@@ -860,11 +867,11 @@ public class BAL {
 
 	//manage IO and run BAL 
 	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
-		/*
-		for(int h=8; h<144; h += h/8 + 1){
-			/nitMultidimensional("k12", h);
+
+		for(int h=120; h<1 21; h += h/8 + 1){
+			initMultidimensional("k12", h);
 			experiment();
-		} */
+		} 
 		experiment(); 
 	}
 
@@ -913,13 +920,13 @@ public class BAL {
 		CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
 		INIT_MAX_EPOCHS = 1000;
 
-		INIT_RUNS = 20; 
+		INIT_RUNS = 1; 
 		INIT_CANDIDATES_COUNT = 0;
 
 		PRINT_NETWORK_IS = false; 
 
-		TRY_NORMAL_DISTRIBUTION_SIGMA = new double[] {2.3}; 
-		TRY_LAMBDA = new double[] {0.7}; 
+		TRY_NORMAL_DISTRIBUTION_SIGMA = new double[] {1.0}; 
+		TRY_LAMBDA = new double[] {0.2}; 
 		TRY_MOMENTUM = new double[] {0.0}; 
 	}
 }
