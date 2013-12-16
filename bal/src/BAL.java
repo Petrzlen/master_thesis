@@ -16,7 +16,7 @@
 //TODO nie autoassoc ale permutovat vystupy (napr. 1000 na 0100)
 //TODO reprezentacia SUC/ERR 
 //TODO m_sim, h_f_b_dist -> jeden nasobkom druheho bias
-//TODO spektralna nalyza
+//TODO spektralna analyza
 //TODO bipolarna [-1, 1] vstupy
 //h_size = 3 => [9,10,1] for errors [0.0, 1.0, 2.0] 
 
@@ -55,15 +55,15 @@ public class BAL {
 	public static  double CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
 	public static  int INIT_MAX_EPOCHS = 30000;
 
-	public static  int INIT_RUNS = 1000; 
+	public static  int INIT_RUNS = 999; 
 	public static  int INIT_CANDIDATES_COUNT = 100;
 
 	public static boolean HIDDEN_REPRESENTATION_IS = true;
 	public static int HIDDEN_REPRESENTATION_EACH = 1; 
 	public static int HIDDEN_REPRESENTATION_AFTER = 200;
 	public static int HIDDEN_REPRESENTATION_ONLY_EACH = 50;
-	
-	public static  boolean PRINT_NETWORK_IS = false; 
+
+	public static  boolean PRINT_NETWORK_IS = true; 
 
 	public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {2.3}; 
 	//public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2}; 
@@ -79,6 +79,8 @@ public class BAL {
 
 	public static  String[] MEASURE_HEADINGS = {"epoch", "err", "sigma", "lambda", "momentum", "h_dist","h_f_b_dist","m_avg_w","m_sim", "first_second", "o_f_b_dist"}; 
 
+	public static Map<Integer, String> MEASURE_RUN_ID = new HashMap<Integer, String>(); 
+	
 	//TODO activation on hidden networks 
 	//epoch
 	public static  int MEASURE_EPOCH = 0; 
@@ -146,7 +148,7 @@ public class BAL {
 
 	private static String RUN_ID = null;  
 
-	public static void run(){
+	public static void run(BAL override_network) throws FileNotFoundException{
 		BAL.INIT_NORMAL_DISTRIBUTION_SIGMA = BAL.TRY_NORMAL_DISTRIBUTION_SIGMA[random.nextInt(BAL.TRY_NORMAL_DISTRIBUTION_SIGMA.length)]; 
 		BAL.INIT_LAMBDA = BAL.TRY_LAMBDA[random.nextInt(BAL.TRY_LAMBDA.length)];
 		BAL.INIT_MOMENTUM = BAL.TRY_MOMENTUM[random.nextInt(BAL.TRY_MOMENTUM.length)];
@@ -157,6 +159,8 @@ public class BAL {
 		double lambda = BAL.INIT_LAMBDA; 
 		int max_epoch = BAL.INIT_MAX_EPOCHS; 
 
+		generateRunId(); 
+		
 		RealMatrix inputs = BAL.loadFromFile(BAL.INPUT_FILEPATH);
 		RealMatrix outputs = BAL.loadFromFile(BAL.OUTPUT_FILEPATH);
 
@@ -176,8 +180,19 @@ public class BAL {
 				network = N; 
 			}
 		}
+		
+		if(override_network != null){
+			network = override_network; 
+		}
 
-		//log.println(network.printNetwork()); 
+		if(PRINT_NETWORK_IS){
+			log.println("----------Network before run: --------------"); 
+			log.println(network.printNetwork());
+			
+			PrintWriter pw = new PrintWriter("data/networks/" + RUN_ID + "_pre.bal"); 
+			pw.write(network.printNetwork());
+			pw.close(); 
+		}
 
 		ArrayList<Integer> order = new ArrayList<Integer>(inputs.getRowDimension());
 		for(int i=0; i<inputs.getRowDimension() ; i++){
@@ -185,6 +200,7 @@ public class BAL {
 		}
 
 		if(MEASURE_IS) { 
+			MEASURE_RUN_ID.put(pre_measure.size(), RUN_ID);
 			pre_measure.add(network.measure(0, inputs, outputs));
 		}
 
@@ -259,37 +275,39 @@ public class BAL {
 
 		double network_result = network.evaluate(inputs, outputs);
 
-		//print only "bad results" 
-		if(network_result > 0.0){
+		if(PRINT_NETWORK_IS){
+			log.println("---------- Network after run: --------------");
+			log.println(network.printNetwork());
+			
+			PrintWriter pw = new PrintWriter("data/networks/" + RUN_ID + "_post.bal"); 
+			pw.write(network.printNetwork());
+			pw.close(); 
+		}
+
+		//print each input output activations 
+		for(int i=0 ; i<inputs.getRowDimension(); i++){
+			RealVector[] forward = network.forwardPass(inputs.getRowVector(i));
+
 			if(PRINT_NETWORK_IS){
-				log.println(network.printNetwork());
-			}
-
-			//print each input output activations 
-			for(int i=0 ; i<inputs.getRowDimension(); i++){
-				RealVector[] forward = network.forwardPass(inputs.getRowVector(i));
-
-				if(PRINT_NETWORK_IS){
-					log.println("Forward pass:");
-					for(int j=0; j<forward.length; j++){
-						log.print(BAL.printVector(forward[j]));
-					}
+				log.println("Forward pass:");
+				for(int j=0; j<forward.length; j++){
+					log.print(BAL.printVector(forward[j]));
 				}
-
-				network.postprocessOutput(forward[2]);
-				log.print("Given:   " + BAL.printVector(forward[2]));
-				log.print("Expected:" + BAL.printVector(outputs.getRowVector(i)));
-				log.println();
 			}
-			//print each input output activations 
-			if(PRINT_NETWORK_IS){
-				for(int i=0 ; i<outputs.getRowDimension(); i++){
-					RealVector[] backward = network.backwardPass(outputs.getRowVector(i));
 
-					log.println("Backward pass:");
-					for(int j=0; j<3; j++){
-						log.print(BAL.printVector(backward[j]));
-					}
+			network.postprocessOutput(forward[2]);
+			log.print("Given:   " + BAL.printVector(forward[2]));
+			log.print("Expected:" + BAL.printVector(outputs.getRowVector(i)));
+			log.println();
+		}
+		//print each input output activations 
+		if(PRINT_NETWORK_IS){
+			for(int i=0 ; i<outputs.getRowDimension(); i++){
+				RealVector[] backward = network.backwardPass(outputs.getRowVector(i));
+
+				log.println("Backward pass:");
+				for(int j=0; j<3; j++){
+					log.print(BAL.printVector(backward[j]));
 				}
 			}
 		}
@@ -297,6 +315,7 @@ public class BAL {
 		if(MEASURE_IS) {
 			post_measure.add(network.measure(epochs, inputs, outputs));
 		}
+
 		if(HIDDEN_REPRESENTATION_IS){
 			hidden_repre_all.add(hidden_repre_cur); 
 		}
@@ -304,7 +323,7 @@ public class BAL {
 		//log.println(network.printNetwork());
 
 		if(BAL.MEASURE_IS && BAL.MEASURE_SAVE_AFTER_EACH_RUN){
-			network.saveMeasures("data/measure_" + ((int)network.evaluate(inputs, outputs)) + "_" + (System.currentTimeMillis() / 1000L) + ".dat");
+			network.saveMeasures("data/" + RUN_ID + "_measure_" + ((int)network.evaluate(inputs, outputs)) + "_" + ".dat");
 		}
 
 		log.println("Epochs=" + epochs);
@@ -732,14 +751,14 @@ public class BAL {
 
 	public String printNetwork(){
 		StringBuilder sb = new StringBuilder(); 
-		sb.append("BAL network of size " + (this.IH.getRowDimension()-1) + "," + this.IH.getColumnDimension() + "," + this.HO.getColumnDimension() + "\n");
-		sb.append("IH\n"); 
+		sb.append((this.IH.getRowDimension()-1) + " " + this.IH.getColumnDimension() + " " + this.HO.getColumnDimension() + "\n");
+		sb.append("#IH\n"); 
 		sb.append(BAL.printMatrix(this.IH));
-		sb.append("HO\n"); 
+		sb.append("#HO\n"); 
 		sb.append(BAL.printMatrix(this.HO));
-		sb.append("OH\n"); 
+		sb.append("#OH\n"); 
 		sb.append(BAL.printMatrix(this.OH));
-		sb.append("HI\n"); 
+		sb.append("#HI\n"); 
 		sb.append(BAL.printMatrix(this.HI));
 		return sb.toString(); 
 	}
@@ -847,10 +866,9 @@ public class BAL {
 
 		for(int i=0; i<hidden_repre_all.size() ; i++){
 			ArrayList<RealVector[]> priebeh = hidden_repre_all.get(i);
-			long run_id = (System.currentTimeMillis() / 10000L + System.currentTimeMillis() % 1000L);
-			
+
 			for(int k=0; k < priebeh.get(0).length ; k++){
-				String filename = "data/hr/" + ((post_measure.get(i)[MEASURE_ERROR] == 0.0) ? "good" : "bad") + "/" + run_id + "_" + k + ".dat";
+				String filename = "data/hr/" + ((post_measure.get(i)[MEASURE_ERROR] == 0.0) ? "good" : "bad") + "/" + MEASURE_RUN_ID.get(i) + "_" + k + ".dat";
 				PrintWriter hr_writer = new PrintWriter(filename, "UTF-8");
 				for(RealVector[] vectors : priebeh){
 					RealVector v = vectors[k]; 
@@ -865,19 +883,25 @@ public class BAL {
 		}
 	}
 
+	public static void generateRunId(){
+		RUN_ID = INPUT_FILEPATH.substring(0, INPUT_FILEPATH.indexOf('.')) + "_" + (System.currentTimeMillis()) + "_" + INIT_HIDDEN_LAYER_SIZE;
+	}
+	
+
 	//manage IO and run BAL 
 	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
-
-		for(int h=120; h<1 21; h += h/8 + 1){
+		/*
+		for(int h=5; h<=144; h += h/8 + 1){
 			initMultidimensional("k12", h);
 			experiment();
 		} 
+		 */ 
 		experiment(); 
 	}
-
+	
 	public static void experiment() throws FileNotFoundException, UnsupportedEncodingException{
-		RUN_ID = INPUT_FILEPATH.substring(0, INPUT_FILEPATH.indexOf('.')) + "_" + (System.currentTimeMillis() / 1000L) + "_" + INIT_HIDDEN_LAYER_SIZE;
-
+		generateRunId(); 
+		
 		pre_measure = new ArrayList<double[]>();
 		post_measure = new ArrayList<double[]>();
 		if(HIDDEN_REPRESENTATION_IS){
@@ -893,7 +917,7 @@ public class BAL {
 			log.println("======== " + i + "/" + BAL.INIT_RUNS + " ==============");
 			System.out.println("======== " + i + "/" + BAL.INIT_RUNS + " ==============");
 
-			BAL.run(); 
+			BAL.run(null); 
 
 			long run_time = (System.currentTimeMillis() - start_time); 
 			log.println("RunTime=" + run_time);
