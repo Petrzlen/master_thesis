@@ -20,19 +20,24 @@
 //TODO bipolarna [-1, 1] vstupy
 //h_size = 3 => [9,10,1] for errors [0.0, 1.0, 2.0] 
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.Set;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -55,15 +60,15 @@ public class BAL {
 	public static  double CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
 	public static  int INIT_MAX_EPOCHS = 30000;
 
-	public static  int INIT_RUNS = 999; 
+	public static  int INIT_RUNS = 100; 
 	public static  int INIT_CANDIDATES_COUNT = 100;
 
-	public static boolean HIDDEN_REPRESENTATION_IS = true;
+	public static boolean HIDDEN_REPRESENTATION_IS = false;
 	public static int HIDDEN_REPRESENTATION_EACH = 1; 
 	public static int HIDDEN_REPRESENTATION_AFTER = 200;
 	public static int HIDDEN_REPRESENTATION_ONLY_EACH = 50;
 
-	public static  boolean PRINT_NETWORK_IS = true; 
+	public static  boolean PRINT_NETWORK_IS = false; 
 
 	public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {2.3}; 
 	//public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2}; 
@@ -72,7 +77,9 @@ public class BAL {
 	//public static  double TRY_LAMBDA[] = {0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5}; 
 	//public static  double TRY_NOISE_SPAN[] = {0.0, 0.003, 0.01, 0.03, 0.1, 0.3}; 
 	//public static  double TRY_MULTIPLY_WEIGHTS[] = {1.0, 1.00001, 1.00003, 1.0001, 1.0003, 1.001}; 
-	public static  double TRY_MOMENTUM[] = {-1, -0.3, -0.1, -0.03, -0.01, -0.003, -0.001, 0.0, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1}; 
+	
+	public static  double TRY_MOMENTUM[] = {0.0};
+	//public static  double TRY_MOMENTUM[] = {-1, -0.3, -0.1, -0.03, -0.01, -0.003, -0.001, 0.0, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1}; 
 
 	public static  double INIT_NORMAL_DISTRIBUTION_MU = 0;
 	public static  double NORMAL_DISTRIBUTION_SPAN = 15; 
@@ -391,8 +398,7 @@ public class BAL {
 			}
 		}
 
-		RealMatrix m = MatrixUtils.createRealMatrix(matrix_data);
-		return m; 
+		return MatrixUtils.createRealMatrix(matrix_data); 
 	}
 
 	//Creates a BAL network with layer sizes [in_size, h_size, out_size] 
@@ -404,7 +410,15 @@ public class BAL {
 		this.HO = createInitMatrix(h_size+1, out_size);
 		this.OH = createInitMatrix(out_size+1, h_size);
 		this.HI = createInitMatrix(h_size+1, in_size);
-
+		
+		this.BAL_construct_other(); 
+	}
+	
+	private void BAL_construct_other(){
+		int in_size = this.HI.getColumnDimension();
+		int h_size = this.IH.getColumnDimension();
+		int out_size = this.HO.getColumnDimension(); 
+		
 		this.MOM_IH = new double[in_size+1][h_size];
 		this.MOM_HO = new double[h_size+1][out_size];
 		this.MOM_OH = new double[out_size+1][h_size];
@@ -414,6 +428,45 @@ public class BAL {
 		for(int i=0; i<MEASURE_COUNT; i++){
 			this.measures[i] = new ArrayList<Double>();
 		}
+	}
+	
+	public static RealMatrix loadMatrixFromReader(BufferedReader reader) throws IOException{
+		String[] tokens = reader.readLine().split(" ");
+		int rows = Integer.parseInt(tokens[0]);  
+		int cols = Integer.parseInt(tokens[1]); 
+		
+		System.out.println("Loading matrix [" + cols + "," + rows + "]");
+		
+		double[][] real_matrix = new double[rows][cols]; 
+		
+		for(int i=0; i<rows; i++){
+			tokens = reader.readLine().split(" ");
+			
+			for(int j=0; j<cols; j++){
+				real_matrix[i][j] = Double.parseDouble(tokens[j]); 
+			}
+		}
+		
+		return MatrixUtils.createRealMatrix(real_matrix); 
+	}
+
+	public BAL(String filename) throws IOException{
+		log.println("Creating BAL from file '" + filename + "'");
+		BufferedReader reader = new BufferedReader(new FileReader(filename));
+		
+		reader.readLine();
+		reader.readLine();
+		this.IH = BAL.loadMatrixFromReader(reader);
+		reader.readLine();
+		this.HO = BAL.loadMatrixFromReader(reader);
+		reader.readLine();
+		this.OH = BAL.loadMatrixFromReader(reader);
+		reader.readLine();
+		this.HI = BAL.loadMatrixFromReader(reader);
+		
+		reader.close(); 
+		
+		this.BAL_construct_other(); 
 	}
 
 	//TODO consider k*n in exponent 
@@ -661,11 +714,12 @@ public class BAL {
 			counts_parent.put(s_parent, counts_parent.get(s_parent) + 1);
 		}
 
+		StringBuilder sb = new StringBuilder(); 
 		for(int j=0; j<m; j++){
-			if(j != 0) log.print(" ");
-			log.print(BAL.MEASURE_HEADINGS[BAL.MEASURE_GROUP_BY_COLS[j]]);
+			if(j != 0) sb.append(" ");
+			sb.append(BAL.MEASURE_HEADINGS[BAL.MEASURE_GROUP_BY_COLS[j]]);
 		}
-		log.println(" success sample_ratio");
+		sb.append(" success sample_ratio\n");
 
 		List<String> result = new ArrayList<String>(); 
 		for(Entry<String, Integer> entry : counts_child.entrySet()){
@@ -675,8 +729,11 @@ public class BAL {
 		}
 		Collections.sort(result); 
 		for(String s : result){
-			log.println(s);
+			sb.append(s + "\n");
 		}
+		
+		log.print(sb.toString());
+		System.out.println(sb.toString());
 	}
 
 	private static void measureAverages(ArrayList<double[]> measures) {
@@ -886,10 +943,9 @@ public class BAL {
 	public static void generateRunId(){
 		RUN_ID = INPUT_FILEPATH.substring(0, INPUT_FILEPATH.indexOf('.')) + "_" + (System.currentTimeMillis()) + "_" + INIT_HIDDEN_LAYER_SIZE;
 	}
-	
 
 	//manage IO and run BAL 
-	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
+	public static void main(String[] args) throws IOException {
 		/*
 		for(int h=5; h<=144; h += h/8 + 1){
 			initMultidimensional("k12", h);
@@ -899,7 +955,7 @@ public class BAL {
 		experiment(); 
 	}
 	
-	public static void experiment() throws FileNotFoundException, UnsupportedEncodingException{
+	public static void experiment() throws IOException{
 		generateRunId(); 
 		
 		pre_measure = new ArrayList<double[]>();
@@ -908,20 +964,46 @@ public class BAL {
 			hidden_repre_all = new ArrayList<ArrayList<RealVector[]>>(); 
 		}
 
-		String filename = "data/" + RUN_ID + ".log"; 
-		log = new PrintWriter(filename);
+		log = new PrintWriter("data/" + RUN_ID + ".log");
 
-		for(int i=0 ; i<BAL.INIT_RUNS ; i++){
-			long start_time = System.currentTimeMillis(); 
+		File folder = new File("data/hr/good/");
+		Set<String> filenames = new HashSet<String>(); 
+		int file_c=0; 
+		for(File file : folder.listFiles()){
+			String filename = file.getName();  
+			if(!filename.endsWith(".png")){
+				continue; 
+			}
 
-			log.println("======== " + i + "/" + BAL.INIT_RUNS + " ==============");
-			System.out.println("======== " + i + "/" + BAL.INIT_RUNS + " ==============");
-
-			BAL.run(null); 
-
-			long run_time = (System.currentTimeMillis() - start_time); 
-			log.println("RunTime=" + run_time);
-			System.out.println("RunTime=" + run_time);
+			System.out.println("=== Loading " + filename + " (" + file_c + "/" + filenames.size() + ")");
+			file_c++; 
+			
+			System.out.println(filename);
+			int pos = filename.lastIndexOf('_'); 
+			if(pos > 0){
+				filenames.add(filename.substring(0, pos));
+			}
+		}
+		
+		for(String filename : filenames){
+			String filepath = "data/networks/" + filename + "_pre.bal";
+			if(!new File(filepath).exists()){
+				continue; 
+			}
+			BAL network = new BAL(filepath); 
+			
+			for(int i=0 ; i<BAL.INIT_RUNS ; i++){
+				long start_time = System.currentTimeMillis(); 
+	
+				log.println("  ======== " + i + "/" + BAL.INIT_RUNS + " ==============");
+				System.out.println("  ======== " + i + "/" + BAL.INIT_RUNS + " ==============");
+	
+				BAL.run(network); 
+	
+				long run_time = (System.currentTimeMillis() - start_time); 
+				log.println("  RunTime=" + run_time);
+				System.out.println("  RunTime=" + run_time);
+			}
 		}
 
 		printPreAndPostMeasures();

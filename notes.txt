@@ -1285,4 +1285,21 @@ TODO pouzivam error pri uceni? 0.2, 0.8
 TODO ako vyzeraju blizke body (moz
 TODO konverguje pri zlych? 
 
+============================== 16-12-2013 ========================
+Saving networks before and after runs (bad / good).
+Rerunning same configurations. 
+
+All bad: 
+err sigma lambda momentum success sample_ratio
+0.0 2.3 0.7 0.0 19.296918767507005 6889/35700
+1.0 2.3 0.7 0.0 68.05602240896359 24296/35700
+2.0 2.3 0.7 0.0 12.644257703081232 4514/35700
+3.0 2.3 0.7 0.0 0.0028011204481792717 1/35700
+
+All good: 
+err sigma lambda momentum success sample_ratio
+0.0 2.3 0.7 0.0 99.98911353032659 64293/64300
+1.0 2.3 0.7 0.0 0.01088646967340591 7/64300
+
+
 
