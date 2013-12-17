@@ -60,15 +60,16 @@ public class BAL {
 	public static  double CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
 	public static  int INIT_MAX_EPOCHS = 30000;
 
-	public static  int INIT_RUNS = 100; 
-	public static  int INIT_CANDIDATES_COUNT = 100;
+	public static  int INIT_RUNS = 1000; 
+	public static  int INIT_CANDIDATES_COUNT = 1;
+	public static boolean INIT_SHUFFLE_IS = false; 
 
-	public static boolean HIDDEN_REPRESENTATION_IS = false;
+	public static boolean HIDDEN_REPRESENTATION_IS = true;
 	public static int HIDDEN_REPRESENTATION_EACH = 1; 
 	public static int HIDDEN_REPRESENTATION_AFTER = 200;
 	public static int HIDDEN_REPRESENTATION_ONLY_EACH = 50;
 
-	public static  boolean PRINT_NETWORK_IS = false; 
+	public static  boolean PRINT_NETWORK_IS = true; 
 
 	public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {2.3}; 
 	//public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2}; 
@@ -231,7 +232,9 @@ public class BAL {
 
 			//TODO Consider as a MEASURE (avg_weight_change) 
 			double avg_weight_change = 0.0; 
-			java.util.Collections.shuffle(order);
+			if(INIT_SHUFFLE_IS){
+				java.util.Collections.shuffle(order);
+			}
 
 			//TODO Shuffle! 
 			for(int order_i : order){
@@ -403,7 +406,7 @@ public class BAL {
 
 	//Creates a BAL network with layer sizes [in_size, h_size, out_size] 
 	public BAL(int in_size, int h_size, int out_size) {
-		log.println("Creating BAL of size ["+in_size + ","+h_size + ","+out_size + "]");
+		log.println("Creating BAL of size ["+in_size + ","+h_size + ","+out_size + "] RunId=" + RUN_ID);
 		//+1 stands for biases 
 		//we use matrix premultiply and vertical vectors A*v 
 		this.IH = createInitMatrix(in_size+1, h_size);
@@ -451,7 +454,7 @@ public class BAL {
 	}
 
 	public BAL(String filename) throws IOException{
-		log.println("Creating BAL from file '" + filename + "'");
+		log.println("Creating BAL from file '" + filename + "' RunId=" + RUN_ID);
 		BufferedReader reader = new BufferedReader(new FileReader(filename));
 		
 		reader.readLine();
@@ -966,6 +969,7 @@ public class BAL {
 
 		log = new PrintWriter("data/" + RUN_ID + ".log");
 
+		/*
 		File folder = new File("data/hr/good/");
 		Set<String> filenames = new HashSet<String>(); 
 		int file_c=0; 
@@ -990,7 +994,7 @@ public class BAL {
 			if(!new File(filepath).exists()){
 				continue; 
 			}
-			BAL network = new BAL(filepath); 
+			BAL network = new BAL(filepath); */ 
 			
 			for(int i=0 ; i<BAL.INIT_RUNS ; i++){
 				long start_time = System.currentTimeMillis(); 
@@ -998,13 +1002,13 @@ public class BAL {
 				log.println("  ======== " + i + "/" + BAL.INIT_RUNS + " ==============");
 				System.out.println("  ======== " + i + "/" + BAL.INIT_RUNS + " ==============");
 	
-				BAL.run(network); 
+				BAL.run(null); 
 	
 				long run_time = (System.currentTimeMillis() - start_time); 
 				log.println("  RunTime=" + run_time);
 				System.out.println("  RunTime=" + run_time);
 			}
-		}
+		//}
 
 		printPreAndPostMeasures();
 		printHiddenRepresentations(); 
