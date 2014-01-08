@@ -1,11 +1,18 @@
-//TODO datasety z clanku (TODO: naozaj funguje kod? - otestovat nie stvorcove data)
-//  TODO k12 ine parametre 
-//TODO graf skrytych reprezentacii v priebehu (mozno 3d ciary)
-//  TODO pridat vahy (zapameatat siet), pridat deliace ciary
-//  TODO ci blizke blizke
-//  TODO viackrat tu istu konfiguraciu spustit 
+//TODO overit ci zrobilo dobre good / bad
+//TODO numericky potvrdit ci vnutri trojuholnika 
+//TODO batch mode 
+//TODO ==> ako rozlisit uspesne a neuspesne od inicializacie (v batch mode)
+//TODO binarny klasifikator na good/bad vah 
+
+//TODO graf od poctu epoch
+
+//TODO v result vypisat aj pocet epoch
+//TODO pridat deliace ciary 
+//TODO porovnat vahove matice pri viacnasobnom behu rovnakej siete
 //TODO inicializovat protilahle matice zavisle na sebe 
-//  
+
+//TODO zovseobecnenie siete
+
 //TODO measure min, max distance from target 
 //TODO dropout? 
 //TODO matematicky pohlad - o'really clanok aproximacia gradientu chyby
@@ -20,6 +27,8 @@
 //TODO bipolarna [-1, 1] vstupy
 //h_size = 3 => [9,10,1] for errors [0.0, 1.0, 2.0] 
 
+import java.awt.Point;
+import java.awt.Polygon; 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -60,9 +69,9 @@ public class BAL {
 	public static  double CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
 	public static  int INIT_MAX_EPOCHS = 30000;
 
-	public static  int INIT_RUNS = 1000; 
+	public static  int INIT_RUNS = 50; 
 	public static  int INIT_CANDIDATES_COUNT = 1;
-	public static boolean INIT_SHUFFLE_IS = false; 
+	public static boolean INIT_SHUFFLE_IS = false;
 
 	public static boolean HIDDEN_REPRESENTATION_IS = true;
 	public static int HIDDEN_REPRESENTATION_EACH = 1; 
@@ -85,7 +94,7 @@ public class BAL {
 	public static  double INIT_NORMAL_DISTRIBUTION_MU = 0;
 	public static  double NORMAL_DISTRIBUTION_SPAN = 15; 
 
-	public static  String[] MEASURE_HEADINGS = {"epoch", "err", "sigma", "lambda", "momentum", "h_dist","h_f_b_dist","m_avg_w","m_sim", "first_second", "o_f_b_dist"}; 
+	public static  String[] MEASURE_HEADINGS = {"epoch", "err", "sigma", "lambda", "momentum", "h_dist","h_f_b_dist","m_avg_w","m_sim", "first_second", "o_f_b_dist", "in_triangle"}; 
 
 	public static Map<Integer, String> MEASURE_RUN_ID = new HashMap<Integer, String>(); 
 	
@@ -123,7 +132,10 @@ public class BAL {
 	//avg distance between forward and backward activations on their output layers (forward layer 2, backward layer 0) 
 	public static  int MEASURE_OUTPUT_FOR_BACK_DIST = 10;
 
-	public static  int MEASURE_COUNT = 11; 
+	//check if some point is inside a polygon from others 
+	public static  int MEASURE_IN_TRIANGLE = 11;
+
+	public static  int MEASURE_COUNT = 12;  
 
 	public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_MOMENTUM};
 	public static  int MEASURE_GROUP_BY = MEASURE_ERROR;  
@@ -414,6 +426,19 @@ public class BAL {
 		this.OH = createInitMatrix(out_size+1, h_size);
 		this.HI = createInitMatrix(h_size+1, in_size);
 		
+		//#DEVELOPER for special 4-2-4 
+		/*
+		for(int i=0; i<IH.getRowDimension() ; i++){
+			for(int j=0; j<IH.getColumnDimension() ; j++){
+				this.OH.setEntry(i, j, this.IH.getEntry(i, j)); 
+			}
+		} 
+		for(int i=0; i<HO.getRowDimension() ; i++){
+			for(int j=0; j<HO.getColumnDimension() ; j++){
+				this.HI.setEntry(i, j, this.HO.getEntry(i, j)); 
+			}
+		}*/
+		
 		this.BAL_construct_other(); 
 	}
 	
@@ -612,7 +637,6 @@ public class BAL {
 	public double[] measure(int epoch, RealMatrix in, RealMatrix target){
 		double n = in.getRowDimension(); 
 
-
 		if(MEASURE_EPOCH < MEASURE_COUNT) this.measures[MEASURE_EPOCH].add((double)epoch); 
 		if(MEASURE_SIGMA < MEASURE_COUNT) this.measures[MEASURE_SIGMA].add(BAL.INIT_NORMAL_DISTRIBUTION_SIGMA); 
 		if(MEASURE_LAMBDA < MEASURE_COUNT) this.measures[MEASURE_LAMBDA].add(BAL.INIT_LAMBDA); 
@@ -659,6 +683,21 @@ public class BAL {
 				}
 
 				this.measures[MEASURE_HIDDEN_DIST].add(hidden_dist);  
+			}
+			
+			if(MEASURE_IN_TRIANGLE < MEASURE_COUNT){
+				ArrayList<Point> hidden_points = new ArrayList<Point>(); 
+				for(int i=0; i<forward_hiddens.size() ; i++){
+					hidden_points.add(new Point((int)(1000.0 * forward_hiddens.get(i).getEntry(0)), (int)(1000.0 * forward_hiddens.get(i).getEntry(1)))); 
+				}
+				ArrayList<Point> convex_hull = ConvexHull.execute(hidden_points); 
+				this.measures[MEASURE_IN_TRIANGLE].add((double)(hidden_points.size() - convex_hull.size()));
+				
+				log.println("Hidden points");
+				log.println(hidden_points);
+				log.println("ConvexHull points");
+				log.println(convex_hull);
+				log.println("End");
 			}
 		}
 
@@ -802,6 +841,7 @@ public class BAL {
 				if(j!=0){
 					sb.append(' ');
 				}
+				//TODO round 
 				sb.append(m.getEntry(i, j));
 			}
 			sb.append('\n');

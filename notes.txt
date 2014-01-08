@@ -1300,6 +1300,31 @@ All good:
 err sigma lambda momentum success sample_ratio
 0.0 2.3 0.7 0.0 99.98911353032659 64293/64300
 1.0 2.3 0.7 0.0 0.01088646967340591 7/64300
+//TODO overit ci zrobilo dobre good / bad
+//TODO numericky potvrdit ci vnutri trojuholnika 
+//TODO batch mode 
+//TODO ==> ako rozlisit uspesne a neuspesne od inicializacie (v batch mode)
+//TODO binarny klasifikator na good/bad vah 
 
+//TODO zovseobecnenie siete
 
+============================== 08-01-2014 ========================
+Checking if some point inside others. 
+Preliminary result: 
+awk 'BEGIN{FS=" "}{print $2,$12}' auto4_1389182421458_2_post.dat | sort | uniq -c | sort -n
+      1 2.0 0.0
+      1 err in_triangle
+      3 1.0 0.0
+      3 2.0 1.0
+     13 1.0 1.0
+     30 0.0 0.0
+
+awk 'BEGIN{FS=" "}{print $2,$12}' auto4_1389182421458_2_pre.dat | sort | uniq -c | sort -n
+      1 err in_triangle
+      4 0.0 1.0
+      4 1.0 1.0
+      4 2.0 0.0
+     12 1.0 0.0
+     26 0.0 0.0
+     
 
