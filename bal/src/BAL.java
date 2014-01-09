@@ -1,3 +1,6 @@
+//TODO O'Really - kedy podobny backpropagation 
+//  -- ci sa naozaj snazi minimalizovat gradient 
+
 //TODO overit ci zrobilo dobre good / bad
 //TODO numericky potvrdit ci vnutri trojuholnika 
 //TODO batch mode 
@@ -69,9 +72,10 @@ public class BAL {
 	public static  double CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
 	public static  int INIT_MAX_EPOCHS = 30000;
 
-	public static  int INIT_RUNS = 50; 
-	public static  int INIT_CANDIDATES_COUNT = 1;
+	public static  int INIT_RUNS = 2000; 
+	public static  int INIT_CANDIDATES_COUNT = 100;
 	public static boolean INIT_SHUFFLE_IS = false;
+	public static boolean INIT_BATCH_IS = false;
 
 	public static boolean HIDDEN_REPRESENTATION_IS = true;
 	public static int HIDDEN_REPRESENTATION_EACH = 1; 
@@ -79,6 +83,11 @@ public class BAL {
 	public static int HIDDEN_REPRESENTATION_ONLY_EACH = 50;
 
 	public static  boolean PRINT_NETWORK_IS = true; 
+	
+	public static double INIT_NORMAL_DISTRIBUTION_SIGMA = 1.25; 
+	public static double INIT_LAMBDA = 0.03; 
+	public static double INIT_MOMENTUM = 0.1; 
+	public static boolean INIT_MOMENTUM_IS = false; 
 
 	public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {2.3}; 
 	//public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2}; 
@@ -137,13 +146,10 @@ public class BAL {
 
 	public static  int MEASURE_COUNT = 12;  
 
-	public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_MOMENTUM};
+	public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_IN_TRIANGLE};
 	public static  int MEASURE_GROUP_BY = MEASURE_ERROR;  
 
 	public static Random random = new Random(); 
-	public static double INIT_NORMAL_DISTRIBUTION_SIGMA = 1.25; 
-	public static double INIT_LAMBDA = 0.03; 
-	public static double INIT_MOMENTUM = 0.1; 
 	//public static double INIT_NOISE_SPAN = 0.00; 
 	//public static double INIT_MULTIPLY_WEIGHTS = 1.001; 
 
@@ -165,10 +171,16 @@ public class BAL {
 	private double[][] MOM_HO;  
 	private double[][] MOM_OH; 
 	private double[][] MOM_HI;
+	
+	//Batch matrices 
+	private double[][] BATCH_IH; 
+	private double[][] BATCH_HO;  
+	private double[][] BATCH_OH; 
+	private double[][] BATCH_HI;
 
 	private static String RUN_ID = null;  
-
-	public static void run(BAL override_network) throws FileNotFoundException{
+	
+	public static double run(BAL override_network) throws FileNotFoundException{
 		BAL.INIT_NORMAL_DISTRIBUTION_SIGMA = BAL.TRY_NORMAL_DISTRIBUTION_SIGMA[random.nextInt(BAL.TRY_NORMAL_DISTRIBUTION_SIGMA.length)]; 
 		BAL.INIT_LAMBDA = BAL.TRY_LAMBDA[random.nextInt(BAL.TRY_LAMBDA.length)];
 		BAL.INIT_MOMENTUM = BAL.TRY_MOMENTUM[random.nextInt(BAL.TRY_MOMENTUM.length)];
@@ -190,12 +202,20 @@ public class BAL {
 
 		//select the network with the biggest hidden distance 
 		double mav=0.0; 
+		double in_points_best = 1000.0; 
 		BAL network = new BAL(inputs.getColumnDimension(), h_size, outputs.getColumnDimension()); 
 		for(int i=0; i<BAL.INIT_CANDIDATES_COUNT; i++){
 			BAL N = new BAL(inputs.getColumnDimension(), h_size, outputs.getColumnDimension()); 
 			double[] measure = N.measure(0, inputs, outputs); 
 			double hd =  measure[BAL.MEASURE_HIDDEN_DIST];
-			if(hd > mav){
+			double in_points = measure[BAL.MEASURE_IN_TRIANGLE];
+			
+			if(in_points < in_points_best){
+				in_points_best = in_points;
+				mav = hd;
+				network = N;
+			}
+			if(in_points == in_points_best && hd > mav){
 				mav = hd;
 				network = N; 
 			}
@@ -205,6 +225,10 @@ public class BAL {
 			network = override_network; 
 		}
 
+		BAL.state_on_begin = ""; 
+		BAL.state_on_begin = matrixToRowString(network.IH) + matrixToRowString(network.HO) + matrixToRowString(network.OH) + matrixToRowString(network.HI); 
+	
+		
 		if(PRINT_NETWORK_IS){
 			log.println("----------Network before run: --------------"); 
 			log.println(network.printNetwork());
@@ -352,6 +376,8 @@ public class BAL {
 		log.println("Result=" + network_result);
 		System.out.println("Epochs=" + epochs);
 		System.out.println("Result=" + network_result);
+		
+		return network_result; 
 	}
 
 	//interpret activations on the output layer 
@@ -415,6 +441,16 @@ public class BAL {
 
 		return MatrixUtils.createRealMatrix(matrix_data); 
 	}
+	
+	public static String matrixToRowString(RealMatrix m){
+		String result = "";
+		for(int i=0; i<m.getRowDimension() ; i++){
+			for(int j=0; j<m.getColumnDimension() ; j++){
+				result += " " + ((Double)m.getEntry(i, j)).toString(); 
+			}
+		}
+		return result; 
+	}
 
 	//Creates a BAL network with layer sizes [in_size, h_size, out_size] 
 	public BAL(int in_size, int h_size, int out_size) {
@@ -440,17 +476,27 @@ public class BAL {
 		}*/
 		
 		this.BAL_construct_other(); 
+		 
 	}
 	
 	private void BAL_construct_other(){
+			
 		int in_size = this.HI.getColumnDimension();
 		int h_size = this.IH.getColumnDimension();
 		int out_size = this.HO.getColumnDimension(); 
 		
-		this.MOM_IH = new double[in_size+1][h_size];
-		this.MOM_HO = new double[h_size+1][out_size];
-		this.MOM_OH = new double[out_size+1][h_size];
-		this.MOM_HI = new double[h_size+1][in_size];
+		if(INIT_MOMENTUM_IS){
+			this.MOM_IH = new double[in_size+1][h_size];
+			this.MOM_HO = new double[h_size+1][out_size];
+			this.MOM_OH = new double[out_size+1][h_size];
+			this.MOM_HI = new double[h_size+1][in_size];
+		}
+		if(INIT_BATCH_IS){
+			this.BATCH_IH = new double[in_size+1][h_size];
+			this.BATCH_HO = new double[h_size+1][out_size];
+			this.BATCH_OH = new double[out_size+1][h_size];
+			this.BATCH_HI = new double[h_size+1][in_size];
+		}
 
 		this.measures = new ArrayList[MEASURE_COUNT]; 
 		for(int i=0; i<MEASURE_COUNT; i++){
@@ -544,23 +590,48 @@ public class BAL {
 	//learns on a weight matrix, other parameters are activations on needed layers 
 	//\delta w_{pq}^F = \lambda a_p^{F}(a_q^{B} - a_q^{F})
 	//\delta w_ij = lamda * a_pre * (a_post_other - a_post_self)  
-	private double subLearn(RealMatrix w, RealVector a_pre, RealVector a_post_other, RealVector a_post_self, double lambda, double[][] mom){
+	private double subLearn(RealMatrix w, RealVector a_pre, RealVector a_post_other, RealVector a_post_self, double lambda, double[][] mom, double[][] batch){
 		double avg_change = 0.0; 
 
 		for(int i = 0 ; i < w.getRowDimension() ; i++){
 			for(int j = 0 ; j < w.getColumnDimension() ; j++){
 				double w_value = w.getEntry(i, j); 
 				double dw = lambda * a_pre.getEntry(i) * (a_post_other.getEntry(j) - a_post_self.getEntry(j));
-				w.setEntry(i, j, w_value + dw + BAL.INIT_MOMENTUM * mom[i][j]);
 
-				mom[i][j] = dw; 
-				avg_change += Math.abs(dw / w_value); 
+				if(INIT_BATCH_IS){
+					batch[i][j] += dw; 
+				}
+				else{
+					w.setEntry(i, j, w_value + dw + (INIT_MOMENTUM_IS ? BAL.INIT_MOMENTUM * mom[i][j] : 0.0));
+				}
+
+				if(INIT_MOMENTUM_IS){
+					mom[i][j] = dw; 
+				}
+				
+				avg_change += Math.abs(dw / w_value);
 			}
 		}
 
 		return avg_change / ((double)(w.getRowDimension() * w.getColumnDimension()));
 	}
 
+	private void resetTwoDimArray(double[][] arr){
+		for(int i=0; i<arr.length ; i++){
+			for(int j=0; j<arr[i].length ; j++){
+				arr[i][j] = 0.0; 
+			}
+		}
+	}
+
+	private void updateTwoDimArray(RealMatrix m, double[][] arr){
+		for(int i=0; i<arr.length ; i++){
+			for(int j=0; j<arr[i].length ; j++){
+				m.setEntry(i, j, m.getEntry(i, j) + arr[i][j]); 
+			}
+		}
+	}
+	
 	//learn on one input-output mapping
 	// returns avg weight change 
 	public double learn(RealVector in, RealVector target, double lambda){
@@ -570,12 +641,26 @@ public class BAL {
 		double avg_change_ih = 0.0; 
 		double avg_change_oh = 0.0; 
 
+		if(INIT_BATCH_IS){
+			resetTwoDimArray(this.BATCH_IH);
+			resetTwoDimArray(this.BATCH_HO);
+			resetTwoDimArray(this.BATCH_OH);
+			resetTwoDimArray(this.BATCH_HI);
+		}
+		
 		//learn 
-		avg_change_ih += subLearn(this.IH, forward[0], backward[1], forward[1], lambda, this.MOM_IH); 
-		avg_change_oh += subLearn(this.HO, forward[1], backward[2], forward[2], lambda, this.MOM_HO); 
-		avg_change_ih += subLearn(this.OH, backward[2], forward[1], backward[1], lambda, this.MOM_OH); 
-		avg_change_oh += subLearn(this.HI, backward[1], forward[0], backward[0], lambda, this.MOM_HI); 
+		avg_change_ih += subLearn(this.IH, forward[0], backward[1], forward[1], lambda, this.MOM_IH, this.BATCH_IH); 
+		avg_change_oh += subLearn(this.HO, forward[1], backward[2], forward[2], lambda, this.MOM_HO, this.BATCH_HO); 
+		avg_change_ih += subLearn(this.OH, backward[2], forward[1], backward[1], lambda, this.MOM_OH, this.BATCH_OH); 
+		avg_change_oh += subLearn(this.HI, backward[1], forward[0], backward[0], lambda, this.MOM_HI, this.BATCH_HI); 
 
+		if(INIT_BATCH_IS){
+			updateTwoDimArray(this.IH, this.BATCH_IH);
+			updateTwoDimArray(this.HO, this.BATCH_HO);
+			updateTwoDimArray(this.OH, this.BATCH_OH);
+			updateTwoDimArray(this.HI, this.BATCH_HI);
+		}
+		
 		//this.addNoise(this.OH, BAL.INIT_MULTIPLY_WEIGHTS);
 		//this.addNoise(this.HI, BAL.INIT_MULTIPLY_WEIGHTS); 
 
@@ -632,6 +717,25 @@ public class BAL {
 		return sum; 
 	}
 
+	/** Fetches angle relative to screen centre point
+	 * where 3 O'Clock is 0 and 12 O'Clock is 270 degrees
+	 * 
+	 * @param screenPoint
+	 * @return angle in degress from 0-360.
+	 */
+	public static double getAngle(double dx, double dy)
+	{
+	    double inRads = Math.atan2(dy,dx);
+
+	    // We need to map to coord system when 0 degree is at 3 O'clock, 270 at 12 O'clock
+	    if (inRads < 0)
+	        inRads = Math.abs(inRads);
+	    else
+	        inRads = 2*Math.PI - inRads;
+
+	    return Math.toDegrees(inRads);
+	}
+	
 	//collect monitoring data, epoch is used as identifier
 	//  !this data is also stored into measures array 
 	public double[] measure(int epoch, RealMatrix in, RealMatrix target){
@@ -939,7 +1043,8 @@ public class BAL {
 		post_writer.println();
 
 		for(int i=0; i<pre_measure.size() ; i++){
-			pre_measure.get(i)[MEASURE_ERROR] = post_measure.get(i)[MEASURE_ERROR];
+			//#DEVELOPER
+			//pre_measure.get(i)[MEASURE_ERROR] = post_measure.get(i)[MEASURE_ERROR];
 			for(int j=0; j<MEASURE_COUNT ; j++){
 				if(j != 0){
 					pre_writer.write(' ');
@@ -955,7 +1060,13 @@ public class BAL {
 		pre_writer.close();
 		post_writer.close();
 
+		System.out.println("PreMeasure : GroupBy");
 		BAL.measureGroupBY(pre_measure); 
+		System.out.println("PostMeasure : GroupBy");
+		BAL.measureGroupBY(post_measure); 
+		log.print("PreMeasure : Averages");
+		BAL.measureAverages(pre_measure); 
+		log.print("PostMeasure : Averages");
 		BAL.measureAverages(post_measure); 
 	}
 
@@ -1008,7 +1119,9 @@ public class BAL {
 		}
 
 		log = new PrintWriter("data/" + RUN_ID + ".log");
-
+		PrintWriter file_initial_state = new PrintWriter("data/" + RUN_ID + ".train");
+		file_initial_state.println("error IH HO OH HI");
+		
 		/*
 		File folder = new File("data/hr/good/");
 		Set<String> filenames = new HashSet<String>(); 
@@ -1042,11 +1155,12 @@ public class BAL {
 				log.println("  ======== " + i + "/" + BAL.INIT_RUNS + " ==============");
 				System.out.println("  ======== " + i + "/" + BAL.INIT_RUNS + " ==============");
 	
-				BAL.run(null); 
+				Double error = BAL.run(null); 
 	
 				long run_time = (System.currentTimeMillis() - start_time); 
 				log.println("  RunTime=" + run_time);
 				System.out.println("  RunTime=" + run_time);
+				file_initial_state.println(error.toString() + BAL.state_on_begin);
 			}
 		//}
 
