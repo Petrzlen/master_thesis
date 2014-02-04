@@ -1433,3 +1433,9 @@ petrzlen@Petobook3:~/diplomovka/bal/data$ awk 'BEGIN{FS=" "}{print $2}' auto4_13
 Trying out different learning algorithms. 
 
 There is something weird with the epochs, I should plot it ASAP. It looks like the more epochs the better results what is not in correspondence with Igors observations. 
+
+tail -n +2 data/auto4_1391556235821_2_measure.dat | awk '{a[$2] += $3}END{for(epoch in a) print epoch,a[epoch]}' | sort -n | tail -n +100 > epochs_100000.dat
+
+
+
+

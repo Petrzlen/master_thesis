@@ -30,9 +30,7 @@
 //h_size = 3 => [9,10,1] for errors [0.0, 1.0, 2.0] 
 
 import java.awt.Point;
-import java.awt.Polygon; 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -42,13 +40,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Scanner;
-import java.util.Set;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -62,8 +58,8 @@ public class BAL {
 	public static double DOUBLE_EPSILON = 0.001;
 	
 	public static  boolean MEASURE_IS = true; 
-	public static boolean MEASURE_SAVE_AFTER_EACH_RUN = false; 
-	public static  int MEASURE_RECORD_EACH = 1000;
+	public static boolean MEASURE_SAVE_AFTER_EACH_RUN = true; 
+	public static  int MEASURE_RECORD_EACH = 100;
 
 	public static  String INPUT_FILEPATH = "auto4.in"; 
 	public static  String OUTPUT_FILEPATH = "auto4.in"; 
@@ -71,12 +67,12 @@ public class BAL {
 
 	public static  double CONVERGENCE_WEIGHT_EPSILON = 0.0; 
 	//there was no change in given outputs for last CONVERGENCE_NO_CHANGE_FOR
-	public static  int CONVERGENCE_NO_CHANGE_FOR = 100000; 
+	public static  int CONVERGENCE_NO_CHANGE_FOR = 1000000; 
 	//public static  double CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
-	public static  int INIT_MAX_EPOCHS = 100000;
+	public static  int INIT_MAX_EPOCHS = 1000000;
 
 	public static  int INIT_RUNS = 100; 
-	public static  int INIT_CANDIDATES_COUNT = 1;
+	public static  int INIT_CANDIDATES_COUNT = 100;
 	public static boolean INIT_SHUFFLE_IS = false;
 	public static boolean INIT_BATCH_IS = false;
 
@@ -162,6 +158,7 @@ public class BAL {
 
 	public static ArrayList<double[]> pre_measure = null;
 	public static ArrayList<double[]> post_measure = null; 
+	public static PrintWriter measure_writer; 
 
 	public static ArrayList<ArrayList<RealVector[]>> hidden_repre_all = null;
 	public static ArrayList<RealVector[]> hidden_repre_cur = null; 
@@ -279,6 +276,7 @@ public class BAL {
 			}
 
 			//TODO Consider as a MEASURE (avg_weight_change) 
+			@SuppressWarnings("unused")
 			double avg_weight_change = 0.0; 
 			if(INIT_SHUFFLE_IS){
 				java.util.Collections.shuffle(order);
@@ -302,7 +300,6 @@ public class BAL {
 				BAL.postprocessOutput(forwardPass[2]);
 				is_diffent_output = is_diffent_output || (last_outputs[order_i].getDistance(forwardPass[2]) > DOUBLE_EPSILON);  
 				last_outputs[order_i] = forwardPass[2];
-				 
 			}
 			
 			/*
@@ -346,7 +343,7 @@ public class BAL {
 				}
 			}
 
-			network.postprocessOutput(forward[2]);
+			BAL.postprocessOutput(forward[2]);
 			log.print("Given:   " + BAL.printVector(forward[2]));
 			log.print("Expected:" + BAL.printVector(outputs.getRowVector(i)));
 			log.println();
@@ -374,7 +371,7 @@ public class BAL {
 		//log.println(network.printNetwork());
 
 		if(BAL.MEASURE_IS && BAL.MEASURE_SAVE_AFTER_EACH_RUN){
-			network.saveMeasures("data/" + RUN_ID + "_measure_" + ((int)network.evaluate(inputs, outputs)) + "_" + ".dat");
+			network.saveMeasures(RUN_ID, measure_writer);
 		}
 
 		log.println("Epochs=" + epochs);
@@ -484,6 +481,7 @@ public class BAL {
 		 
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void BAL_construct_other(){
 			
 		int in_size = this.HI.getColumnDimension();
@@ -1024,15 +1022,9 @@ public class BAL {
 
 	//TODO Refactor with printPreAndPostMeasures()
 	//saves this.measures into file 
-	public boolean saveMeasures(String filename){
+	public boolean saveMeasures(String run_id, PrintWriter writer){
 		if(!MEASURE_IS) return true; 
 
-		PrintWriter writer;
-		try {
-			writer = new PrintWriter(filename, "UTF-8");
-		} catch (Exception e) {
-			return false; 
-		} 
 
 		double[] m = new double[MEASURE_COUNT];
 		for(int j=0; j<MEASURE_COUNT; j++){
@@ -1049,39 +1041,35 @@ public class BAL {
 			m[MEASURE_EPOCH] = 1;
 		 */ 
 
-		//writer.println(this.measures[0].size() + " " + this.measures.length); 
+		//writer.println(this.measures[0].size() + " " + this.measures.length);
+		writer.write("RUN_ID\t");
 		for(int i=0; i<MEASURE_HEADINGS.length ; i++){
-			if(i != 0){
-				writer.write(' ');
-			}
+			writer.write("\t");
 			writer.write(MEASURE_HEADINGS[i]); 
 		}
 		writer.println(); 
 
 		for(int i=0; i<this.measures[0].size(); i++){
+			writer.write(run_id);
 			for(int j=0; j<this.measures.length; j++){
-				if(j != 0){
-					writer.print(' ');
-				}
+				writer.write("\t"); 
 				writer.print(this.measures[j].get(i) / m[j]); 
 			}
 			writer.println(); 
 		}
 
-		writer.close();
-
 		return true; 
 	}	
 
 	//TODO Refactor with saveMeasures()
-	public static void printPreAndPostMeasures(){
+	public static void printPreAndPostMeasures(String global_run_id){
 		if(!MEASURE_IS) return; 
 
 		PrintWriter pre_writer;
 		PrintWriter post_writer;
 		try {
-			pre_writer = new PrintWriter("data/" + RUN_ID + "_pre.dat", "UTF-8");
-			post_writer = new PrintWriter("data/" + RUN_ID + "_post.dat", "UTF-8");
+			pre_writer = new PrintWriter("data/" + global_run_id + "_pre.dat", "UTF-8");
+			post_writer = new PrintWriter("data/" + global_run_id + "_post.dat", "UTF-8");
 		} catch (Exception e) {
 			return; 
 		} 
@@ -1166,6 +1154,7 @@ public class BAL {
 	
 	public static void experiment() throws IOException{
 		generateRunId(); 
+		String global_run_id = RUN_ID; 
 		
 		pre_measure = new ArrayList<double[]>();
 		post_measure = new ArrayList<double[]>();
@@ -1173,9 +1162,11 @@ public class BAL {
 			hidden_repre_all = new ArrayList<ArrayList<RealVector[]>>(); 
 		}
 
-		log = new PrintWriter("data/" + RUN_ID + ".log");
-		PrintWriter file_initial_state = new PrintWriter("data/" + RUN_ID + ".train");
+		log = new PrintWriter("data/" + global_run_id + ".log");
+		PrintWriter file_initial_state = new PrintWriter("data/" + global_run_id + ".train");
 		file_initial_state.println("error IH HO OH HI");
+		
+		measure_writer = new PrintWriter("data/" + global_run_id + "_measure.dat");
 		
 		/*
 		File folder = new File("data/hr/good/");
@@ -1210,6 +1201,7 @@ public class BAL {
 				log.println("  ======== " + i + "/" + BAL.INIT_RUNS + " ==============");
 				System.out.println("  ======== " + i + "/" + BAL.INIT_RUNS + " ==============");
 	
+				@SuppressWarnings("unused")
 				Double error = BAL.run(null); 
 	
 				long run_time = (System.currentTimeMillis() - start_time); 
@@ -1219,9 +1211,11 @@ public class BAL {
 			}
 		//}
 
-		printPreAndPostMeasures();
+		printPreAndPostMeasures(global_run_id);
 		printHiddenRepresentations(); 
 		log.close(); 
+		measure_writer.close(); 
+		file_initial_state.close();
 	}
 
 	public static void initMultidimensional(String input_prefix, int hidden_size){
