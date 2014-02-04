@@ -56,6 +56,8 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
 public class BAL {
+	private static final boolean SYMMETRIC_WEIGHT_UPDATE = false;
+
 	private static PrintWriter log = null; 
 
 	public static  boolean MEASURE_IS = true; 
@@ -72,8 +74,8 @@ public class BAL {
 	public static  double CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
 	public static  int INIT_MAX_EPOCHS = 30000;
 
-	public static  int INIT_RUNS = 2000; 
-	public static  int INIT_CANDIDATES_COUNT = 100;
+	public static  int INIT_RUNS = 100; 
+	public static  int INIT_CANDIDATES_COUNT = 1;
 	public static boolean INIT_SHUFFLE_IS = false;
 	public static boolean INIT_BATCH_IS = false;
 
@@ -146,7 +148,9 @@ public class BAL {
 
 	public static  int MEASURE_COUNT = 12;  
 
-	public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_IN_TRIANGLE};
+	//public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_IN_TRIANGLE};
+	public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA};
+	
 	public static  int MEASURE_GROUP_BY = MEASURE_ERROR;  
 
 	public static Random random = new Random(); 
@@ -225,8 +229,8 @@ public class BAL {
 			network = override_network; 
 		}
 
-		BAL.state_on_begin = ""; 
-		BAL.state_on_begin = matrixToRowString(network.IH) + matrixToRowString(network.HO) + matrixToRowString(network.OH) + matrixToRowString(network.HI); 
+		//BAL.state_on_begin = ""; 
+		//BAL.state_on_begin = matrixToRowString(network.IH) + matrixToRowString(network.HO) + matrixToRowString(network.OH) + matrixToRowString(network.HI); 
 	
 		
 		if(PRINT_NETWORK_IS){
@@ -615,6 +619,35 @@ public class BAL {
 
 		return avg_change / ((double)(w.getRowDimension() * w.getColumnDimension()));
 	}
+	
+
+
+	//learns on a weight matrix, other parameters are activations on needed layers 
+	//\delta w_{pq}^F = \lambda a_p^{F}(a_q^{B} - a_q^{F})
+	//\delta w_ij = lamda * a_pre * (a_post_other - a_post_self)  
+	private double subCHLLearn(RealMatrix w, RealVector a_plus_i, RealVector a_plus_j, RealVector a_minus_j, RealVector a_minus_i, double lambda){
+		double avg_change = 0.0; 
+
+		for(int i = 0 ; i < w.getRowDimension() ; i++){
+			for(int j = 0 ; j < w.getColumnDimension() ; j++){
+				//System.out.println("  " + i + "," + j);
+				double w_value = w.getEntry(i, j);
+				
+				double dw = 0.0;
+				if(a_plus_i.getDimension() <= i || a_plus_j.getDimension() <= j || a_minus_j.getDimension() <= j || a_minus_i.getDimension() <= i){
+					dw = lambda * a_plus_i.getEntry(i) * (a_minus_j.getEntry(j) - a_plus_j.getEntry(j));
+				}
+				else{
+					dw = lambda * ((a_plus_i.getEntry(i) * a_plus_j.getEntry(j)) - (a_minus_i.getEntry(i) * a_minus_j.getEntry(j)));
+				}
+				
+				w.setEntry(i, j, w_value + dw);
+				avg_change += Math.abs(dw / w_value);
+			}
+		}
+
+		return avg_change / ((double)(w.getRowDimension() * w.getColumnDimension()));
+	}
 
 	private void resetTwoDimArray(double[][] arr){
 		for(int i=0; i<arr.length ; i++){
@@ -648,11 +681,31 @@ public class BAL {
 			resetTwoDimArray(this.BATCH_HI);
 		}
 		
-		//learn 
-		avg_change_ih += subLearn(this.IH, forward[0], backward[1], forward[1], lambda, this.MOM_IH, this.BATCH_IH); 
-		avg_change_oh += subLearn(this.HO, forward[1], backward[2], forward[2], lambda, this.MOM_HO, this.BATCH_HO); 
-		avg_change_ih += subLearn(this.OH, backward[2], forward[1], backward[1], lambda, this.MOM_OH, this.BATCH_OH); 
-		avg_change_oh += subLearn(this.HI, backward[1], forward[0], backward[0], lambda, this.MOM_HI, this.BATCH_HI); 
+		/*
+		System.out.println("IH dim: " + this.IH.getRowDimension() + "," + this.IH.getColumnDimension());
+		System.out.println("HO dim: " + this.HO.getRowDimension() + "," + this.HO.getColumnDimension());
+		System.out.println("OH dim: " + this.OH.getRowDimension() + "," + this.OH.getColumnDimension());
+		System.out.println("HI dim: " + this.HI.getRowDimension() + "," + this.HI.getColumnDimension());
+		for(int i=0; i<3; i++){
+			System.out.println("Forward " + i + ": " + forward[i].getDimension());
+		}
+		for(int i=0; i<3; i++){
+			System.out.println("Backward " + i + ": " + backward[i].getDimension());
+		}*/
+		
+		//learn
+		if(SYMMETRIC_WEIGHT_UPDATE){
+			avg_change_ih += subCHLLearn(this.IH, forward[0], forward[1], backward[1], backward[0], lambda);
+			avg_change_ih += subCHLLearn(this.HO, forward[1], forward[2], backward[2], backward[1], lambda);
+			avg_change_ih += subCHLLearn(this.OH, backward[2], backward[1], forward[1], forward[2], lambda);
+			avg_change_ih += subCHLLearn(this.HI, backward[1], backward[0], forward[0], forward[1], lambda);
+		}
+		else{
+			avg_change_ih += subLearn(this.IH, forward[0], backward[1], forward[1], lambda, this.MOM_IH, this.BATCH_IH); 
+			avg_change_oh += subLearn(this.HO, forward[1], backward[2], forward[2], lambda, this.MOM_HO, this.BATCH_HO); 
+			avg_change_ih += subLearn(this.OH, backward[2], forward[1], backward[1], lambda, this.MOM_OH, this.BATCH_OH); 
+			avg_change_oh += subLearn(this.HI, backward[1], forward[0], backward[0], lambda, this.MOM_HI, this.BATCH_HI);
+		}
 
 		if(INIT_BATCH_IS){
 			updateTwoDimArray(this.IH, this.BATCH_IH);
@@ -678,6 +731,7 @@ public class BAL {
 
 		double size_ih = this.IH.getColumnDimension() * this.IH.getRowDimension();
 		double size_oh = this.OH.getColumnDimension() * this.OH.getRowDimension(); 
+		
 		return (avg_change_ih * size_ih + avg_change_oh * size_oh) / (size_ih + size_oh); 
 	}
 
@@ -1160,7 +1214,7 @@ public class BAL {
 				long run_time = (System.currentTimeMillis() - start_time); 
 				log.println("  RunTime=" + run_time);
 				System.out.println("  RunTime=" + run_time);
-				file_initial_state.println(error.toString() + BAL.state_on_begin);
+				//file_initial_state.println(error.toString() + BAL.state_on_begin); //TODO 
 			}
 		//}
 
