@@ -1,9 +1,8 @@
 //TODO O'Really - kedy podobny backpropagation 
 //  -- ci sa naozaj snazi minimalizovat gradient 
 
-//TODO overit ci zrobilo dobre good / bad
-//TODO numericky potvrdit ci vnutri trojuholnika 
-//TODO batch mode 
+//TODO Refactor 
+
 //TODO ==> ako rozlisit uspesne a neuspesne od inicializacie (v batch mode)
 //TODO binarny klasifikator na good/bad vah 
 
@@ -60,6 +59,8 @@ public class BAL {
 
 	private static PrintWriter log = null; 
 
+	public static double DOUBLE_EPSILON = 0.001;
+	
 	public static  boolean MEASURE_IS = true; 
 	public static boolean MEASURE_SAVE_AFTER_EACH_RUN = false; 
 	public static  int MEASURE_RECORD_EACH = 1000;
@@ -70,9 +71,9 @@ public class BAL {
 
 	public static  double CONVERGENCE_WEIGHT_EPSILON = 0.0; 
 	//there was no change in given outputs for last CONVERGENCE_NO_CHANGE_FOR
-	public static  int CONVERGENCE_NO_CHANGE_FOR = 1000; 
-	public static  double CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
-	public static  int INIT_MAX_EPOCHS = 30000;
+	public static  int CONVERGENCE_NO_CHANGE_FOR = 100000; 
+	//public static  double CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
+	public static  int INIT_MAX_EPOCHS = 100000;
 
 	public static  int INIT_RUNS = 100; 
 	public static  int INIT_CANDIDATES_COUNT = 1;
@@ -204,7 +205,7 @@ public class BAL {
 			hidden_repre_cur = new ArrayList<RealVector[]>();
 		}
 
-		//select the network with the biggest hidden distance 
+		//select the "best" candidate network 
 		double mav=0.0; 
 		double in_points_best = 1000.0; 
 		BAL network = new BAL(inputs.getColumnDimension(), h_size, outputs.getColumnDimension()); 
@@ -242,26 +243,33 @@ public class BAL {
 			pw.close(); 
 		}
 
-		ArrayList<Integer> order = new ArrayList<Integer>(inputs.getRowDimension());
-		for(int i=0; i<inputs.getRowDimension() ; i++){
-			order.add(i); 
-		}
-
 		if(MEASURE_IS) { 
 			MEASURE_RUN_ID.put(pre_measure.size(), RUN_ID);
 			pre_measure.add(network.measure(0, inputs, outputs));
 		}
 
-		//HISTORY, INPUT_ID, VECTOR_ENTRY
-		RealVector[][] given = new RealVector[CONVERGENCE_NO_CHANGE_FOR][outputs.getRowDimension()];
-		int epochs=0;
+		//order for shuffling 
+		ArrayList<Integer> order = new ArrayList<Integer>(inputs.getRowDimension());
+		for(int i=0; i<inputs.getRowDimension() ; i++){
+			order.add(i); 
+		}
 
+		//HISTORY, INPUT_ID, VECTOR_ENTRY
+		RealVector last_outputs[] = new RealVector[inputs.getRowDimension()];
+		for(int i=0; i<inputs.getRowDimension() ; i++){
+			last_outputs[i] = inputs.getRowVector(i); // fill it with "random" 
+		}
+		int no_change_epochs=0; 
+
+		//Main learning loop 
+		int epochs=0;
 		for(epochs=0; epochs<max_epoch ; epochs++){
 			if(MEASURE_IS && (MEASURE_SAVE_AFTER_EACH_RUN && epochs % BAL.MEASURE_RECORD_EACH == 0)){
 				//log.println(network.evaluate(inputs, outputs));
 				network.measure(epochs, inputs, outputs);
 			}
 
+			// which hidden representations should be saved 
 			RealVector[] hr = null; 
 			boolean is_hr = HIDDEN_REPRESENTATION_IS && ((epochs < HIDDEN_REPRESENTATION_AFTER) 
 					? epochs % HIDDEN_REPRESENTATION_EACH == 0 
@@ -276,48 +284,41 @@ public class BAL {
 				java.util.Collections.shuffle(order);
 			}
 
-			//TODO Shuffle! 
+			boolean is_diffent_output = false; 
+			// learn on each given / target mapping 
 			for(int order_i : order){
 				RealVector in = inputs.getRowVector(order_i);
 				RealVector out = outputs.getRowVector(order_i);
 
 				avg_weight_change += network.learn(in, out, lambda);
 
-				RealVector[] forward_pass = network.forwardPass(in); 
-				given[epochs % CONVERGENCE_NO_CHANGE_FOR][order_i] = forward_pass[2]; 
+				RealVector[] forwardPass = network.forwardPass(in); 
+				
 				if(is_hr){
-					hr[order_i] = forward_pass[1]; 
+					hr[order_i] = forwardPass[1]; 
 				}
+				
+				//check if change
+				BAL.postprocessOutput(forwardPass[2]);
+				is_diffent_output = is_diffent_output || (last_outputs[order_i].getDistance(forwardPass[2]) > DOUBLE_EPSILON);  
+				last_outputs[order_i] = forwardPass[2];
+				 
 			}
+			
+			/*
+			System.out.println("Last outputs, no_change="+no_change_epochs+ " is_different_output="+is_diffent_output+": ");
+			for(int i=0; i<last_outputs.length ; i++){
+				System.out.print("  " + i + ":" + printVector(last_outputs[i]));
+			}*/
+			
 
 			if(is_hr){
 				hidden_repre_cur.add(hr); 
 			}
 
-			//no weight change
-			avg_weight_change /= (double) (order.size()); 
-			if(avg_weight_change < BAL.CONVERGENCE_WEIGHT_EPSILON){
-				log.println("Training stopped at epoch=" + epochs + " with avg_weight_change=" + avg_weight_change);
-				break;
-			}
-
-			//no output change
-			boolean output_change = true; 
-			if(epochs >= CONVERGENCE_NO_CHANGE_FOR){
-				int a = epochs % CONVERGENCE_NO_CHANGE_FOR;
-				int b = (epochs + 1) % CONVERGENCE_NO_CHANGE_FOR; 
-				double max_diff = 0.0;
-
-				for(int j=0; j<given[0].length; j++){
-					for(int k=0; k<given[0][0].getDimension() ; k++){
-						max_diff = Math.max(max_diff, Math.abs(given[a][j].getEntry(k) - given[b][j].getEntry(k)));
-					}
-				}
-
-				output_change = (max_diff > CONVERGENCE_NO_CHANGE_EPSILON); 
-				//log.println("  max_diff=" + max_diff);
-			}
-			if(!output_change){
+			// no output change for CONVERGENCE_NO_CHANGE_FOR
+			no_change_epochs = (is_diffent_output) ? 0 : no_change_epochs + 1; 
+			if(no_change_epochs >= CONVERGENCE_NO_CHANGE_FOR){
 				log.println("Training stopped at epoch=" + epochs + " as no output change occured in last " + CONVERGENCE_NO_CHANGE_FOR + "epochs");
 				break;
 			}
@@ -386,7 +387,7 @@ public class BAL {
 
 	//interpret activations on the output layer 
 	//for example map continuous [0,1] data to discrete {0, 1} 
-	public void postprocessOutput(RealVector out){
+	public static void postprocessOutput(RealVector out){
 
 		//normal sigmoid 
 		//[0.5,\=+\infty] -> 1.0, else 0.0
@@ -740,16 +741,16 @@ public class BAL {
 	public double evaluate(RealVector in, RealVector target){
 		RealVector[] forward = forwardPass(in);
 		RealVector result = forward[forward.length - 1]; 
-		this.postprocessOutput(result);
-
+		BAL.postprocessOutput(result);
+		
 		double error = 0.0; 
-
 		for(int i=0; i<target.getDimension() ; i++){
 			error += Math.pow(result.getEntry(i) - target.getEntry(i), 2); 
 		}
-
-		return error; 	
+		
+		return error;  
 	}
+	
 
 	//evaluates performance on several input-output mapping 
 	//returns absolute error 
@@ -1235,7 +1236,6 @@ public class BAL {
 		CONVERGENCE_WEIGHT_EPSILON = 0.0; 
 
 		CONVERGENCE_NO_CHANGE_FOR = 10; 
-		CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
 		INIT_MAX_EPOCHS = 1000;
 
 		INIT_RUNS = 1; 
