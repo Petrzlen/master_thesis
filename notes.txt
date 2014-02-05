@@ -1436,10 +1436,62 @@ There is something weird with the epochs, I should plot it ASAP. It looks like t
 
 tail -n +2 data/auto4_1391556235821_2_measure.dat | awk '{a[$2] += $3}END{for(epoch in a) print epoch,a[epoch]}' | sort -n | tail -n +100 > epochs_100000.dat
 
-
+... even after 800,000 epochs there are some networks for which the error change 
 
 
 =================================================================================
 ========================== 5th February       ===================================
 =================================================================================
 Implementing dropout 
+  -- not helping, we should check out the implementation 
+ 
+ 
+EPOCHS = 500,000
+CANDIDATES = 1 
+
+PreMeasure : GroupBy
+err sigma lambda momentum success sample_ratio
+10.0 2.3 0.7 0.1 14.000000000000002 14/100
+11.0 2.3 0.7 0.1 4.0 4/100
+12.0 2.3 0.7 0.1 4.0 4/100
+4.0 2.3 0.7 0.1 6.0 6/100
+5.0 2.3 0.7 0.1 7.000000000000001 7/100
+6.0 2.3 0.7 0.1 21.0 21/100
+7.0 2.3 0.7 0.1 16.0 16/100
+8.0 2.3 0.7 0.1 20.0 20/100
+9.0 2.3 0.7 0.1 8.0 8/100
+
+PostMeasure : GroupBy
+err sigma lambda momentum success sample_ratio
+0.0 2.3 0.7 0.1 60.0 60/100
+1.0 2.3 0.7 0.1 28.999999999999996 29/100
+2.0 2.3 0.7 0.1 11.0 11/100
+
+
+EPOCHS = 500,000
+CANDIDATES = 1000
+PreMeasure : GroupBy
+err sigma lambda momentum success sample_ratio
+10.0 2.3 0.7 0.1 10.0 10/100
+11.0 2.3 0.7 0.1 6.0 6/100
+12.0 2.3 0.7 0.1 4.0 4/100
+13.0 2.3 0.7 0.1 2.0 2/100
+4.0 2.3 0.7 0.1 6.0 6/100
+5.0 2.3 0.7 0.1 6.0 6/100
+6.0 2.3 0.7 0.1 11.0 11/100
+7.0 2.3 0.7 0.1 19.0 19/100
+8.0 2.3 0.7 0.1 14.000000000000002 14/100
+9.0 2.3 0.7 0.1 22.0 22/100
+
+PostMeasure : GroupBy
+err sigma lambda momentum success sample_ratio
+0.0 2.3 0.7 0.1 79.0 79/100
+1.0 2.3 0.7 0.1 15.0 15/100
+2.0 2.3 0.7 0.1 6.0 6/100
+
+tail -n +2 auto4_1391599344374_2_measure.dat | awk '{a[$2] += $3}END{for(epoch in a) print epoch,a[epoch]}' | sort -n | tail -n +10 | head -1000 > epochs_500000_can.dat
+petrzlen@Petobook3:~/diplomovka/bal/data$ tail -n +2 auto4_1391598749349_2_measure.dat | awk '{a[$2] += $3}END{for(epoch in a) print epoch,a[epoch]}' | sort -n | tail -n +10 | head -1000 > epochs_500000_norm.dat
+
+plot "./epochs_500000_norm.dat" using 1:2 with lines title "normal",  \
+>"./epochs_500000_can.dat" using 1:2 with lines title "1000 canditates"
+

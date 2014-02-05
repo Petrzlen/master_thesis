@@ -4,6 +4,10 @@
 //TODO almeida-pineda iterative solution 
 
 //TODO Refactor 
+//TODO some memory leak when / time explosion
+//	public static  int INIT_MAX_EPOCHS = 1000000;
+//	public static  int INIT_RUNS = 250; 	
+//	public static  int CONVERGENCE_NO_CHANGE_FOR = 10000000; 
 
 //TODO ==> ako rozlisit uspesne a neuspesne od inicializacie (v batch mode)
 //TODO binarny klasifikator na good/bad vah 
@@ -67,42 +71,43 @@ public class BAL {
 	public static  String OUTPUT_FILEPATH = "auto4.in"; 
 	public static  int INIT_HIDDEN_LAYER_SIZE = 2 ; 
 	
-	public static  int INIT_MAX_EPOCHS = 1000000;
-	public static  int INIT_RUNS = 250; 
-	public static  int INIT_CANDIDATES_COUNT = 100;
+	public static  int INIT_MAX_EPOCHS = 500000;
+	public static  int INIT_RUNS = 100; 
+	public static  int INIT_CANDIDATES_COUNT = 1000;
 	public static boolean INIT_SHUFFLE_IS = false;
 	public static boolean INIT_BATCH_IS = false;
-	public static boolean DROPOUT_IS = false; 
+	public static boolean DROPOUT_IS = false; //TODO check some runs, it gives error 
 	
-	public static  double CONVERGENCE_WEIGHT_EPSILON = 0.0; 
-	public static  int CONVERGENCE_NO_CHANGE_FOR = 10000000; 
+	public static  int CONVERGENCE_NO_CHANGE_FOR = 500000; 
+	
+	public static double INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3; 
+	public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {2.3}; 
+	//public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2}; 
+	
+	public static double INIT_LAMBDA = 0.7; 
+	public static  double TRY_LAMBDA[] = {0.7}; 
+	//public static  double TRY_LAMBDA[] = {0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2}; 
+	//public static  double TRY_LAMBDA[] = {0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5}; 
+	
+	//public static  double TRY_NOISE_SPAN[] = {0.0, 0.003, 0.01, 0.03, 0.1, 0.3}; 
+	//public static  double TRY_MULTIPLY_WEIGHTS[] = {1.0, 1.00001, 1.00003, 1.0001, 1.0003, 1.001}; 
+
+	public static boolean INIT_MOMENTUM_IS = true;  // a performance flag 
+	public static double INIT_MOMENTUM = 0.1;  
+	public static  double TRY_MOMENTUM[] = {0.1};
+	//public static  double TRY_MOMENTUM[] = {-1, -0.3, -0.1, -0.03, -0.01, -0.003, -0.001, 0.0, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1}; 
+
+	public static  double INIT_NORMAL_DISTRIBUTION_MU = 0;
+	public static  double NORMAL_DISTRIBUTION_SPAN = 15; 
+	
 	
 	public static boolean HIDDEN_REPRESENTATION_IS = true;
 	public static int HIDDEN_REPRESENTATION_EACH = 1; 
 	public static int HIDDEN_REPRESENTATION_AFTER = 200;
 	public static int HIDDEN_REPRESENTATION_ONLY_EACH = 50;
 
-	public static  boolean PRINT_NETWORK_IS = true; 
+	public static  boolean PRINT_NETWORK_IS = false; //!TODO should be turned of most of the times ! 
 	
-	public static double INIT_NORMAL_DISTRIBUTION_SIGMA = 1.25; 
-	public static double INIT_LAMBDA = 0.03; 
-	public static double INIT_MOMENTUM = 0.1; 
-	public static boolean INIT_MOMENTUM_IS = false; 
-
-	public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {2.3}; 
-	//public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2}; 
-	public static  double TRY_LAMBDA[] = {0.7}; 
-	//public static  double TRY_LAMBDA[] = {0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2}; 
-	//public static  double TRY_LAMBDA[] = {0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5}; 
-	//public static  double TRY_NOISE_SPAN[] = {0.0, 0.003, 0.01, 0.03, 0.1, 0.3}; 
-	//public static  double TRY_MULTIPLY_WEIGHTS[] = {1.0, 1.00001, 1.00003, 1.0001, 1.0003, 1.001}; 
-	
-	public static  double TRY_MOMENTUM[] = {0.0};
-	//public static  double TRY_MOMENTUM[] = {-1, -0.3, -0.1, -0.03, -0.01, -0.003, -0.001, 0.0, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1}; 
-
-	public static  double INIT_NORMAL_DISTRIBUTION_MU = 0;
-	public static  double NORMAL_DISTRIBUTION_SPAN = 15; 
-
 	public static  String[] MEASURE_HEADINGS = {"epoch", "err", "sigma", "lambda", "momentum", "h_dist","h_f_b_dist","m_avg_w","m_sim", "first_second", "o_f_b_dist", "in_triangle"}; 
 
 	public static Map<Integer, String> MEASURE_RUN_ID = new HashMap<Integer, String>(); 
@@ -147,7 +152,7 @@ public class BAL {
 	public static  int MEASURE_COUNT = 12;  
 
 	//public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_IN_TRIANGLE};
-	public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA};
+	public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_MOMENTUM};
 	
 	public static  int MEASURE_GROUP_BY = MEASURE_ERROR;  
 
@@ -512,7 +517,7 @@ public class BAL {
 		}
 		
 		// mask which hidden layer neurons should be used 
-		this.active_hidden = new boolean[h_size];
+		this.active_hidden = new boolean[h_size + 1]; // +1 for the bias 
 		for(int i=0; i<this.active_hidden.length ; i++){
 			this.active_hidden[i] = true; 
 		}
@@ -629,7 +634,7 @@ public class BAL {
 			if(!is_train_pre[i]) continue; //dropout 
 			
 			for(int j = 0 ; j < w.getColumnDimension() ; j++){
-				if(!is_train_post[i]) continue; //dropout
+				if(!is_train_post[j]) continue; //dropout
 				
 				double w_value = w.getEntry(i, j); 
 				double dw = lambda * a_pre.getEntry(i) * (a_post_other.getEntry(j) - a_post_self.getEntry(j));
@@ -1266,8 +1271,6 @@ public class BAL {
 		INPUT_FILEPATH = input_prefix + ".in"; 
 		OUTPUT_FILEPATH = input_prefix + ".out"; 
 		INIT_HIDDEN_LAYER_SIZE = hidden_size; 
-
-		CONVERGENCE_WEIGHT_EPSILON = 0.0; 
 
 		CONVERGENCE_NO_CHANGE_FOR = 10; 
 		INIT_MAX_EPOCHS = 1000;
