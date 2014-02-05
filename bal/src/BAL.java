@@ -1,6 +1,8 @@
 //TODO O'Really - kedy podobny backpropagation 
 //  -- ci sa naozaj snazi minimalizovat gradient 
 
+//TODO almeida-pineda iterative solution 
+
 //TODO Refactor 
 
 //TODO ==> ako rozlisit uspesne a neuspesne od inicializacie (v batch mode)
@@ -64,18 +66,17 @@ public class BAL {
 	public static  String INPUT_FILEPATH = "auto4.in"; 
 	public static  String OUTPUT_FILEPATH = "auto4.in"; 
 	public static  int INIT_HIDDEN_LAYER_SIZE = 2 ; 
-
-	public static  double CONVERGENCE_WEIGHT_EPSILON = 0.0; 
-	//there was no change in given outputs for last CONVERGENCE_NO_CHANGE_FOR
-	public static  int CONVERGENCE_NO_CHANGE_FOR = 1000000; 
-	//public static  double CONVERGENCE_NO_CHANGE_EPSILON = 0.001;
+	
 	public static  int INIT_MAX_EPOCHS = 1000000;
-
-	public static  int INIT_RUNS = 100; 
+	public static  int INIT_RUNS = 250; 
 	public static  int INIT_CANDIDATES_COUNT = 100;
 	public static boolean INIT_SHUFFLE_IS = false;
 	public static boolean INIT_BATCH_IS = false;
-
+	public static boolean DROPOUT_IS = false; 
+	
+	public static  double CONVERGENCE_WEIGHT_EPSILON = 0.0; 
+	public static  int CONVERGENCE_NO_CHANGE_FOR = 10000000; 
+	
 	public static boolean HIDDEN_REPRESENTATION_IS = true;
 	public static int HIDDEN_REPRESENTATION_EACH = 1; 
 	public static int HIDDEN_REPRESENTATION_AFTER = 200;
@@ -179,6 +180,10 @@ public class BAL {
 	private double[][] BATCH_HO;  
 	private double[][] BATCH_OH; 
 	private double[][] BATCH_HI;
+	
+	//which hidden layer neurons are active (bias is not counted), used for dropout 
+	private boolean[] active_hidden; 
+	private static boolean[] all_true_active_hidden; 
 
 	private static String RUN_ID = null;  
 	
@@ -505,6 +510,17 @@ public class BAL {
 		for(int i=0; i<MEASURE_COUNT; i++){
 			this.measures[i] = new ArrayList<Double>();
 		}
+		
+		// mask which hidden layer neurons should be used 
+		this.active_hidden = new boolean[h_size];
+		for(int i=0; i<this.active_hidden.length ; i++){
+			this.active_hidden[i] = true; 
+		}
+		
+		all_true_active_hidden = new boolean[Math.max(in_size, Math.max(h_size, out_size)) + 1];
+		for(int i=0; i<all_true_active_hidden.length ; i++){
+			all_true_active_hidden[i] = true; 
+		}
 	}
 	
 	public static RealMatrix loadMatrixFromReader(BufferedReader reader) throws IOException{
@@ -560,6 +576,16 @@ public class BAL {
 		return in.append(1); 
 	}
 
+	private void applyDropoutInPass(RealVector hidden){
+		if(BAL.DROPOUT_IS){
+			for(int i=0; i<this.active_hidden.length ; i++){
+				if(!this.active_hidden[i]){
+					hidden.set(0.0);  
+				}
+			}
+		}
+	}
+	
 	//forward activations 
 	private RealVector[] forwardPass(RealVector in){
 		RealVector[] forward = new RealVector[3]; 
@@ -567,7 +593,9 @@ public class BAL {
 
 		forward[1] = this.IH.preMultiply(forward[0]);
 		applyNonlinearity(forward[1]);
-		forward[1] = addBias(forward[1]); 
+		applyDropoutInPass(forward[1]);
+		forward[1] = addBias(forward[1]);
+		
 
 		forward[2] = this.HO.preMultiply(forward[1]);
 		applyNonlinearity(forward[2]);
@@ -582,6 +610,7 @@ public class BAL {
 
 		backward[1] = this.OH.preMultiply(backward[2]);
 		applyNonlinearity(backward[1]);
+		applyDropoutInPass(backward[1]);
 		backward[1] = addBias(backward[1]); 
 
 		backward[0] = this.HI.preMultiply(backward[1]);
@@ -593,11 +622,15 @@ public class BAL {
 	//learns on a weight matrix, other parameters are activations on needed layers 
 	//\delta w_{pq}^F = \lambda a_p^{F}(a_q^{B} - a_q^{F})
 	//\delta w_ij = lamda * a_pre * (a_post_other - a_post_self)  
-	private double subLearn(RealMatrix w, RealVector a_pre, RealVector a_post_other, RealVector a_post_self, double lambda, double[][] mom, double[][] batch){
+	private double subLearn(RealMatrix w, RealVector a_pre, RealVector a_post_other, RealVector a_post_self, double lambda, double[][] mom, double[][] batch, boolean[] is_train_pre, boolean[] is_train_post){
 		double avg_change = 0.0; 
 
 		for(int i = 0 ; i < w.getRowDimension() ; i++){
+			if(!is_train_pre[i]) continue; //dropout 
+			
 			for(int j = 0 ; j < w.getColumnDimension() ; j++){
+				if(!is_train_post[i]) continue; //dropout
+				
 				double w_value = w.getEntry(i, j); 
 				double dw = lambda * a_pre.getEntry(i) * (a_post_other.getEntry(j) - a_post_self.getEntry(j));
 
@@ -620,7 +653,8 @@ public class BAL {
 	}
 	
 
-
+	//TODO: why not working? 
+	//TODO: dropout 
 	//learns on a weight matrix, other parameters are activations on needed layers 
 	//\delta w_{pq}^F = \lambda a_p^{F}(a_q^{B} - a_q^{F})
 	//\delta w_ij = lamda * a_pre * (a_post_other - a_post_self)  
@@ -680,6 +714,12 @@ public class BAL {
 			resetTwoDimArray(this.BATCH_HI);
 		}
 		
+		if(DROPOUT_IS){
+			for(int i=0; i<this.active_hidden.length ; i++){
+				this.active_hidden[i] = BAL.random.nextBoolean(); 
+			}
+		}
+		
 		/*
 		System.out.println("IH dim: " + this.IH.getRowDimension() + "," + this.IH.getColumnDimension());
 		System.out.println("HO dim: " + this.HO.getRowDimension() + "," + this.HO.getColumnDimension());
@@ -700,10 +740,10 @@ public class BAL {
 			avg_change_ih += subCHLLearn(this.HI, backward[1], backward[0], forward[0], forward[1], lambda);
 		}
 		else{
-			avg_change_ih += subLearn(this.IH, forward[0], backward[1], forward[1], lambda, this.MOM_IH, this.BATCH_IH); 
-			avg_change_oh += subLearn(this.HO, forward[1], backward[2], forward[2], lambda, this.MOM_HO, this.BATCH_HO); 
-			avg_change_ih += subLearn(this.OH, backward[2], forward[1], backward[1], lambda, this.MOM_OH, this.BATCH_OH); 
-			avg_change_oh += subLearn(this.HI, backward[1], forward[0], backward[0], lambda, this.MOM_HI, this.BATCH_HI);
+			avg_change_ih += subLearn(this.IH, forward[0], backward[1], forward[1], lambda, this.MOM_IH, this.BATCH_IH, BAL.all_true_active_hidden, this.active_hidden); 
+			avg_change_oh += subLearn(this.HO, forward[1], backward[2], forward[2], lambda, this.MOM_HO, this.BATCH_HO, this.active_hidden, BAL.all_true_active_hidden); 
+			avg_change_ih += subLearn(this.OH, backward[2], forward[1], backward[1], lambda, this.MOM_OH, this.BATCH_OH, BAL.all_true_active_hidden, this.active_hidden); 
+			avg_change_oh += subLearn(this.HI, backward[1], forward[0], backward[0], lambda, this.MOM_HI, this.BATCH_HI, this.active_hidden, BAL.all_true_active_hidden);
 		}
 
 		if(INIT_BATCH_IS){
