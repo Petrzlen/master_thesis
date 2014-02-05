@@ -31,6 +31,7 @@
 *.xdy
 *.tdo
 *~
+*#
 *.dat
 *.class
 *.jar
