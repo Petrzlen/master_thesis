@@ -128,6 +128,7 @@ class Matrix{
   public: 
   //x - rows
   //y - columns
+  //TODO shit where is bias guys? :P 
     Matrix(Uint dimension_x, Uint dimension_y){
       cout << "Matrix create " << dimension_x << " " << dimension_y << endl;
       dimx = dimension_x;
@@ -350,7 +351,8 @@ int main(int argc, char *argv[])
     cout << "Success rate " << suc << "/" << tI.size() << " " << 100.0*((Double)suc/(Double)tI.size()) << "%" << endl; 
     cout << "Hidden: " << argv[3] << " Epoch: " << argv[4] << " Alpha: " << argv[5] << endl;
     
-    
+    //BACKWARD IMAGES 
+    /* 
     REP(i, 10){
       cout << "creating backward activation image for " << i << endl;
       
@@ -369,7 +371,7 @@ int main(int argc, char *argv[])
       digit[0] += i; 
       Vector feature_i = WIH.getColumnAsVector(i);
       feature_i.saveAsPgm(string(argv[9]) + "feat_" + digit + ".pgm", 28, 28);
-    }
+    }*/ 
     
     
     fout.close(); 
