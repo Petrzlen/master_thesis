@@ -245,10 +245,10 @@ int main(int argc, char *argv[])
   cout << "init ok" << endl;
   
   REP(e, epochs){
-    cout << "epoch " << e+1 << endl;
+    if((e+1) % 100 == 0) cout << "epoch " << e+1 << endl;
   
     REP(in, I.size()){ 
-      if((in)%1000==0) cout << "  input " << in+1 << endl;
+      //if((in)%1000==0) cout << "  input " << in+1 << endl;
     
       Vector* hn_minus = WIH.multiplyLeft(I.at(in)); //cout << "hn_minus ok " << hn_minus << endl;
       Vector* hminus = hn_minus->applyToNew(Sigmoid);  //cout << "minus ok" << endl; 
@@ -335,17 +335,28 @@ int main(int argc, char *argv[])
     Uint suc = 0; 
     
     REP(t, tI.size()){
-        if((t)%1000==0) cout << "  test " << t+1 << endl;
+        //if((t)%1000==0) cout << "  test " << t+1 << endl;
+        cout << "  test " << t+1 << endl;
+        
         Vector* hn_minus = WIH.multiplyLeft(tI.at(t));  //cout << "hn_minus ok " << hn_minus << endl;
         Vector* hminus = hn_minus->applyToNew(Sigmoid);  //cout << "minus ok" << endl; 
         Vector* on_minus = WHO.multiplyLeft(hminus);  //cout << "on_minus ok" << endl; 
         Vector* ominus = on_minus->applyToNew(Sigmoid);  //cout << "ominus ok" << endl;
         
+        //classification by [0.0, 0.5] -> 0 and [0.5, 1.0] -> 1 
+        int error = 0; 
+        Vector* test_vector = tO.at(t); 
+        REP(i, test_vector->size()) error += ((ominus->at(i) < 0.5) ? 0 : 1) != ((int)test_vector->at(i)); 
+        cout << "test: " << t << " error: " << error << endl;
+        suc += error == 0; 
+        
+        /* //classification by max id 
         int max_id = 0;
         REP(i, ominus->size()) if(ominus->at(i) > ominus->at(max_id)) {max_id=i;}
         
         suc += (tO.at(t)->at(0) == max_id); 
         fout << max_id << endl;
+        */ 
     }
     
     cout << "Success rate " << suc << "/" << tI.size() << " " << 100.0*((Double)suc/(Double)tI.size()) << "%" << endl; 
