@@ -62,6 +62,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
+import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -69,19 +70,25 @@ import org.apache.commons.math3.linear.RealVector;
 public class BAL {
 	//manage IO and run BAL 
 	public static void main(String[] args) throws IOException {
-		experiment_Default();
+		//experiment_Default();
 		//experiment_DifferentHiddenSizes("k12");
 		//experiment_RerunGoodBad();
+		experiment_TestImplementation();
 	}
 	
+	private static boolean IS_PRINT = false; 
+
 	private static int BAL_WEIGHT_UPDATE = 1; 
 	private static int CHL_WEIGHT_UPDATE = 2; //TODO must to be iterative activation
-	private static int WEIGHT_UPDATE_TYPE = BAL_WEIGHT_UPDATE; 
+	private static int BAL_RECIRC_WEIGHT_UPDATE = 3; 
+	private static int GENEREC_WEIGHT_UPDATE = 4; //TODO 
+	private static int WEIGHT_UPDATE_TYPE = BAL_RECIRC_WEIGHT_UPDATE;
+	private static boolean INIT_RECIRCULATION_IS = (WEIGHT_UPDATE_TYPE == CHL_WEIGHT_UPDATE || WEIGHT_UPDATE_TYPE == BAL_RECIRC_WEIGHT_UPDATE || WEIGHT_UPDATE_TYPE == GENEREC_WEIGHT_UPDATE); 
 
 	private static PrintWriter log = null; 
 
 	public static double DOUBLE_EPSILON = 0.001;
-	
+
 	public static  boolean MEASURE_IS = true; 
 	public static boolean MEASURE_SAVE_AFTER_EACH_RUN = true; 
 	public static  int MEASURE_RECORD_EACH = 100;
@@ -89,29 +96,32 @@ public class BAL {
 	public static  String INPUT_FILEPATH = "auto4.in"; 
 	public static  String OUTPUT_FILEPATH = "auto4.in"; 
 	public static  int INIT_HIDDEN_LAYER_SIZE = 2 ; 
-	
+
 	public static  int INIT_MAX_EPOCHS = 500000;
 	public static  int INIT_RUNS = 100; 
 	public static  int INIT_CANDIDATES_COUNT = 1000;
 	public static boolean INIT_SHUFFLE_IS = false;
 	public static boolean INIT_BATCH_IS = false;
+	public static boolean INIT_SYMMETRIC_IS = true; 
 
 	//which hidden layer neurons are active (bias is not counted), used for dropout
 	public static boolean DROPOUT_IS = false; //TODO check some runs, it gives error 
 	private boolean[] active_hidden; 
 	private static boolean[] all_true_active_hidden; // a mock which says "all hidden units are active" 
-	
+
 	public static  int CONVERGENCE_NO_CHANGE_FOR = 500000; 
-	
+
 	public static double INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3; 
-	public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {2.3}; 
+	//public static double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {2.3}; 
 	//public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2}; 
+	public static double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {0.3, 0.5, 0.7, 1.0};
 	
 	public static double INIT_LAMBDA = 0.7; 
 	public static  double TRY_LAMBDA[] = {0.7}; 
 	//public static  double TRY_LAMBDA[] = {0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2}; 
-	//public static  double TRY_LAMBDA[] = {0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5}; 
-	
+	//public static  double TRY_LAMBDA[] = {0.03, 0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.8, 2.2};
+	//public static double TRY_LAMBDA[] = {0.7, 0.8, 0.9, 1.0, 1.1, 1.2}; 
+
 	//public static  double TRY_NOISE_SPAN[] = {0.0, 0.003, 0.01, 0.03, 0.1, 0.3}; 
 	//public static  double TRY_MULTIPLY_WEIGHTS[] = {1.0, 1.00001, 1.00003, 1.0001, 1.0003, 1.001}; 
 
@@ -122,15 +132,16 @@ public class BAL {
 
 	public static  double INIT_NORMAL_DISTRIBUTION_MU = 0;
 	public static  double NORMAL_DISTRIBUTION_SPAN = 15; 
-	
+
 	// save the hidden representations 
-	public static boolean HIDDEN_REPRESENTATION_IS = true;
+	public static boolean HIDDEN_REPRESENTATION_IS = false;
+	public static String HIDDEN_REPRESENTATION_DIRECTORY = "data/hr/"; 
 	public static int HIDDEN_REPRESENTATION_EACH = 1; 
 	public static int HIDDEN_REPRESENTATION_AFTER = 200;
 	public static int HIDDEN_REPRESENTATION_ONLY_EACH = 50;
 
 	public static  boolean PRINT_NETWORK_IS = false; //!TODO should be turned-off most of the times ! 
-	
+
 	//=======================  "TELEMETRY" of the network in time =========================== 
 	//TODO Consider as a MEASURE (avg_weight_change) 
 	public static Map<Integer, String> MEASURE_RUN_ID = new HashMap<Integer, String>(); 
@@ -170,9 +181,10 @@ public class BAL {
 
 	//public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_IN_TRIANGLE};
 	public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_MOMENTUM};
-	
+
 	public static  int MEASURE_GROUP_BY = MEASURE_ERROR;  
 
+	// ================= DATA COLLECTORS ===================
 	public static Random random = new Random(); 
 	//public static double INIT_NOISE_SPAN = 0.00; 
 	//public static double INIT_MULTIPLY_WEIGHTS = 1.001; 
@@ -188,6 +200,8 @@ public class BAL {
 	public static ArrayList<RealVector[]> hidden_repre_cur = null; 
 
 	// ================= STATE of the network ========================== 
+	// .getRowDimension() = with bias
+	// .getColumnDimension() = without bias 
 	private RealMatrix IH; 
 	private RealMatrix HO;  
 	private RealMatrix OH; 
@@ -198,7 +212,7 @@ public class BAL {
 	private double[][] MOM_HO;  
 	private double[][] MOM_OH; 
 	private double[][] MOM_HI;
-	
+
 	//Batch matrices (sum all weight changes and update after the current epoch ended) 
 	private double[][] BATCH_IH; 
 	private double[][] BATCH_HO;  
@@ -206,7 +220,7 @@ public class BAL {
 	private double[][] BATCH_HI; 
 
 	private static String NETWORK_RUN_ID = null;  
-	
+
 	// if override_network != null then the provided netwoek will be used (usually loaded from file) 
 	public static double run(BAL override_network) throws FileNotFoundException{
 		BAL.INIT_NORMAL_DISTRIBUTION_SIGMA = BAL.TRY_NORMAL_DISTRIBUTION_SIGMA[random.nextInt(BAL.TRY_NORMAL_DISTRIBUTION_SIGMA.length)]; 
@@ -220,7 +234,7 @@ public class BAL {
 		int max_epoch = BAL.INIT_MAX_EPOCHS; 
 
 		generateNetworkRunId(); 
-		
+
 		RealMatrix inputs = BAL.loadFromFile(BAL.INPUT_FILEPATH);
 		RealMatrix outputs = BAL.loadFromFile(BAL.OUTPUT_FILEPATH);
 
@@ -237,7 +251,7 @@ public class BAL {
 			double[] measure = N.measure(0, inputs, outputs); 
 			double hd =  measure[BAL.MEASURE_HIDDEN_DIST];
 			double in_points = measure[BAL.MEASURE_IN_TRIANGLE];
-			
+
 			if(in_points < in_points_best){
 				in_points_best = in_points;
 				mav = hd;
@@ -248,15 +262,15 @@ public class BAL {
 				network = N; 
 			}
 		}
-		
+
 		if(override_network != null){
 			network = override_network; 
 		}
-	
+
 		if(PRINT_NETWORK_IS){
 			log.println("----------Network before run: --------------"); 
 			log.println(network.printNetwork());
-			
+
 			PrintWriter pw = new PrintWriter("data/networks/" + NETWORK_RUN_ID + "_pre.bal"); 
 			pw.write(network.printNetwork());
 			pw.close(); 
@@ -307,36 +321,36 @@ public class BAL {
 				resetTwoDimArray(network.BATCH_OH);
 				resetTwoDimArray(network.BATCH_HI);
 			}
-			
+
 			// check if different outputs given as the last epoch 
 			boolean is_diffent_output = false; 
-			
+
 			// learn on each given / target mapping 
 			for(int order_i : order){
 				RealVector in = inputs.getRowVector(order_i);
 				RealVector out = outputs.getRowVector(order_i);
-				
+
 				network.learn(in, out, lambda);
-				
+
 				RealVector[] forwardPass = network.forwardPass(in); 
-				
+
 				if(is_save_hidden_representation){
 					hidden_representation[order_i] = forwardPass[1]; 
 				}
-				
+
 				//check if change
 				BAL.postprocessOutput(forwardPass[2]);
 				is_diffent_output = is_diffent_output || (last_outputs[order_i].getDistance(forwardPass[2]) > DOUBLE_EPSILON);  
 				last_outputs[order_i] = forwardPass[2];
 			}
-			
+
 			if(INIT_BATCH_IS){
 				updateTwoDimArray(network.IH, network.BATCH_IH);
 				updateTwoDimArray(network.HO, network.BATCH_HO);
 				updateTwoDimArray(network.OH, network.BATCH_OH);
 				updateTwoDimArray(network.HI, network.BATCH_HI);
 			}
-			
+
 			if(is_save_hidden_representation){
 				hidden_repre_cur.add(hidden_representation); 
 			}
@@ -352,7 +366,7 @@ public class BAL {
 		if(PRINT_NETWORK_IS){
 			log.println("---------- Network after run: --------------");
 			log.println(network.printNetwork());
-			
+
 			PrintWriter pw = new PrintWriter("data/networks/" + NETWORK_RUN_ID + "_post.bal"); 
 			pw.write(network.printNetwork());
 			pw.close(); 
@@ -397,7 +411,7 @@ public class BAL {
 		if(BAL.MEASURE_IS && BAL.MEASURE_SAVE_AFTER_EACH_RUN){
 			network.saveMeasures(NETWORK_RUN_ID, measure_writer);
 		}
-		
+
 		// Print out basics 
 		double network_result = network.evaluate(inputs, outputs);
 
@@ -405,7 +419,7 @@ public class BAL {
 		log.println("Result=" + network_result);
 		System.out.println("Epochs=" + epochs);
 		System.out.println("Result=" + network_result);
-		
+
 		return network_result; 
 	}
 
@@ -468,7 +482,7 @@ public class BAL {
 
 		return MatrixUtils.createRealMatrix(matrix_data); 
 	}
-	
+
 	public static String matrixToRowString(RealMatrix m){
 		String result = "";
 		for(int i=0; i<m.getRowDimension() ; i++){
@@ -479,6 +493,14 @@ public class BAL {
 		return result; 
 	}
 
+	public static void makeSymmetric(RealMatrix target, RealMatrix from, int rows, int cols) { 
+		for(int i=0 ; i<rows ; i++){
+			for(int j=0 ; j < cols ; j++){
+				target.setEntry(i, j, from.getEntry(j, i));
+			}
+		}
+	}
+	
 	//Creates a BAL network with layer sizes [in_size, h_size, out_size] 
 	public BAL(int in_size, int h_size, int out_size) {
 		log.println("Creating BAL of size ["+in_size + ","+h_size + ","+out_size + "] RunId=" + NETWORK_RUN_ID);
@@ -487,17 +509,22 @@ public class BAL {
 		this.HO = createInitMatrix(h_size+1, out_size);
 		this.OH = createInitMatrix(out_size+1, h_size);
 		this.HI = createInitMatrix(h_size+1, in_size);
+
+		// TODO how to cope with biases? 
+		if(INIT_SYMMETRIC_IS){
+			makeSymmetric(this.OH, this.HO, out_size, h_size);
+			makeSymmetric(this.HI, this.IH, h_size, in_size);
+		}
 		
 		this.BAL_construct_other(); 
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void BAL_construct_other(){
-			
 		int in_size = this.HI.getColumnDimension();
 		int h_size = this.IH.getColumnDimension();
 		int out_size = this.HO.getColumnDimension(); 
-		
+
 		if(INIT_MOMENTUM_IS){
 			this.MOM_IH = new double[in_size+1][h_size];
 			this.MOM_HO = new double[h_size+1][out_size];
@@ -515,43 +542,43 @@ public class BAL {
 		for(int i=0; i<MEASURE_COUNT; i++){
 			this.measures[i] = new ArrayList<Double>();
 		}
-		
+
 		// DROPOUT: mask which hidden layer neurons should be used 
 		this.active_hidden = new boolean[h_size + 1]; // +1 for the bias 
 		for(int i=0; i<this.active_hidden.length ; i++){
 			this.active_hidden[i] = true; 
 		}
-		
+
 		all_true_active_hidden = new boolean[Math.max(in_size, Math.max(h_size, out_size)) + 1];
 		for(int i=0; i<all_true_active_hidden.length ; i++){
 			all_true_active_hidden[i] = true; 
 		}
 	}
-	
+
 	public static RealMatrix loadMatrixFromReader(BufferedReader reader) throws IOException{
 		String[] tokens = reader.readLine().split(" ");
 		int rows = Integer.parseInt(tokens[0]);  
 		int cols = Integer.parseInt(tokens[1]); 
-		
+
 		System.out.println("Loading matrix [" + cols + "," + rows + "]");
-		
+
 		double[][] real_matrix = new double[rows][cols]; 
-		
+
 		for(int i=0; i<rows; i++){
 			tokens = reader.readLine().split(" ");
-			
+
 			for(int j=0; j<cols; j++){
 				real_matrix[i][j] = Double.parseDouble(tokens[j]); 
 			}
 		}
-		
+
 		return MatrixUtils.createRealMatrix(real_matrix); 
 	}
 
 	public BAL(String filename) throws IOException{
 		log.println("Creating BAL from file '" + filename + "' RunId=" + NETWORK_RUN_ID);
 		BufferedReader reader = new BufferedReader(new FileReader(filename));
-		
+
 		reader.readLine();
 		reader.readLine();
 		this.IH = BAL.loadMatrixFromReader(reader);
@@ -561,9 +588,9 @@ public class BAL {
 		this.OH = BAL.loadMatrixFromReader(reader);
 		reader.readLine();
 		this.HI = BAL.loadMatrixFromReader(reader);
-		
+
 		reader.close(); 
-		
+
 		this.BAL_construct_other(); 
 	}
 
@@ -590,9 +617,14 @@ public class BAL {
 			}
 		}
 	}
-	
+
+	// TODO merge forwardPass with backwardPass
 	//forward activations 
 	private RealVector[] forwardPass(RealVector in){
+		if(INIT_RECIRCULATION_IS){
+			return forwardPassWithRecirculation(in); 
+		}
+		
 		RealVector[] forward = new RealVector[3]; 
 		forward[0] = addBias(in);
 
@@ -600,7 +632,6 @@ public class BAL {
 		applyNonlinearity(forward[1]);
 		applyDropoutInPass(forward[1]);
 		forward[1] = addBias(forward[1]);
-		
 
 		forward[2] = this.HO.preMultiply(forward[1]);
 		applyNonlinearity(forward[2]);
@@ -608,8 +639,48 @@ public class BAL {
 		return forward; 
 	}
 
+	// TODO merge forwardPassWithRecirculation with backwardPassWithRecirculation
+	private RealVector[] forwardPassWithRecirculation(RealVector in){
+		RealVector[] forward = new RealVector[3]; 
+		forward[0] = addBias(in);
+		forward[2] = new ArrayRealVector(this.HO.getColumnDimension(), 0.0);
+		
+		RealVector hidden_net_from_input = this.IH.preMultiply(forward[0]);
+		ArrayList<RealVector> h = new ArrayList<RealVector>();
+		
+		for(int i=0; i<5 ; i++){
+			forward[2] = addBias(forward[2]); 
+			
+			RealVector hidden_net_from_output = this.OH.preMultiply(forward[2]);
+			
+			forward[1] = hidden_net_from_input.add(hidden_net_from_output);
+			//forward[1].mapMultiplyToSelf(0.5); //DEVELOPER HALF
+			applyNonlinearity(forward[1]);
+			applyDropoutInPass(forward[1]);
+			forward[1] = addBias(forward[1]); 
+			
+			forward[2] = this.HO.preMultiply(forward[1]);
+			applyNonlinearity(forward[2]);
+			
+			h.add(forward[1]);
+			h.add(forward[2]); 
+		}
+
+		if(IS_PRINT){
+			System.out.println("forwardPassWithRecirculation : " + printVector(in));
+			for(int i=0; i<h.size() ; i += 2){System.out.print("  Hidden activations: " + printVector(h.get(i)));}
+			for(int i=1; i<h.size() ; i += 2){System.out.print("  Output activations: " + printVector(h.get(i)));}
+		}
+		
+		return forward; 
+	}
+
 	//backward activations 
 	private RealVector[] backwardPass(RealVector out){
+		if(INIT_RECIRCULATION_IS){
+			return backwardPassWithRecirculation(out); 
+		}
+		
 		RealVector[] backward = new RealVector[3]; 
 		backward[2] = addBias(out); 
 
@@ -623,6 +694,48 @@ public class BAL {
 
 		return backward; 
 	}
+	
+	private RealVector[] backwardPassWithRecirculation(RealVector out){
+		RealVector[] backward = new RealVector[3]; 
+		backward[2] = addBias(out);
+		backward[0] = new ArrayRealVector(this.HI.getColumnDimension(), 0.0);
+		
+		RealVector hidden_net_from_output = this.OH.preMultiply(backward[2]);
+		
+		ArrayList<RealVector> h = new ArrayList<RealVector>(); 
+		
+		for(int i=0; i<5 ; i++){
+			backward[0] = addBias(backward[0]); 
+			RealVector hidden_net_from_input = this.IH.preMultiply(backward[0]);
+			
+			backward[1] = hidden_net_from_input.add(hidden_net_from_output);
+			//backward[1].mapMultiplyToSelf(0.5); //DEVELOPER HALF
+			applyNonlinearity(backward[1]);
+			applyDropoutInPass(backward[1]);
+			backward[1] = addBias(backward[1]); 
+			
+			backward[0] = this.HI.preMultiply(backward[1]);
+			applyNonlinearity(backward[0]);
+			
+			h.add(backward[1]);
+			h.add(backward[0]); 
+		}
+		
+		if(IS_PRINT){
+			System.out.println("backwardPassWithRecirculation : " + printVector(out));
+			for(int i=0; i<h.size() ; i += 2){System.out.print("  Hidden activations: " + printVector(h.get(i)));}
+			for(int i=1; i<h.size() ; i += 2){System.out.print("  Input activations: " + printVector(h.get(i)));}
+		}
+		
+		return backward; 
+	}
+	
+	private RealVector bothwardPass(RealVector in, RealVector out){
+		RealVector hidden_net_from_input = this.IH.preMultiply(addBias(in));
+		RealVector hidden_net_from_output = this.OH.preMultiply(addBias(out));
+		//backward[1].mapMultiplyToSelf(0.5); //DEVELOPER HALF
+		return hidden_net_from_input.add(hidden_net_from_output); 
+	}
 
 	//learns on a weight matrix, other parameters are activations on needed layers 
 	//\delta w_{pq}^F = \lambda a_p^{F}(a_q^{B} - a_q^{F})
@@ -630,10 +743,10 @@ public class BAL {
 	private static void subLearn(RealMatrix w, RealVector a_pre, RealVector a_post_other, RealVector a_post_self, double lambda, double[][] mom, double[][] batch, boolean[] is_train_pre, boolean[] is_train_post){
 		for(int i = 0 ; i < w.getRowDimension() ; i++){
 			if(!is_train_pre[i]) continue; //dropout 
-			
+
 			for(int j = 0 ; j < w.getColumnDimension() ; j++){
 				if(!is_train_post[j]) continue; //dropout
-				
+
 				double w_value = w.getEntry(i, j); 
 				double dw = lambda * a_pre.getEntry(i) * (a_post_other.getEntry(j) - a_post_self.getEntry(j));
 
@@ -650,7 +763,7 @@ public class BAL {
 			}
 		}
 	}
-	 
+
 	//TODO: dropout 
 	//TODO: batch 
 	//learns on a weight matrix, other parameters are activations on needed layers 
@@ -661,7 +774,7 @@ public class BAL {
 			for(int j = 0 ; j < w.getColumnDimension() ; j++){
 				//System.out.println("  " + i + "," + j);
 				double w_value = w.getEntry(i, j);
-				
+
 				double dw = 0.0;
 				if(a_plus_i.getDimension() <= i || a_plus_j.getDimension() <= j || a_minus_j.getDimension() <= j || a_minus_i.getDimension() <= i){
 					dw = lambda * a_plus_i.getEntry(i) * (a_minus_j.getEntry(j) - a_plus_j.getEntry(j));
@@ -669,7 +782,7 @@ public class BAL {
 				else{
 					dw = lambda * ((a_plus_i.getEntry(i) * a_plus_j.getEntry(j)) - (a_minus_i.getEntry(i) * a_minus_j.getEntry(j)));
 				}
-				
+
 				w.setEntry(i, j, w_value + dw);
 			}
 		}
@@ -690,34 +803,63 @@ public class BAL {
 			}
 		}
 	}
-	
+
 	//learn on one input-output mapping
 	public void learn(RealVector in, RealVector target, double lambda){
-		// TODO 
-		//forward and backward activation
-		RealVector[] forward = this.forwardPass(in);
-		RealVector[] backward = this.backwardPass(target);
-		
 		if(DROPOUT_IS){
 			for(int i=0; i<this.active_hidden.length ; i++){
 				this.active_hidden[i] = BAL.random.nextBoolean(); 
 			}
 		}
-		
+		boolean[] d_all = BAL.all_true_active_hidden;
+		boolean[] d_hidden = this.active_hidden; 
+
 		//learn
 		if(WEIGHT_UPDATE_TYPE == BAL_WEIGHT_UPDATE){
-			subLearn(this.IH, forward[0], backward[1], forward[1], lambda, this.MOM_IH, this.BATCH_IH, BAL.all_true_active_hidden, this.active_hidden); 
-			subLearn(this.HO, forward[1], backward[2], forward[2], lambda, this.MOM_HO, this.BATCH_HO, this.active_hidden, BAL.all_true_active_hidden); 
-			subLearn(this.OH, backward[2], forward[1], backward[1], lambda, this.MOM_OH, this.BATCH_OH, BAL.all_true_active_hidden, this.active_hidden); 
-			subLearn(this.HI, backward[1], forward[0], backward[0], lambda, this.MOM_HI, this.BATCH_HI, this.active_hidden, BAL.all_true_active_hidden);
+			IS_PRINT = true; 
+			RealVector[] forward = this.forwardPass(in);
+			RealVector[] backward = this.backwardPass(target);
+			IS_PRINT = false; 
+			
+			subLearn(this.IH, forward[0], backward[1], forward[1], lambda, this.MOM_IH, this.BATCH_IH, d_all, d_hidden); 
+			subLearn(this.HO, forward[1], backward[2], forward[2], lambda, this.MOM_HO, this.BATCH_HO, d_hidden, d_all); 
+			subLearn(this.OH, backward[2], forward[1], backward[1], lambda, this.MOM_OH, this.BATCH_OH, d_all, d_hidden); 
+			subLearn(this.HI, backward[1], forward[0], backward[0], lambda, this.MOM_HI, this.BATCH_HI, d_hidden, d_all);
+		}
+		if(WEIGHT_UPDATE_TYPE == BAL_RECIRC_WEIGHT_UPDATE){
+			/**/
+			//IS_PRINT = true; 
+			RealVector[] forward = this.forwardPass(in);
+			RealVector[] backward = this.backwardPass(target);
+			//IS_PRINT = false; 
+			
+			subLearn(this.IH, forward[0], backward[1], forward[1], lambda, this.MOM_IH, this.BATCH_IH, d_all, d_hidden); 
+			subLearn(this.HO, forward[1], backward[2], forward[2], lambda, this.MOM_HO, this.BATCH_HO, d_hidden, d_all); 
+			subLearn(this.OH, backward[2], forward[1], backward[1], lambda, this.MOM_OH, this.BATCH_OH, d_all, d_hidden); 
+			subLearn(this.HI, backward[1], forward[0], backward[0], lambda, this.MOM_HI, this.BATCH_HI, d_hidden, d_all);
+			/*/
+			//TODO not working - zero activations on INPUT / OUTPUT 
+			//IS_PRINT = true; 
+			RealVector[] forward = this.forwardPassWithRecirculation(in);
+			RealVector[] backward = this.backwardPassWithRecirculation(target);
+			RealVector bothward = this.bothwardPass(in, target); 
+			//IS_PRINT = false; 
+			
+			subLearn(this.IH, forward[0], bothward, forward[1], lambda, this.MOM_IH, this.BATCH_IH, d_all, d_hidden); 
+			subLearn(this.HO, forward[1], backward[2], forward[2], lambda, this.MOM_HO, this.BATCH_HO, d_hidden, d_all); 
+			subLearn(this.OH, backward[2], bothward, backward[1], lambda, this.MOM_OH, this.BATCH_OH, d_all, d_hidden); 
+			subLearn(this.HI, backward[1], forward[0], backward[0], lambda, this.MOM_HI, this.BATCH_HI, d_hidden, d_all);
+			/**/
 		}
 		if(WEIGHT_UPDATE_TYPE == CHL_WEIGHT_UPDATE){
+			RealVector[] forward = this.forwardPass(in);
+			RealVector[] backward = this.backwardPass(target);
 			subCHLLearn(this.IH, forward[0], forward[1], backward[1], backward[0], lambda);
 			subCHLLearn(this.HO, forward[1], forward[2], backward[2], backward[1], lambda);
 			subCHLLearn(this.OH, backward[2], backward[1], forward[1], forward[2], lambda);
 			subCHLLearn(this.HI, backward[1], backward[0], forward[0], forward[1], lambda);
 		}
-		
+
 		//log.print(BAL.printVector(forward[1]));
 		//log.println(BAL.printVector(backward[1]));
 	}
@@ -728,15 +870,15 @@ public class BAL {
 		RealVector[] forward = forwardPass(in);
 		RealVector result = forward[forward.length - 1]; 
 		BAL.postprocessOutput(result);
-		
+
 		double error = 0.0; 
 		for(int i=0; i<target.getDimension() ; i++){
 			error += Math.pow(result.getEntry(i) - target.getEntry(i), 2); 
 		}
-		
+
 		return error;  
 	}
-	
+
 	//evaluates performance on several input-output mapping 
 	//returns absolute error 
 	public double evaluate(RealMatrix in, RealMatrix target){
@@ -765,17 +907,17 @@ public class BAL {
 	 */
 	public static double getAngle(double dx, double dy)
 	{
-	    double inRads = Math.atan2(dy,dx);
+		double inRads = Math.atan2(dy,dx);
 
-	    // We need to map to coord system when 0 degree is at 3 O'clock, 270 at 12 O'clock
-	    if (inRads < 0)
-	        inRads = Math.abs(inRads);
-	    else
-	        inRads = 2*Math.PI - inRads;
+		// We need to map to coord system when 0 degree is at 3 O'clock, 270 at 12 O'clock
+		if (inRads < 0)
+			inRads = Math.abs(inRads);
+		else
+			inRads = 2*Math.PI - inRads;
 
-	    return Math.toDegrees(inRads);
+		return Math.toDegrees(inRads);
 	}
-	
+
 	//collect monitoring=measure data, epoch is used as identifier
 	//  !this data is also stored into measures array 
 	public double[] measure(int epoch, RealMatrix in, RealMatrix target){
@@ -828,7 +970,7 @@ public class BAL {
 
 				this.measures[MEASURE_HIDDEN_DIST].add(hidden_dist);  
 			}
-			
+
 			if(MEASURE_IN_TRIANGLE < MEASURE_COUNT){
 				ArrayList<Point> hidden_points = new ArrayList<Point>(); 
 				for(int i=0; i<forward_hiddens.size() ; i++){
@@ -836,12 +978,13 @@ public class BAL {
 				}
 				ArrayList<Point> convex_hull = ConvexHull.execute(hidden_points); 
 				this.measures[MEASURE_IN_TRIANGLE].add((double)(hidden_points.size() - convex_hull.size()));
-				
+
+				/*//DEVELOPER DEBUG 
 				log.println("Hidden points");
 				log.println(hidden_points);
 				log.println("ConvexHull points");
 				log.println(convex_hull);
-				log.println("End");
+				log.println("End"); */
 			}
 		}
 
@@ -918,7 +1061,7 @@ public class BAL {
 		for(String s : result){
 			sb.append(s + "\n");
 		}
-		
+
 		log.print(sb.toString());
 		System.out.println(sb.toString());
 	}
@@ -1078,13 +1221,16 @@ public class BAL {
 		pre_writer.close();
 		post_writer.close();
 
+		log.println("PreMeasure : GroupBy");
 		System.out.println("PreMeasure : GroupBy");
 		BAL.measureGroupBY(pre_measure); 
+		log.println("PostMeasure : GroupBy");
 		System.out.println("PostMeasure : GroupBy");
-		BAL.measureGroupBY(post_measure); 
-		log.print("PreMeasure : Averages");
+		BAL.measureGroupBY(post_measure);
+		
+		log.println("PreMeasure : Averages");
 		BAL.measureAverages(pre_measure); 
-		log.print("PostMeasure : Averages");
+		log.println("PostMeasure : Averages");
 		BAL.measureAverages(post_measure); 
 	}
 
@@ -1098,7 +1244,7 @@ public class BAL {
 			ArrayList<RealVector[]> priebeh = hidden_repre_all.get(i);
 
 			for(int k=0; k < priebeh.get(0).length ; k++){
-				String filename = "data/hr/" + ((post_measure.get(i)[MEASURE_ERROR] == 0.0) ? "good" : "bad") + "/" + MEASURE_RUN_ID.get(i) + "_" + k + ".dat";
+				String filename = HIDDEN_REPRESENTATION_DIRECTORY + ((post_measure.get(i)[MEASURE_ERROR] == 0.0) ? "good" : "bad") + "/" + MEASURE_RUN_ID.get(i) + "_" + k + ".dat";
 				PrintWriter hr_writer = new PrintWriter(filename, "UTF-8");
 				for(RealVector[] vectors : priebeh){
 					RealVector v = vectors[k]; 
@@ -1116,24 +1262,24 @@ public class BAL {
 	public static void generateNetworkRunId(){
 		NETWORK_RUN_ID = INPUT_FILEPATH.substring(0, INPUT_FILEPATH.indexOf('.')) + "_" + (System.currentTimeMillis()) + "_" + INIT_HIDDEN_LAYER_SIZE;
 	}
-	
+
 	public static String experimentInit() throws IOException{
 		generateNetworkRunId(); 
 		String global_run_id = NETWORK_RUN_ID; // it changes after each new network generation 
-		
+
 		log = new PrintWriter("data/" + global_run_id + ".log");
-		
+
 		measure_writer = new PrintWriter("data/" + global_run_id + "_measure.dat");
 		pre_measure = new ArrayList<double[]>();
 		post_measure = new ArrayList<double[]>();
-		
+
 		if(HIDDEN_REPRESENTATION_IS){
 			hidden_repre_all = new ArrayList<ArrayList<RealVector[]>>(); 
 		}
-		
+
 		return global_run_id; 
 	}
-	
+
 	public static void experimentRun(BAL network) throws FileNotFoundException {
 		for(int i=0 ; i<BAL.INIT_RUNS ; i++){
 			long start_time = System.currentTimeMillis(); 
@@ -1145,28 +1291,28 @@ public class BAL {
 			Double error = BAL.run(network); 
 
 			long run_time = (System.currentTimeMillis() - start_time); 
-			log.println("  RunTime=" + run_time);
-			System.out.println("  RunTime=" + run_time);
+			log.println("RunTime=" + run_time);
+			System.out.println("RunTime=" + run_time);
 		}
 	}
-	
+
 	public static void experimentFinalize(String global_run_id) throws FileNotFoundException, UnsupportedEncodingException {
 		printPreAndPostMeasures(global_run_id);
 		printHiddenRepresentations(); 
 		log.close(); 
 		measure_writer.close(); 
 	}
-	
+
 	public static void experiment_Default() throws IOException{
 		String global_run_id = experimentInit();
 		experimentRun(null);
 		experimentFinalize(global_run_id);
 	}
-	
+
 	// TODO test 
 	public static void experiment_RerunGoodBad() throws IOException{
 		String global_run_id = experimentInit(); 
-		
+
 		File folder = new File("data/hr/good/");
 		Set<String> filenames = new HashSet<String>(); 
 		int file_c=0; 
@@ -1178,24 +1324,24 @@ public class BAL {
 
 			System.out.println("=== Loading " + filename + " (" + file_c + "/" + filenames.size() + ")");
 			file_c++; 
-			
+
 			System.out.println(filename);
 			int pos = filename.lastIndexOf('_'); 
 			if(pos > 0){
 				filenames.add(filename.substring(0, pos));
 			}
 		}
-		
+
 		for(String filename : filenames){
 			String filepath = "data/networks/" + filename + "_pre.bal";
 			if(!new File(filepath).exists()){
 				continue; 
 			}
-			
+
 			BAL network = new BAL(filepath); 			
 			experimentRun(network);
 		}
-		
+
 		experimentFinalize(global_run_id);
 	}
 
@@ -1209,7 +1355,7 @@ public class BAL {
 		OUTPUT_FILEPATH = input_prefix + ".out"; 
 
 		CONVERGENCE_NO_CHANGE_FOR = 10; 
-		INIT_MAX_EPOCHS = 1000;
+		INIT_MAX_EPOCHS = 10000;
 
 		INIT_RUNS = 1; 
 		INIT_CANDIDATES_COUNT = 0;
@@ -1219,10 +1365,47 @@ public class BAL {
 		TRY_NORMAL_DISTRIBUTION_SIGMA = new double[] {1.0}; 
 		TRY_LAMBDA = new double[] {0.2}; 
 		TRY_MOMENTUM = new double[] {0.0}; 
-		
+
 		for(int h=5; h<=144; h += h/8 + 1){
 			INIT_HIDDEN_LAYER_SIZE = h; 
 			experiment_Default();
 		}  
+	}
+
+	public static void experiment_TestImplementation() throws IOException{
+		MEASURE_IS = true; 
+		MEASURE_SAVE_AFTER_EACH_RUN = true; 
+		MEASURE_RECORD_EACH = 100;
+
+		INPUT_FILEPATH = "auto4.in"; 
+		OUTPUT_FILEPATH = "auto4.in"; 
+		INIT_HIDDEN_LAYER_SIZE = 2 ; 
+
+		INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3;  
+		INIT_LAMBDA = 0.7; 
+		INIT_MAX_EPOCHS = 30000;
+		INIT_RUNS = 200; 
+		INIT_CANDIDATES_COUNT = 1;
+		INIT_SHUFFLE_IS = false;
+		INIT_BATCH_IS = false;
+		INIT_SYMMETRIC_IS = false; 
+
+		DROPOUT_IS = false; 
+		CONVERGENCE_NO_CHANGE_FOR = INIT_MAX_EPOCHS; 
+
+		INIT_MOMENTUM_IS = false; 
+		
+		INIT_NORMAL_DISTRIBUTION_MU = 0;
+		NORMAL_DISTRIBUTION_SPAN = 15; 
+ 
+		HIDDEN_REPRESENTATION_IS = false;
+		HIDDEN_REPRESENTATION_DIRECTORY = "data/test/"; 
+		HIDDEN_REPRESENTATION_EACH = 1; 
+		HIDDEN_REPRESENTATION_AFTER = 200;
+		HIDDEN_REPRESENTATION_ONLY_EACH = 1;
+
+		PRINT_NETWORK_IS = true;  
+		
+		experiment_Default();
 	}
 }
