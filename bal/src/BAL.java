@@ -2,6 +2,8 @@
 //TODO symmetric version 
 //TODO generec implementation 
 
+//TODO 
+
 //TODO GeneRec na nase autoasociativne problemy 
 //  TODO iterative activation calculation 
 
@@ -9,6 +11,7 @@
 //TODO some memory leak / time explosion when: 
 //	public static  int INIT_MAX_EPOCHS = 1000000;
 //	public static  int INIT_RUNS = 250; 	
+//	public static  int CONVERGENCE_NO_CHANGE_FOR = 10000000; 
 //	public static  int CONVERGENCE_NO_CHANGE_FOR = 10000000; 
 
 //TODO O'Really - kedy podobny backpropagation 
@@ -41,6 +44,8 @@
 //h_size = 3 => [9,10,1] for errors [0.0, 1.0, 2.0] 
 
 //TODO run simulations with adding noise / multiplying weights
+
+//TODO speed up by only calculating what is necessary 
 
 import java.awt.Point;
 import java.io.BufferedReader;
@@ -84,7 +89,10 @@ public class BAL {
 	private static int GENEREC_WEIGHT_UPDATE = 4; //TODO 
 	private static int WEIGHT_UPDATE_TYPE = BAL_RECIRC_WEIGHT_UPDATE;
 	private static boolean INIT_RECIRCULATION_IS = (WEIGHT_UPDATE_TYPE == CHL_WEIGHT_UPDATE || WEIGHT_UPDATE_TYPE == BAL_RECIRC_WEIGHT_UPDATE || WEIGHT_UPDATE_TYPE == GENEREC_WEIGHT_UPDATE); 
-
+	private static double RECIRCULATION_EPSILON = 0.01; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
+	private static int RECIRCULATION_ITERATIONS_MAX = 20; //maximum number of iterations to approximate the underlying dynamic system  
+	private static boolean RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING = false; // average of last two activations will be used instead of the last one (intuition: more stable) 
+	
 	private static PrintWriter log = null; 
 
 	public static double DOUBLE_EPSILON = 0.001;
@@ -110,10 +118,12 @@ public class BAL {
 	private static boolean[] all_true_active_hidden; // a mock which says "all hidden units are active" 
 
 	public static  int CONVERGENCE_NO_CHANGE_FOR = 500000; 
+	public static boolean STOP_IF_NO_ERROR = true; 
 
 	public static double INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3; 
 	//public static double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {2.3}; 
-	//public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2}; 
+	//public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2};
+	//public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {0.5, 1.0, 1.5, 2.0, 2.5, 3.0}; 
 	public static double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {0.3, 0.5, 0.7, 1.0};
 	
 	public static double INIT_LAMBDA = 0.7; 
@@ -145,7 +155,7 @@ public class BAL {
 	//=======================  "TELEMETRY" of the network in time =========================== 
 	//TODO Consider as a MEASURE (avg_weight_change) 
 	public static Map<Integer, String> MEASURE_RUN_ID = new HashMap<Integer, String>(); 
-	public static  String[] MEASURE_HEADINGS = {"epoch", "err", "sigma", "lambda", "momentum", "h_dist","h_f_b_dist","m_avg_w","m_sim", "first_second", "o_f_b_dist", "in_triangle"};
+	public static  String[] MEASURE_HEADINGS = {"epoch", "err", "sigma", "lambda", "momentum", "h_dist","h_f_b_dist","m_avg_w","m_sim", "first_second", "o_f_b_dist", "in_triangle", "fluctuation"};
 	public static  int MEASURE_EPOCH = 0;
 	public static  int MEASURE_ERROR = 1; //error function (RMSE) 
 	public static  int MEASURE_SIGMA = 2; 
@@ -165,7 +175,7 @@ public class BAL {
 	//sum of |a_{ij} - b_{ij}| per pairs (HO, HI) and (OH, IH) 
 	public static  int MEASURE_MATRIX_SIMILARITY = 8;
 
-	//ratio of (a_1, a_2) where a_i is the i-th biggest output 
+	//sum of ratio of (a_1, a_2) where a_i is the i-th biggest output 
 	public static  int MEASURE_FIRST_SECOND_RATIO = 9;
 
 	//public static  int MEASURE_NOISE_SPAN = 9; 
@@ -177,7 +187,10 @@ public class BAL {
 	//check if some point is inside a polygon from others 
 	public static  int MEASURE_IN_TRIANGLE = 11;
 
-	public static  int MEASURE_COUNT = 12;  
+	//how much differ activations when iterative method is used 
+	public static int MEASURE_FLUCTUATION = 12; 
+			
+	public static int MEASURE_COUNT = 13;  
 
 	//public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_IN_TRIANGLE};
 	public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_MOMENTUM};
@@ -198,6 +211,8 @@ public class BAL {
 	// TIMELINE of hidden representations 
 	public static ArrayList<ArrayList<RealVector[]>> hidden_repre_all = null;
 	public static ArrayList<RealVector[]> hidden_repre_cur = null; 
+	
+	public static ArrayList<Integer> recirc_iter_counts = new ArrayList<Integer>(); 
 
 	// ================= STATE of the network ========================== 
 	// .getRowDimension() = with bias
@@ -219,10 +234,14 @@ public class BAL {
 	private double[][] BATCH_OH; 
 	private double[][] BATCH_HI; 
 
-	private static String NETWORK_RUN_ID = null;  
+	private static String NETWORK_RUN_ID = null;
+	private static int NETWORK_EPOCH = 0; 
 
 	// if override_network != null then the provided netwoek will be used (usually loaded from file) 
 	public static double run(BAL override_network) throws FileNotFoundException{
+		NETWORK_EPOCH = 0; 
+		max_fluctuation = 0.0; 
+		
 		BAL.INIT_NORMAL_DISTRIBUTION_SIGMA = BAL.TRY_NORMAL_DISTRIBUTION_SIGMA[random.nextInt(BAL.TRY_NORMAL_DISTRIBUTION_SIGMA.length)]; 
 		BAL.INIT_LAMBDA = BAL.TRY_LAMBDA[random.nextInt(BAL.TRY_LAMBDA.length)];
 		BAL.INIT_MOMENTUM = BAL.TRY_MOMENTUM[random.nextInt(BAL.TRY_MOMENTUM.length)];
@@ -297,6 +316,8 @@ public class BAL {
 		//Main learning loop 
 		int epochs=0;
 		for(epochs=0; epochs<max_epoch ; epochs++){
+			NETWORK_EPOCH = epochs; 
+			
 			if(MEASURE_IS && (MEASURE_SAVE_AFTER_EACH_RUN && epochs % BAL.MEASURE_RECORD_EACH == 0)){
 				//log.println(network.evaluate(inputs, outputs));
 				network.measure(epochs, inputs, outputs);
@@ -324,7 +345,7 @@ public class BAL {
 
 			// check if different outputs given as the last epoch 
 			boolean is_diffent_output = false; 
-
+			
 			// learn on each given / target mapping 
 			for(int order_i : order){
 				RealVector in = inputs.getRowVector(order_i);
@@ -359,6 +380,12 @@ public class BAL {
 			no_change_epochs = (is_diffent_output) ? 0 : no_change_epochs + 1; 
 			if(no_change_epochs >= CONVERGENCE_NO_CHANGE_FOR){
 				log.println("Training stopped at epoch=" + epochs + " as no output change occured in last " + CONVERGENCE_NO_CHANGE_FOR + "epochs");
+				break;
+			}
+			
+			// we need to evaluate the performance on each input / output as when non-batch learning the total_error could be changed after weight change 
+			if(STOP_IF_NO_ERROR && network.evaluate(inputs, outputs) == 0.0){
+				log.println("Training stopped at epoch=" + epochs + " as all outputs given correctly");
 				break;
 			}
 		}
@@ -639,16 +666,31 @@ public class BAL {
 		return forward; 
 	}
 
+	public static RealVector getAverage(RealVector rv1, RealVector rv2){
+		return rv1.add(rv2).mapDivide(2.0);
+	}
+	
 	// TODO merge forwardPassWithRecirculation with backwardPassWithRecirculation
+	public static double max_fluctuation = 0.0; 
+	public static Set<String> max_fluctuation_run_ids = new HashSet<String>(); 
 	private RealVector[] forwardPassWithRecirculation(RealVector in){
 		RealVector[] forward = new RealVector[3]; 
 		forward[0] = addBias(in);
 		forward[2] = new ArrayRealVector(this.HO.getColumnDimension(), 0.0);
 		
 		RealVector hidden_net_from_input = this.IH.preMultiply(forward[0]);
-		ArrayList<RealVector> h = new ArrayList<RealVector>();
+		RealVector last_hid_activation = forward[1]; 
+		RealVector last_out_activation = forward[2]; 
 		
-		for(int i=0; i<5 ; i++){
+		ArrayList<RealVector> h = new ArrayList<RealVector>();
+
+		//TODO when reached max, take average of last two
+		int cc = 0; 
+		double max_change = 0.0; 
+		for(cc=0; cc < RECIRCULATION_ITERATIONS_MAX ; cc++){
+			last_hid_activation = forward[1]; 
+			last_out_activation = forward[2];
+			
 			forward[2] = addBias(forward[2]); 
 			
 			RealVector hidden_net_from_output = this.OH.preMultiply(forward[2]);
@@ -656,7 +698,7 @@ public class BAL {
 			forward[1] = hidden_net_from_input.add(hidden_net_from_output);
 			//forward[1].mapMultiplyToSelf(0.5); //DEVELOPER HALF
 			applyNonlinearity(forward[1]);
-			applyDropoutInPass(forward[1]);
+			//applyDropoutInPass(forward[1]);
 			forward[1] = addBias(forward[1]); 
 			
 			forward[2] = this.HO.preMultiply(forward[1]);
@@ -664,12 +706,46 @@ public class BAL {
 			
 			h.add(forward[1]);
 			h.add(forward[2]); 
+			
+			// stop when no bigger change 
+			max_change = 0.0; 
+			for(int j=0; j<last_out_activation.getDimension() ; j++) {
+				max_change = Math.max(max_change, Math.abs(last_out_activation.getEntry(j) - forward[2].getEntry(j)));
+			}
+			
+			if(cc > 0 && max_change <= RECIRCULATION_EPSILON) {
+				break; 
+			}
+		}
+		
+		//It's relevant only to monitor activation changes at end of iteration 
+		max_fluctuation = Math.max(max_fluctuation, max_change);
+		/*
+		System.out.println("max fluctuation: " + max_fluctuation);
+		System.out.println("  max: " + max);
+		System.out.print("  " + printVector(last_out_activation));
+		System.out.print("  " + printVector(forward[2]));
+		*/ 
+
+		if(IS_PRINT || max_fluctuation > 0.05 && !max_fluctuation_run_ids.contains(NETWORK_RUN_ID)){
+			recirc_iter_counts.add(cc); 
+			max_fluctuation_run_ids.add(NETWORK_RUN_ID);
+			
+			System.out.print("forwardPassWithRecirculation : " + printVector(in));
+			System.out.println("  RUN_ID: " + NETWORK_RUN_ID);
+			System.out.println("  Epoch:  " + NETWORK_EPOCH);
+			System.out.println("  Max fluctuation: " + max_fluctuation);
+			System.out.println("  Iteration count: " + cc);
+			System.out.println("  Recirc epsilon : " + RECIRCULATION_EPSILON);
+			for(int i=2*RECIRCULATION_ITERATIONS_MAX-10; i<h.size() ; i += 2){System.out.print("  Hidden activations: " + printVector(h.get(i)));}
+			for(int i=2*RECIRCULATION_ITERATIONS_MAX-10+1; i<h.size() ; i += 2){System.out.print("  Output activations: " + printVector(h.get(i)));}
+			System.out.println("Network: " + this.printNetwork());
+			System.out.println();
 		}
 
-		if(IS_PRINT){
-			System.out.println("forwardPassWithRecirculation : " + printVector(in));
-			for(int i=0; i<h.size() ; i += 2){System.out.print("  Hidden activations: " + printVector(h.get(i)));}
-			for(int i=1; i<h.size() ; i += 2){System.out.print("  Output activations: " + printVector(h.get(i)));}
+		if(cc == RECIRCULATION_ITERATIONS_MAX && RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING){
+			forward[1] = getAverage(last_hid_activation, forward[1]); 
+			forward[2] = getAverage(last_out_activation, forward[2]); 
 		}
 		
 		return forward; 
@@ -701,10 +777,18 @@ public class BAL {
 		backward[0] = new ArrayRealVector(this.HI.getColumnDimension(), 0.0);
 		
 		RealVector hidden_net_from_output = this.OH.preMultiply(backward[2]);
+		RealVector last_in_activation = backward[0]; 
+		RealVector last_hid_activation = backward[1]; 
 		
 		ArrayList<RealVector> h = new ArrayList<RealVector>(); 
-		
-		for(int i=0; i<5 ; i++){
+
+		//TODO when reached max, take average of last two 
+		int cc = 0; 
+		double max_change = 0.0; 
+		for(cc=0; cc < RECIRCULATION_ITERATIONS_MAX ; cc++){
+			last_in_activation = backward[0];
+			last_hid_activation = backward[1];
+			
 			backward[0] = addBias(backward[0]); 
 			RealVector hidden_net_from_input = this.IH.preMultiply(backward[0]);
 			
@@ -719,12 +803,41 @@ public class BAL {
 			
 			h.add(backward[1]);
 			h.add(backward[0]); 
+
+			// stop when no bigger change 
+			max_change = 0.0; 
+			for(int j=0; j<last_in_activation.getDimension() ; j++) {
+			  max_change = Math.max(max_change, Math.abs(last_in_activation.getEntry(j) - backward[0].getEntry(j)));
+			}
+			if(cc > 0 && max_change <= RECIRCULATION_EPSILON) {
+				break; 
+			}
 		}
-		
-		if(IS_PRINT){
-			System.out.println("backwardPassWithRecirculation : " + printVector(out));
-			for(int i=0; i<h.size() ; i += 2){System.out.print("  Hidden activations: " + printVector(h.get(i)));}
-			for(int i=1; i<h.size() ; i += 2){System.out.print("  Input activations: " + printVector(h.get(i)));}
+
+		// it's relevant only to monitor activation divergence 
+		max_fluctuation = Math.max(max_fluctuation, max_change);
+
+		if(IS_PRINT || max_fluctuation > 0.05 && !max_fluctuation_run_ids.contains(NETWORK_RUN_ID)){
+			recirc_iter_counts.add(cc); 
+			max_fluctuation_run_ids.add(NETWORK_RUN_ID);
+			
+			System.out.print("backwardPassWithRecirculation : " + printVector(out));
+			System.out.println("  RUN_ID: " + NETWORK_RUN_ID);
+			System.out.println("  Epoch:  " + NETWORK_EPOCH);
+			System.out.println("  Max fluctuation: " + max_fluctuation);
+			System.out.println("  Iteration count: " + cc);
+			System.out.println("  Recirc epsilon : " + RECIRCULATION_EPSILON);
+			for(int i=2*RECIRCULATION_ITERATIONS_MAX-10; i<h.size() ; i += 2){System.out.print("  Hidden activations: " + printVector(h.get(i)));}
+			for(int i=2*RECIRCULATION_ITERATIONS_MAX-10+1; i<h.size() ; i += 2){System.out.print("  Input activations: " + printVector(h.get(i)));}
+			System.out.println("Network: " + this.printNetwork());
+			System.out.println();
+			
+			max_fluctuation = 0.0; 
+		}
+
+		if(cc == RECIRCULATION_ITERATIONS_MAX && RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING){
+			backward[1] = getAverage(last_hid_activation, backward[1]); 
+			backward[0] = getAverage(last_in_activation, backward[0]); 
 		}
 		
 		return backward; 
@@ -816,10 +929,10 @@ public class BAL {
 
 		//learn
 		if(WEIGHT_UPDATE_TYPE == BAL_WEIGHT_UPDATE){
-			IS_PRINT = true; 
+			//IS_PRINT = true; 
 			RealVector[] forward = this.forwardPass(in);
 			RealVector[] backward = this.backwardPass(target);
-			IS_PRINT = false; 
+			//IS_PRINT = false; 
 			
 			subLearn(this.IH, forward[0], backward[1], forward[1], lambda, this.MOM_IH, this.BATCH_IH, d_all, d_hidden); 
 			subLearn(this.HO, forward[1], backward[2], forward[2], lambda, this.MOM_HO, this.BATCH_HO, d_hidden, d_all); 
@@ -829,8 +942,8 @@ public class BAL {
 		if(WEIGHT_UPDATE_TYPE == BAL_RECIRC_WEIGHT_UPDATE){
 			/**/
 			//IS_PRINT = true; 
-			RealVector[] forward = this.forwardPass(in);
-			RealVector[] backward = this.backwardPass(target);
+			RealVector[] forward = this.forwardPassWithRecirculation(in);
+			RealVector[] backward = this.backwardPassWithRecirculation(target);
 			//IS_PRINT = false; 
 			
 			subLearn(this.IH, forward[0], backward[1], forward[1], lambda, this.MOM_IH, this.BATCH_IH, d_all, d_hidden); 
@@ -851,6 +964,19 @@ public class BAL {
 			subLearn(this.HI, backward[1], forward[0], backward[0], lambda, this.MOM_HI, this.BATCH_HI, d_hidden, d_all);
 			/**/
 		}
+		if(WEIGHT_UPDATE_TYPE == GENEREC_WEIGHT_UPDATE) {
+			//symmetric version 
+			IS_PRINT = true; 
+			RealVector[] forward = this.forwardPassWithRecirculation(in); // TODO HO = OH 
+			RealVector bothward = this.bothwardPass(in, target); 
+			RealVector biased_target = addBias(target); 
+			IS_PRINT = false; 
+			
+			//TODO why biased target? 
+			subLearn(this.IH, forward[0], bothward, forward[1], lambda, this.MOM_IH, this.BATCH_IH, d_all, d_hidden); 
+			subLearn(this.HO, forward[1], biased_target, forward[2], lambda, this.MOM_HO, this.BATCH_HO, d_hidden, d_all); 
+			//subLearn(this.OH, biased_target, forward[1], bothward, lambda, this.MOM_OH, this.BATCH_OH, d_all, d_hidden); 
+		}
 		if(WEIGHT_UPDATE_TYPE == CHL_WEIGHT_UPDATE){
 			RealVector[] forward = this.forwardPass(in);
 			RealVector[] backward = this.backwardPass(target);
@@ -864,19 +990,22 @@ public class BAL {
 		//log.println(BAL.printVector(backward[1]));
 	}
 
+	public double error(RealVector given_activation, RealVector target){
+		BAL.postprocessOutput(given_activation);
+
+		double error = 0.0; 
+		for(int i=0; i<target.getDimension() ; i++){
+			error += Math.pow(given_activation.getEntry(i) - target.getEntry(i), 2); 
+		}
+
+		return error;  
+	}
+	
 	//evaluates performance on one input-output mapping 
 	//returns error 
 	public double evaluate(RealVector in, RealVector target){
 		RealVector[] forward = forwardPass(in);
-		RealVector result = forward[forward.length - 1]; 
-		BAL.postprocessOutput(result);
-
-		double error = 0.0; 
-		for(int i=0; i<target.getDimension() ; i++){
-			error += Math.pow(result.getEntry(i) - target.getEntry(i), 2); 
-		}
-
-		return error;  
+		return this.error(forward[forward.length - 1], target); 
 	}
 
 	//evaluates performance on several input-output mapping 
@@ -986,8 +1115,19 @@ public class BAL {
 				log.println(convex_hull);
 				log.println("End"); */
 			}
+			
 		}
 
+		if(MEASURE_FLUCTUATION < MEASURE_COUNT){
+			max_fluctuation = 0.0; 
+			for(int i=0; i<in.getRowDimension(); i++){
+				this.forwardPassWithRecirculation(in.getRowVector(i));
+				this.backwardPassWithRecirculation(target.getRowVector(i));
+			}
+			this.measures[MEASURE_FLUCTUATION].add(max_fluctuation); 
+			max_fluctuation = 0.0; 
+		}
+		
 		if(MEASURE_MATRIX_AVG_W < MEASURE_COUNT){
 			double matrix_avg_w = 0.0;
 			matrix_avg_w = (sumAbsoluteValuesOfMatrixEntries(this.IH) + sumAbsoluteValuesOfMatrixEntries(this.HO) + sumAbsoluteValuesOfMatrixEntries(this.OH) + sumAbsoluteValuesOfMatrixEntries(this.IH)) / (this.IH.getColumnDimension()*this.IH.getRowDimension() + this.HO.getColumnDimension()*this.HO.getRowDimension()+ this.OH.getColumnDimension()*this.OH.getRowDimension()+ this.HI.getColumnDimension()*this.HI.getRowDimension()); 
@@ -1160,7 +1300,7 @@ public class BAL {
 		}
 
 		//writer.println(this.measures[0].size() + " " + this.measures.length);
-		writer.write("RUN_ID\t");
+		writer.write("RUN_ID");
 		for(int i=0; i<MEASURE_HEADINGS.length ; i++){
 			writer.write("\t");
 			writer.write(MEASURE_HEADINGS[i]); 
@@ -1186,8 +1326,8 @@ public class BAL {
 		PrintWriter pre_writer;
 		PrintWriter post_writer;
 		try {
-			pre_writer = new PrintWriter("data/" + global_run_id + "_pre.dat", "UTF-8");
-			post_writer = new PrintWriter("data/" + global_run_id + "_post.dat", "UTF-8");
+			pre_writer = new PrintWriter("data/" + global_run_id + "_pre.csv", "UTF-8");
+			post_writer = new PrintWriter("data/" + global_run_id + "_post.csv", "UTF-8");
 		} catch (Exception e) {
 			return; 
 		} 
@@ -1244,7 +1384,7 @@ public class BAL {
 			ArrayList<RealVector[]> priebeh = hidden_repre_all.get(i);
 
 			for(int k=0; k < priebeh.get(0).length ; k++){
-				String filename = HIDDEN_REPRESENTATION_DIRECTORY + ((post_measure.get(i)[MEASURE_ERROR] == 0.0) ? "good" : "bad") + "/" + MEASURE_RUN_ID.get(i) + "_" + k + ".dat";
+				String filename = HIDDEN_REPRESENTATION_DIRECTORY + ((post_measure.get(i)[MEASURE_ERROR] == 0.0) ? "good" : "bad") + "/" + MEASURE_RUN_ID.get(i) + "_" + k + ".csv";
 				PrintWriter hr_writer = new PrintWriter(filename, "UTF-8");
 				for(RealVector[] vectors : priebeh){
 					RealVector v = vectors[k]; 
@@ -1269,7 +1409,7 @@ public class BAL {
 
 		log = new PrintWriter("data/" + global_run_id + ".log");
 
-		measure_writer = new PrintWriter("data/" + global_run_id + "_measure.dat");
+		measure_writer = new PrintWriter("data/" + global_run_id + "_measure.csv");
 		pre_measure = new ArrayList<double[]>();
 		post_measure = new ArrayList<double[]>();
 
@@ -1307,6 +1447,15 @@ public class BAL {
 		String global_run_id = experimentInit();
 		experimentRun(null);
 		experimentFinalize(global_run_id);
+		
+		if(!recirc_iter_counts.isEmpty()){
+			int sum=0; 
+			for(int i=0; i<recirc_iter_counts.size(); i++) {
+					System.out.println(recirc_iter_counts.get(i));
+					sum += recirc_iter_counts.get(i); 
+			}
+			System.out.println("Iteration recirc avg=" + (sum / recirc_iter_counts.size()) + " sum=" + sum + " count=" + recirc_iter_counts.size());
+		}
 	}
 
 	// TODO test 
@@ -1383,12 +1532,16 @@ public class BAL {
 
 		INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3;  
 		INIT_LAMBDA = 0.7; 
-		INIT_MAX_EPOCHS = 30000;
-		INIT_RUNS = 200; 
+		INIT_MAX_EPOCHS = 2000;
+		INIT_RUNS = 500; 
 		INIT_CANDIDATES_COUNT = 1;
 		INIT_SHUFFLE_IS = false;
 		INIT_BATCH_IS = false;
-		INIT_SYMMETRIC_IS = false; 
+		INIT_SYMMETRIC_IS = false; 	
+		
+		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
+		RECIRCULATION_ITERATIONS_MAX = 200; //maximum number of iterations to approximate the underlying dynamic system  
+		RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING = true;
 
 		DROPOUT_IS = false; 
 		CONVERGENCE_NO_CHANGE_FOR = INIT_MAX_EPOCHS; 
@@ -1402,9 +1555,9 @@ public class BAL {
 		HIDDEN_REPRESENTATION_DIRECTORY = "data/test/"; 
 		HIDDEN_REPRESENTATION_EACH = 1; 
 		HIDDEN_REPRESENTATION_AFTER = 200;
-		HIDDEN_REPRESENTATION_ONLY_EACH = 1;
+		HIDDEN_REPRESENTATION_ONLY_EACH = 200;
 
-		PRINT_NETWORK_IS = true;  
+		PRINT_NETWORK_IS = false;  
 		
 		experiment_Default();
 	}
