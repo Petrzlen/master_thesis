@@ -1,8 +1,14 @@
-//TODO almeida-pineda iterative activation 
-//TODO symmetric version 
-//TODO generec implementation 
+//TODO struktura, uvod 
+//TODO symmetric version of BAL, energy   
+//TODO generec implementation
+//TODO almeida-pineda iterative activation
+//TODO dynamicka rychlost ucenia 
+  // MEASURE activation change 
+  // kopirovat priebeh 
+  // momemntum 
 
-//TODO 
+//TODO patternSuccess, bitSuccess  
+//TODO GeneRec Obojstranne vysokorozmerne
 
 //TODO GeneRec na nase autoasociativne problemy 
 //  TODO iterative activation calculation 
@@ -11,7 +17,7 @@
 //TODO some memory leak / time explosion when: 
 //	public static  int INIT_MAX_EPOCHS = 1000000;
 //	public static  int INIT_RUNS = 250; 	
-//	public static  int CONVERGENCE_NO_CHANGE_FOR = 10000000; 
+//	public static  int CONVERGENCE_NO_CHANGE_FOR = ; 
 //	public static  int CONVERGENCE_NO_CHANGE_FOR = 10000000; 
 
 //TODO O'Really - kedy podobny backpropagation 
@@ -87,7 +93,7 @@ public class BAL {
 	private static int CHL_WEIGHT_UPDATE = 2; //TODO must to be iterative activation
 	private static int BAL_RECIRC_WEIGHT_UPDATE = 3; 
 	private static int GENEREC_WEIGHT_UPDATE = 4; // => INIT_SYMMETRIC_IS = true 
-	private static int WEIGHT_UPDATE_TYPE = GENEREC_WEIGHT_UPDATE;
+	private static int WEIGHT_UPDATE_TYPE = BAL_WEIGHT_UPDATE;
 	private static boolean INIT_RECIRCULATION_IS = (WEIGHT_UPDATE_TYPE == CHL_WEIGHT_UPDATE || WEIGHT_UPDATE_TYPE == BAL_RECIRC_WEIGHT_UPDATE || WEIGHT_UPDATE_TYPE == GENEREC_WEIGHT_UPDATE); 
 	private static double RECIRCULATION_EPSILON = 0.01; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 	private static int RECIRCULATION_ITERATIONS_MAX = 20; //maximum number of iterations to approximate the underlying dynamic system  
@@ -743,6 +749,7 @@ public class BAL {
 		
 		//It's relevant only to monitor activation changes at end of iteration 
 		max_fluctuation = Math.max(max_fluctuation, max_change);
+		//recirc_iter_counts.add(cc); 
 		/*
 		System.out.println("max fluctuation: " + max_fluctuation);
 		System.out.println("  max: " + max);
@@ -751,8 +758,6 @@ public class BAL {
 		*/ 
 
 		if(IS_PRINT || max_fluctuation > 0.05 && !max_fluctuation_run_ids.contains(NETWORK_RUN_ID)){
-			/*
-			recirc_iter_counts.add(cc); 
 			max_fluctuation_run_ids.add(NETWORK_RUN_ID);
 			
 			System.out.print("forwardPassWithRecirculation : " + printVector(in));
@@ -764,7 +769,8 @@ public class BAL {
 			for(int i=2*RECIRCULATION_ITERATIONS_MAX-10; i<h.size() ; i += 2){System.out.print("  Hidden activations: " + printVector(h.get(i)));}
 			for(int i=2*RECIRCULATION_ITERATIONS_MAX-10+1; i<h.size() ; i += 2){System.out.print("  Output activations: " + printVector(h.get(i)));}
 			System.out.println("Network: " + this.printNetwork());
-			System.out.println();*/
+			System.out.println();
+			
 		}
 
 		if(cc == RECIRCULATION_ITERATIONS_MAX && RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING){
@@ -786,7 +792,7 @@ public class BAL {
 
 		backward[1] = this.OH.preMultiply(backward[2]);
 		applyNonlinearity(backward[1]);
-		applyDropoutInPass(backward[1]);
+		//applyDropoutInPass(backward[1]);
 		backward[1] = addBias(backward[1], MATRIX_HI); 
 
 		backward[0] = this.HI.preMultiply(backward[1]);
@@ -795,6 +801,7 @@ public class BAL {
 		return backward; 
 	}
 	
+	//
 	private RealVector[] backwardPassWithRecirculation(RealVector out){
 		RealVector[] backward = new RealVector[3]; 
 		backward[2] = addBias(out, MATRIX_OH);
@@ -819,7 +826,7 @@ public class BAL {
 			backward[1] = hidden_net_from_input.add(hidden_net_from_output);
 			//backward[1].mapMultiplyToSelf(0.5); //DEVELOPER HALF
 			applyNonlinearity(backward[1]);
-			applyDropoutInPass(backward[1]);
+			//applyDropoutInPass(backward[1]);
 			backward[1] = addBias(backward[1], MATRIX_HI); 
 			
 			backward[0] = this.HI.preMultiply(backward[1]);
@@ -840,9 +847,9 @@ public class BAL {
 
 		// it's relevant only to monitor activation divergence 
 		max_fluctuation = Math.max(max_fluctuation, max_change);
+		//recirc_iter_counts.add(cc); 
 
 		if(IS_PRINT || max_fluctuation > 0.05 && !max_fluctuation_run_ids.contains(NETWORK_RUN_ID)){
-			recirc_iter_counts.add(cc); 
 			max_fluctuation_run_ids.add(NETWORK_RUN_ID);
 			
 			System.out.print("backwardPassWithRecirculation : " + printVector(out));
@@ -966,7 +973,7 @@ public class BAL {
 			subLearn(this.HI, backward[1], forward[0], backward[0], lambda, this.MOM_HI, this.BATCH_HI, d_hidden, d_all);
 		}
 		if(WEIGHT_UPDATE_TYPE == BAL_RECIRC_WEIGHT_UPDATE){
-			/**/
+			/**/ 
 			//IS_PRINT = true; 
 			RealVector[] forward = this.forwardPassWithRecirculation(in);
 			RealVector[] backward = this.backwardPassWithRecirculation(target);
@@ -975,14 +982,18 @@ public class BAL {
 			subLearn(this.IH, forward[0], backward[1], forward[1], lambda, this.MOM_IH, this.BATCH_IH, d_all, d_hidden); 
 			subLearn(this.HO, forward[1], backward[2], forward[2], lambda, this.MOM_HO, this.BATCH_HO, d_hidden, d_all); 
 			
-			//makeSymmetric(this.HI, this.IH, this.IH.getColumnDimension(), this.IH.getRowDimension() - (isBias(MATRIX_IH)?1:0));
-			//makeSymmetric(this.OH, this.HO, this.HO.getColumnDimension(), this.HO.getRowDimension() - (isBias(MATRIX_HO)?1:0));
+			if(INIT_SYMMETRIC_IS){
+				makeSymmetric(this.HI, this.IH, this.IH.getColumnDimension(), this.IH.getRowDimension() - (isBias(MATRIX_IH)?1:0));
+				makeSymmetric(this.OH, this.HO, this.HO.getColumnDimension(), this.HO.getRowDimension() - (isBias(MATRIX_HO)?1:0));
+			}
 			
 			subLearn(this.OH, backward[2], forward[1], backward[1], lambda, this.MOM_OH, this.BATCH_OH, d_all, d_hidden); 
 			subLearn(this.HI, backward[1], forward[0], backward[0], lambda, this.MOM_HI, this.BATCH_HI, d_hidden, d_all);
 			
-			//makeSymmetric(this.IH, this.HI, this.HI.getColumnDimension(), this.HI.getRowDimension() - (isBias(MATRIX_HI)?1:0));
-			//makeSymmetric(this.HO, this.OH, this.OH.getColumnDimension(), this.OH.getRowDimension() - (isBias(MATRIX_OH)?1:0));
+			if(INIT_SYMMETRIC_IS){
+				makeSymmetric(this.IH, this.HI, this.HI.getColumnDimension(), this.HI.getRowDimension() - (isBias(MATRIX_HI)?1:0));
+				makeSymmetric(this.HO, this.OH, this.OH.getColumnDimension(), this.OH.getRowDimension() - (isBias(MATRIX_OH)?1:0));
+			}
 			/*/
 			//TODO not working - zero activations on INPUT / OUTPUT 
 			//IS_PRINT = true; 
@@ -993,17 +1004,28 @@ public class BAL {
 			
 			subLearn(this.IH, forward[0], bothward, forward[1], lambda, this.MOM_IH, this.BATCH_IH, d_all, d_hidden); 
 			subLearn(this.HO, forward[1], backward[2], forward[2], lambda, this.MOM_HO, this.BATCH_HO, d_hidden, d_all); 
+			
+			if(INIT_SYMMETRIC_IS){
+				makeSymmetric(this.HI, this.IH, this.IH.getColumnDimension(), this.IH.getRowDimension() - (isBias(MATRIX_IH)?1:0));
+				makeSymmetric(this.OH, this.HO, this.HO.getColumnDimension(), this.HO.getRowDimension() - (isBias(MATRIX_HO)?1:0));
+			}
+			
 			subLearn(this.OH, backward[2], bothward, backward[1], lambda, this.MOM_OH, this.BATCH_OH, d_all, d_hidden); 
 			subLearn(this.HI, backward[1], forward[0], backward[0], lambda, this.MOM_HI, this.BATCH_HI, d_hidden, d_all);
+			
+			if(INIT_SYMMETRIC_IS){
+				makeSymmetric(this.IH, this.HI, this.HI.getColumnDimension(), this.HI.getRowDimension() - (isBias(MATRIX_HI)?1:0));
+				makeSymmetric(this.HO, this.OH, this.OH.getColumnDimension(), this.OH.getRowDimension() - (isBias(MATRIX_OH)?1:0));
+			}
 			/**/
 		}
 		if(WEIGHT_UPDATE_TYPE == GENEREC_WEIGHT_UPDATE) {
 			//symmetric version 
-			IS_PRINT = true; 
+			//IS_PRINT = true; 
 			RealVector[] forward = this.forwardPassWithRecirculation(in); // TODO HO = OH 
 			RealVector bothward = this.bothwardPass(in, target); 
 			//RealVector biased_target = addBias(target); 
-			IS_PRINT = false; 
+			//IS_PRINT = false; 
 			
 			//TODO why biased target? 
 			subLearn(this.IH, forward[0], bothward, forward[1], lambda, this.MOM_IH, this.BATCH_IH, d_all, d_hidden); 
@@ -1568,7 +1590,7 @@ public class BAL {
 		for(int h=5; h<=144; h += h/8 + 1){
 			INIT_HIDDEN_LAYER_SIZE = h; 
 			experiment_Default();
-		}  
+		} 
 	}
 
 	public static void experiment_TestImplementation() throws IOException{
@@ -1583,11 +1605,11 @@ public class BAL {
 		INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3;  
 		INIT_LAMBDA = 0.7; 
 		INIT_MAX_EPOCHS = 10000;
-		INIT_RUNS = 1000; 
+		INIT_RUNS = 100; 
 		INIT_CANDIDATES_COUNT = 1;
 		INIT_SHUFFLE_IS = false;
 		INIT_BATCH_IS = false;
-		INIT_SYMMETRIC_IS = true; 	
+		INIT_SYMMETRIC_IS = false; 	
 		
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 		RECIRCULATION_ITERATIONS_MAX = 200; //maximum number of iterations to approximate the underlying dynamic system  

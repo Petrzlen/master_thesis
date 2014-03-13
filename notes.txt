@@ -2244,6 +2244,17 @@ epoch	err	sigma	lambda	momentum	h_dist	h_f_b_dist	m_avg_w	m_sim	first_second	o_f
       0.0 1.0 1.5 0.1 68.57142857142857 48/70
       0.0 1.0 1.8 0.1 68.93203883495146 71/103
       0.0 1.0 2.2 0.1 49.074074074074076 53/108
-      
-Symmetric weights haven't helped BAL. 
-    
+
+=================== Trying ForBackWard GeneRec (after having confidence in implementation of Generec)       
+Symmetric weights haven't helped BAL (35%) - no param selection
+Using bothward GeneRec (60%) - no param selection 
+  Forgot to symmetric init -> no perceivable change 
+In both cases (almost) no fluctuation 
+
+Non-symmetric case, fluctuation in about 1/5 cases 
+  About 30% success 
+  About 3-33 iterations needed to settle, very network dependent 
+  About 50 - 5000 epochs needed 
+
+IDEA: maybe bad implementation of backward
+      using iterative activation has almost no reason (bothward is the generec idea) 
