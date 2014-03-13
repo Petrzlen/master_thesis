@@ -2212,3 +2212,38 @@ epoch	err	sigma	lambda	momentum	h_dist	h_f_b_dist	m_avg_w	m_sim	first_second	o_f
         -15.250926634766934 -8.757673237286788 -5.501665207791351 31.09284323832752
         -20.77710446049136 3.4994243814713264 29.01411179876515 -9.410180618166903
         12.323675762656713 -1.5397519760735414 -19.845798989404948 -4.053448780877543
+        
+        
+=================== Implementing GeneRec in Java ========================= 
+  We decided that the most straighforward solution is to make the matrices symmetric (copy values after learning) 
+  The main questions were: 
+    How to implement bias (it is not in the article) 
+    Parameters (lambda, sigma, ...) 
+    
+    
+  INTERESTING: when bias only on input:
+    4-2-4 best network error = 3.0 (tended to have two very profiled (0.95+, 0, 0, 0) and two very even (0.5, 0.5, 0.5, 0.5) 
+    4-3-4 about 75% success rate 
+    
+             : when adding bias on hidden to output: 
+    4-2-4 0.0 1.0 0.5 0.1 91.74311926605505 100/109, almost no 1.0 errors 
+          epochs ranged from 9 to 4500
+    4-3-4 about 100% succes rate with about 20 epochs (ranged from 5 to 700) 
+    
+             : when bias on each matrix: 
+    4-2-4: seems to add a little chaos with a slighty worser performance (but maybe bad sigma) 
+      err sigma lambda momentum success sample_ratio
+      0.0 1.0 0.03 0.1 84.15841584158416 85/101
+      0.0 1.0 0.1 0.1 88.17204301075269 82/93
+      0.0 1.0 0.3 0.1 86.3013698630137 63/73
+      0.0 1.0 0.5 0.1 75.49019607843137 77/102
+      0.0 1.0 0.7 0.1 75.30864197530865 61/81
+      0.0 1.0 0.9 0.1 88.23529411764706 90/102
+      0.0 1.0 1.1 0.1 73.5632183908046 64/87
+      0.0 1.0 1.3 0.1 75.0 60/80
+      0.0 1.0 1.5 0.1 68.57142857142857 48/70
+      0.0 1.0 1.8 0.1 68.93203883495146 71/103
+      0.0 1.0 2.2 0.1 49.074074074074076 53/108
+      
+Symmetric weights haven't helped BAL. 
+    
