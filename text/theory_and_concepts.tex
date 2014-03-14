@@ -1,6 +1,7 @@
 % The theory and concepts of your work. For example, if you work on compiler you can mention about how compiler works without getting much into detail.
 
 \paragraph{Network.}
+%TODO Use some standard notation - reader is someone who knows something about the field (no deep knowledge) 
 In general we can define a neural network as a directed weighted graph. Each \emph{unit} (vertex) has its \emph{activation} and usually it changes in discrete time. The \emph{state} of a neural network are current \emph{weights} of edges and current activations. 
 
 \paragraph{Net inuput.}
@@ -38,6 +39,7 @@ Similary as the input layer, output layer is a subset of units which activations
 Set of units which are both not input or output. 
 
 \paragraph{Treshold unit.}
+%TODO necessary? 
 Threshold unit $\theta$ is a form of bias. We can see it as an activator. If the treshold value is high then the activity of the corresponding unit is high and if the treshold value is low then the activity of the corresponding unit is low. 
 
 The treshold term can be elimated by giving every unit an extra input connection whose activity level is fixed at 1. The weight on this special connection is the negative of the treshold, and it can be learned in just the same way as the other weights  \cite{hinton1988learning}.
@@ -47,5 +49,12 @@ This method is usually assumed in all papers.
 \paragraph{Training.}
 We \emph{train} neural networks on \emph{training sets} of input-output data. For each input we calculate the activation on output layer and compute the error with our error function. Then we apply the learning rule on all weights. This way we iterate through the whole training set. One \emph{epoch} is one iteration through all training values. We repeat training for dozens of epoch with respect to the error function. \emph{Over-fitting} and \emph{under-fitting} must be taken into account.   
 
-\paragraph{Batch update.}
-Instead of updateing the weights after activation of each input, the weight changes are accumulated and weights are updated only after all the inputs were fed into the network. 
+%TODO Testing 
+%TODO Evaluating 
+%TODO Activation 
+%TODO Non-linearity & Linear separability
+%TODO Gradient descent 
+%TODO Convergence & Stability & Fluctuation 
+%TODO Weight initialization 
+%TODO Fancy modifications: Batch, Momentum, Non-constant learning rate, 
+%TODO and shit. 
