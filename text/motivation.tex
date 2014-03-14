@@ -1,6 +1,29 @@
-\section{Our Research} 
+%In this chapter you have to concisely explain the problem that you want to solve and the goal of your solution. This part should contain:
 
-\subsection{Our Motivation}
+% 1) Detailed analysis of the problem and its limitations (e.g. what is the bottleneck and difficulties).
+
+% 2) Your research methods – how did you identify these problems (e.g. tools used)?
+
+% 3) You should clearly state and explain your goal and objectives. You should provide analytical study (mathematical model) of your solution (What is the upper and lower bound of your performance or improvements). You should also mention about the qualitative benefit of your solution such as easy programming etc..
+
+% If necessary you may divide this chapter in sections and subsections.
+
+\subsection*{Motivation Pragmatic}
+
+\paragraph{Feature detector.}
+Neural networks have proven their quality as feature detectors of statistical sets. They can extract and create features which represent individual inputs. This is mostly used in image recognition. 
+
+\paragraph{Autoencoder.}
+The purpose of an encoder network is to learn good \textit{codes} in the intermediate, hidden units. If for, example, there are less hidden units than input units, an encdoer network will perform data-compression  \cite{hinton1988learning}. Autoencoder is also called autoassociator \cite{bengio2009learning}.
+
+\paragraph{Classifier.}
+Aim of classification tasks is to classify individul inputs into a finite number of classes. For example classifying medical results into positive or negative. 
+
+\paragraph{Principal component analysis.}
+Goal of PCA analysis is to get main components which can be lineary combined to individual parts of the original image. The resulting components can be treated as features or used for compression. 
+
+
+\subsection*{Motivation Bio}
 
 It corresponds to O'Reillys motivations \cite{o1998six}.
 
@@ -66,48 +89,3 @@ TODO: Read and cite from Hebbs's original article (Hebb, D.O. (1949). The organi
 The theory is often summarized as "Cells that fire together, wire together.".[1] It attempts to explain "associative learning", in which simultaneous activation of cells leads to pronounced increases in synaptic strength between those cells. Such learning is known as Hebbian learning.
 
 \includegraphics[width=12cm]{img/bio_plausability_o1998six.png}
-
-
-
-\subsection{Considered modifications}
-Viacero z prezentovaných modifikácií boli aplikované na iné typy neurónových sietí. My sme sa zaoberali aplikáciami na Generec, analyzovali sme ich konvergenciu a aplikovali ich na štandardnej sade úloh. 
-
-\subsubsection{Regression} 
-
-\textit{Regression} means that, after one pass around the loop, instead of setting the activity of a visible unit, $i$, to be equal to its current total input, $x_i(2)$, as determined by 
-$$x_j = \sum_i y_iw_{ji} - \theta_j,$$
-we set its activity to be 
-$$y_i(2) = \lambda y_i(0) + (1-\lambda)x_i(2)$$
-where the regression, $\lambda$, is close to 1. Using high regression ensures that the visible units only change state slightly so that when the new visible vector is sent around the loop again on the second pass, it has very similar effects to the first pass \cite{hinton1988learning}.
-
-\subsubsection{Ballard}
-Merging several closed loops of recirculation. 
-
-Since the same learning rule is used for both visivle and hidden units, there is no problem in applying it to systems in which some units are the visible units of one module and the hidden units of another \cite{hinton1988learning}. 
-
-We do not have a formal analysis \cite{hinton1988learning}.
-%D.H. Ballard Proc. American Association for Artificial Intelligence, Seatle, WA, 1987
-
-\includegraphics[width=8cm]{img/ballard.png}
-
-\subsubsection{Dropout}
-When a large feedforward neural network is trained on a small training set,
-it typically performs poorly on held-out test data. This \emph{overfitting} is greatly
-reduced by randomly omitting half of the feature detectors on each training
-case. This prevents complex co-adaptations in which a feature detector is only
-helpful in the context of several other specific feature detectors. Instead, each
-neuron learns to detect a feature that is generally helpful for producing the
-correct answer given the combinatorially large variety of internal contexts in
-which it must operate. Random \emph{dropout} gives big improvements on many
-benchmark tasks and sets new records for speech and object recognition.
- \cite{hinton2012improving} (Abstract copied). 
- 
- TODO: Read the article. 
- 
-Conceptually the idea is simple. In each activation phase turn off randomly a half of all hidden neurons. This should restrict coadaptation of neurons. It a desired quality as we want from each unit to represent a different feature. If the units can coadapt then it might occur that more units represent the same feature. 
-
-\subsubsection{Deep architectures} 
-TODO  \cite{bengio2009learning}.
-
-\subsection{Comparison}
-TODO

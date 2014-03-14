@@ -1,11 +1,7 @@
-%pracu piseme dvoma farbami:
-%ciernou piseme veci, ktore vedia citatela
-%modrou detaily
+%http://www.feradz.com/How_to_Write_Thesis.html
 %Matici sa staruju len aby predali spravnost, Informatici aj motivaciu.
 
-%\documentclass[12pt,a4paper,twoside]{report}
 \documentclass[12pt,a4paper]{article}
-
 
 \usepackage[slovak]{babel}
 \usepackage[utf8]{inputenc}
@@ -73,30 +69,48 @@
 
 \begin{document}
 
+% ==================== 0. Cover ========================
 \setcounter{page}{1}
 \pagenumbering{roman}
 \thispagestyle{empty}
 
-    \input{obal}
+    \input{cover}
     
+% ==================== 1. Title ========================
+%You should be very careful choosing a title for your thesis. It should exactly describe what your thesis is about. You should avoid long title because it is difficult to remember. Also the title shouldn’t be too short and mention just about a general problem or a field. Example title might be “Dynamic Thread Scheduling in Heterogeneous Multi Processors” or “Static Analysis for Unprotected Concurrent Memory Accesses” or “Detecting and Executing Parallel Code in GPUs”.
 \newpage
 \thispagestyle{empty}
 %\addtolength{\hoffset}{4mm}
 %\setlength{\oddsidemargin}{-5mm}
 %\setlength{\evensidemargin}{5mm}
 
-    \input{titulka}
+    \input{title}
+
     
+% ==================== 1+. Assignment ========================
 \newpage
 \thispagestyle{empty}
 
-    \input{zadanie}
+    \input{assignment}
 
+% ==================== 2. Dedication ========================
+% Write to whom you dedicate you thesis if any. For example “I would like to dedicate this thesis to my mother and father…”
 \newpage
 %\thispagestyle{empty}
 \thispagestyle{plain}
 
-    \input{podakovanie}
+    \input{dedication}
+
+% ==================== 3. Acknowledgements ========================
+%It’s good to acknowledge the people who helped or participated in direct or indirect way to your thesis. Here is the place to thank to your supervisor and colleagues.
+\newpage
+%\thispagestyle{empty}
+\thispagestyle{plain}
+
+    \input{acknowledgements}
+
+% ==================== 4. Abstract  ========================
+%Abstract is very important part of the thesis. It will be most read by people and should be written with a great care. The abstract should mention:
 
 \newpage
 %\thispagestyle{empty}
@@ -108,6 +122,7 @@
 
     \input{abstract}
     
+% ==================== 5. Table of Contents ========================
 \newpage
 \setcounter{page}{1}
 \pagenumbering{arabic}
@@ -115,29 +130,67 @@
 
 \tableofcontents
 
+% ==================== 6. Table of Figures ========================
 %    \listoffigures
+% ==================== 7. Table of Tables ========================
 %    \listoftables
+% ==================== 8. Table of Abbrevations ========================
+% TODO 
+%    \input{nomenclature} 
+%    \makenomenclature http://tex.stackexchange.com/questions/100354/list-of-abbreviations
     
+% ==================== 9. Introduction ========================
+% This section should contain a little about everything. Introduction should be an overview of the contents of your thesis. 
 \newpage
+    \input{introduction}
     
-    \input{uvod}
-    
+% ==================== 10. Motivation (or Problem Definition and Proposed Solution) =====
+% In this chapter you have to concisely explain the problem that you want to solve and the goal of your solution. 
 \newpage
+    \input{motivation}
     
-    \input{jadro} 
-   
+% ==================== 11. State of the Art (or Related Work or Literature Review) =========
+% In this section you should present the theoretical basis of your work and overview of the existing solutions. When discussing on the exiting solutions you should relate and qualitatively compare them with yours.
 \newpage
-    
-    \input{zaver}
-    
-\newpage
-    
-    \input{slovnik}
+    \input{overview}
+
+% ==================== 13. Design and Implementation ========================
+%You can divide this chapter in two sections: Design and Implementation.
+%
+% 1) Design – in design section you should describe your approach to solve the problem. The high level design of your solution and the modules, data structures and algorithms that you use.
+%
+% 2) Implementation – in implementation section you should mention the tools that you use to implement, the target environment (e.g. linux, windows). Limitations (e.g. buffer sizes, connections number).
+%
+%If necessary you can add additional sections such as Discussion to discuss or emphasize on the interesting design points.
 
 \newpage
+    \input{design}
+\newpage
+    \input{implementation}
+   
+% ==================== 14. Experimental Results and Analysis ========================
+\newpage
+    \input{methodology}
+\newpage
+    \input{results_and_analysis}
     
-    \include{literatura}
+% ==================== 16. Conclusion ========================
+% This chapter should conclude on your contribution. It should highlight the key results from the research work. In this section you should avoid mentioning new terms and statements not discussed throughout the main text. Also general aspects of the research work shouldn’t be repeated here. Conclusion shouldn’t be the abstract written in past tense. The conclusion should derive the important facts out of your work and results that you obtained.
+\newpage
+    \input{conclusion}
     
+% ==================== 17. Future Work ========================
+%What left unfinished from your work? What are you future plans to develop better your work?
+\newpage
+    \include{future_work}
+
+% ==================== 18. Bibliography ========================
+%Put a list of references.
+\newpage
+    \include{bibliography}
+    
+% ==================== 19. Assignment ========================
+%At the end of your thesis you can attach resources such as source code (or something like ASCII code table) that would improve the completeness of your thesis.
 \newpage
     \input{appendixa}
 
