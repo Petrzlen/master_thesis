@@ -90,10 +90,10 @@ public class BAL {
 	private static boolean IS_PRINT = false; 
 
 	private static int BAL_WEIGHT_UPDATE = 1; 
-	private static int CHL_WEIGHT_UPDATE = 2; //TODO must to be iterative activation
+	private static int CHL_WEIGHT_UPDATE = 2;
 	private static int BAL_RECIRC_WEIGHT_UPDATE = 3; 
 	private static int GENEREC_WEIGHT_UPDATE = 4; // => INIT_SYMMETRIC_IS = true 
-	private static int WEIGHT_UPDATE_TYPE = BAL_WEIGHT_UPDATE;
+	private static int WEIGHT_UPDATE_TYPE = CHL_WEIGHT_UPDATE;
 	private static boolean INIT_RECIRCULATION_IS = (WEIGHT_UPDATE_TYPE == CHL_WEIGHT_UPDATE || WEIGHT_UPDATE_TYPE == BAL_RECIRC_WEIGHT_UPDATE || WEIGHT_UPDATE_TYPE == GENEREC_WEIGHT_UPDATE); 
 	private static double RECIRCULATION_EPSILON = 0.01; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 	private static int RECIRCULATION_ITERATIONS_MAX = 20; //maximum number of iterations to approximate the underlying dynamic system  
@@ -134,9 +134,9 @@ public class BAL {
 	//public static double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {0.3, 0.5, 0.7, 1.0};
 	
 	public static double INIT_LAMBDA = 0.7; 
-	//public static  double TRY_LAMBDA[] = {0.7}; 
+	public static  double TRY_LAMBDA[] = {0.7}; 
 	//public static  double TRY_LAMBDA[] = {0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2}; 
-	public static  double TRY_LAMBDA[] = {0.03, 0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.8, 2.2};
+	//public static  double TRY_LAMBDA[] = {0.03, 0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.8, 2.2};
 	//public static double TRY_LAMBDA[] = {0.7, 0.8, 0.9, 1.0, 1.1, 1.2}; 
 
 	//public static  double TRY_NOISE_SPAN[] = {0.0, 0.003, 0.01, 0.03, 0.1, 0.3}; 
@@ -220,6 +220,7 @@ public class BAL {
 	public static ArrayList<RealVector[]> hidden_repre_cur = null; 
 	
 	public static ArrayList<Integer> recirc_iter_counts = new ArrayList<Integer>(); 
+	public static ArrayList<Integer> epochs_needed_to_no_error = new ArrayList<Integer>(); 
 
 	// ================= STATE of the network ========================== 
 	// .getRowDimension() = with bias
@@ -253,7 +254,9 @@ public class BAL {
 	public static double run(BAL override_network) throws FileNotFoundException{
 		NETWORK_EPOCH = 0; 
 		max_fluctuation = 0.0; 
-		if(WEIGHT_UPDATE_TYPE == GENEREC_WEIGHT_UPDATE) INIT_SYMMETRIC_IS = true; 
+		if(WEIGHT_UPDATE_TYPE == GENEREC_WEIGHT_UPDATE || WEIGHT_UPDATE_TYPE == CHL_WEIGHT_UPDATE) {
+			INIT_SYMMETRIC_IS = true; 
+		}
 		
 		BAL.INIT_NORMAL_DISTRIBUTION_SIGMA = BAL.TRY_NORMAL_DISTRIBUTION_SIGMA[random.nextInt(BAL.TRY_NORMAL_DISTRIBUTION_SIGMA.length)]; 
 		BAL.INIT_LAMBDA = BAL.TRY_LAMBDA[random.nextInt(BAL.TRY_LAMBDA.length)];
@@ -398,6 +401,7 @@ public class BAL {
 			
 			// we need to evaluate the performance on each input / output as when non-batch learning the total_error could be changed after weight change 
 			if(STOP_IF_NO_ERROR && network.evaluate(inputs, outputs) == 0.0){
+				epochs_needed_to_no_error.add(epochs); 
 				log.println("Training stopped at epoch=" + epochs + " as all outputs given correctly");
 				break;
 			}
@@ -910,25 +914,24 @@ public class BAL {
 		}
 	}
 
-	//TODO: dropout 
-	//TODO: batch 
-	//learns on a weight matrix, other parameters are activations on needed layers 
-	//\delta w_{pq}^F = \lambda a_p^{F}(a_q^{B} - a_q^{F})
-	//\delta w_ij = lamda * a_pre * (a_post_other - a_post_self)  
-	private static void subCHLLearn(RealMatrix w, RealVector a_plus_i, RealVector a_plus_j, RealVector a_minus_j, RealVector a_minus_i, double lambda){
+	private static void subCHLLearn(RealMatrix w, RealVector a_minus_i, RealVector a_minus_j, RealVector a_plus_i, RealVector a_plus_j, double lambda){
+		/*
+		System.out.println("subCHLLearn: ");
+		System.out.print("  matrix:  " + printMatrix(w));
+		System.out.print("  a_plus_i:" + printVector(a_plus_i));
+		System.out.print("  a_plus_j:" + printVector(a_plus_j));
+		System.out.print("  a_minus_i:" + printVector(a_minus_i));
+		System.out.print("  a_minus_j:" + printVector(a_minus_j));
+		*/
+		
 		for(int i = 0 ; i < w.getRowDimension() ; i++){
 			for(int j = 0 ; j < w.getColumnDimension() ; j++){
 				//System.out.println("  " + i + "," + j);
 				double w_value = w.getEntry(i, j);
 
-				double dw = 0.0;
-				if(a_plus_i.getDimension() <= i || a_plus_j.getDimension() <= j || a_minus_j.getDimension() <= j || a_minus_i.getDimension() <= i){
-					dw = lambda * a_plus_i.getEntry(i) * (a_minus_j.getEntry(j) - a_plus_j.getEntry(j));
-				}
-				else{
-					dw = lambda * ((a_plus_i.getEntry(i) * a_plus_j.getEntry(j)) - (a_minus_i.getEntry(i) * a_minus_j.getEntry(j)));
-				}
-
+				double dw = lambda * ((a_plus_i.getEntry(i) * a_plus_j.getEntry(j)) - (a_minus_i.getEntry(i) * a_minus_j.getEntry(j)));
+				//System.out.println("   d(" + i + "," + j + "): " + dw);
+					
 				w.setEntry(i, j, w_value + dw);
 			}
 		}
@@ -995,29 +998,14 @@ public class BAL {
 				makeSymmetric(this.HO, this.OH, this.OH.getColumnDimension(), this.OH.getRowDimension() - (isBias(MATRIX_OH)?1:0));
 			}
 			/*/
-			//TODO not working - zero activations on INPUT / OUTPUT 
+			//TODO not working - zero activations on INPUT / OUTPUT (two 
 			//IS_PRINT = true; 
 			RealVector[] forward = this.forwardPassWithRecirculation(in);
 			RealVector[] backward = this.backwardPassWithRecirculation(target);
 			RealVector bothward = this.bothwardPass(in, target); 
-			//IS_PRINT = false; 
-			
-			subLearn(this.IH, forward[0], bothward, forward[1], lambda, this.MOM_IH, this.BATCH_IH, d_all, d_hidden); 
-			subLearn(this.HO, forward[1], backward[2], forward[2], lambda, this.MOM_HO, this.BATCH_HO, d_hidden, d_all); 
-			
-			if(INIT_SYMMETRIC_IS){
-				makeSymmetric(this.HI, this.IH, this.IH.getColumnDimension(), this.IH.getRowDimension() - (isBias(MATRIX_IH)?1:0));
-				makeSymmetric(this.OH, this.HO, this.HO.getColumnDimension(), this.HO.getRowDimension() - (isBias(MATRIX_HO)?1:0));
-			}
-			
-			subLearn(this.OH, backward[2], bothward, backward[1], lambda, this.MOM_OH, this.BATCH_OH, d_all, d_hidden); 
-			subLearn(this.HI, backward[1], forward[0], backward[0], lambda, this.MOM_HI, this.BATCH_HI, d_hidden, d_all);
-			
-			if(INIT_SYMMETRIC_IS){
-				makeSymmetric(this.IH, this.HI, this.HI.getColumnDimension(), this.HI.getRowDimension() - (isBias(MATRIX_HI)?1:0));
-				makeSymmetric(this.HO, this.OH, this.OH.getColumnDimension(), this.OH.getRowDimension() - (isBias(MATRIX_OH)?1:0));
-			}
-			/**/
+			 
+			 // => two indipendent GeneRecs 
+			*/
 		}
 		if(WEIGHT_UPDATE_TYPE == GENEREC_WEIGHT_UPDATE) {
 			//symmetric version 
@@ -1045,12 +1033,13 @@ public class BAL {
 			System.out.println("Network:\n" + printNetwork()); */ 
 		}
 		if(WEIGHT_UPDATE_TYPE == CHL_WEIGHT_UPDATE){
-			RealVector[] forward = this.forwardPass(in);
-			RealVector[] backward = this.backwardPass(target);
-			subCHLLearn(this.IH, forward[0], forward[1], backward[1], backward[0], lambda);
-			subCHLLearn(this.HO, forward[1], forward[2], backward[2], backward[1], lambda);
-			subCHLLearn(this.OH, backward[2], backward[1], forward[1], forward[2], lambda);
-			subCHLLearn(this.HI, backward[1], backward[0], forward[0], forward[1], lambda);
+			RealVector[] forward = this.forwardPassWithRecirculation(in); // TODO HO = OH 
+			RealVector bothward = this.bothwardPass(in, target); 
+			
+			subCHLLearn(this.IH, forward[0], forward[1], forward[0], bothward, lambda);
+			subCHLLearn(this.HO, forward[1], forward[2], addBias(bothward, MATRIX_HO), target, lambda);
+			
+			makeSymmetric(this.OH, this.HO, this.HO.getColumnDimension(), this.HO.getRowDimension() - (isBias(MATRIX_HO)?1:0));
 		}
 
 		//log.print(BAL.printVector(forward[1]));
@@ -1444,6 +1433,10 @@ public class BAL {
 		BAL.measureAverages(pre_measure); 
 		log.println("PostMeasure : Averages");
 		BAL.measureAverages(post_measure); 
+		
+		int s = 0;
+		for(int i=0 ; i < epochs_needed_to_no_error.size() ; i++) s += epochs_needed_to_no_error.get(i); 
+		System.out.println("Avg epochs: " + (s / epochs_needed_to_no_error.size()));
 	}
 
 	// based on results it saves the network to "good" / "bad" folders 
@@ -1605,7 +1598,7 @@ public class BAL {
 		INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3;  
 		INIT_LAMBDA = 0.7; 
 		INIT_MAX_EPOCHS = 10000;
-		INIT_RUNS = 100; 
+		INIT_RUNS = 1000; 
 		INIT_CANDIDATES_COUNT = 1;
 		INIT_SHUFFLE_IS = false;
 		INIT_BATCH_IS = false;
