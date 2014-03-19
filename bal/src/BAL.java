@@ -93,11 +93,13 @@ public class BAL {
 	private static int CHL_WEIGHT_UPDATE = 2;
 	private static int BAL_RECIRC_WEIGHT_UPDATE = 3; 
 	private static int GENEREC_WEIGHT_UPDATE = 4; // => INIT_SYMMETRIC_IS = true 
-	private static int WEIGHT_UPDATE_TYPE = CHL_WEIGHT_UPDATE;
+	private static int WEIGHT_UPDATE_TYPE = BAL_WEIGHT_UPDATE;
 	private static boolean INIT_RECIRCULATION_IS = (WEIGHT_UPDATE_TYPE == CHL_WEIGHT_UPDATE || WEIGHT_UPDATE_TYPE == BAL_RECIRC_WEIGHT_UPDATE || WEIGHT_UPDATE_TYPE == GENEREC_WEIGHT_UPDATE); 
 	private static double RECIRCULATION_EPSILON = 0.01; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 	private static int RECIRCULATION_ITERATIONS_MAX = 20; //maximum number of iterations to approximate the underlying dynamic system  
 	private static boolean RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING = false; // average of last two activations will be used instead of the last one (intuition: more stable) 
+	
+	private static boolean LAMBDA_ERROR_MOMENTUM_IS = false; 
 	
 	private static PrintWriter log = null; 
 
@@ -112,7 +114,7 @@ public class BAL {
 	public static  int INIT_HIDDEN_LAYER_SIZE = 2 ; 
 
 	public static  int INIT_MAX_EPOCHS = 500000;
-	public static  int INIT_RUNS = 100; 
+	public static  int INIT_RUNS = 1000; 
 	public static  int INIT_CANDIDATES_COUNT = 1000;
 	public static boolean INIT_SHUFFLE_IS = false;
 	public static boolean INIT_BATCH_IS = false;
@@ -240,6 +242,12 @@ public class BAL {
 	private double[][] MOM_HO;  
 	private double[][] MOM_OH; 
 	private double[][] MOM_HI;
+	
+	//Last error matrices 
+	private double[][] ERR_IH; 
+	private double[][] ERR_HO;  
+	private double[][] ERR_OH; 
+	private double[][] ERR_HI;
 
 	//Batch matrices (sum all weight changes and update after the current epoch ended) 
 	private double[][] BATCH_IH; 
@@ -264,8 +272,7 @@ public class BAL {
 		//BAL.INIT_NOISE_SPAN = BAL.TRY_NOISE_SPAN[random.nextInt(BAL.TRY_NOISE_SPAN.length)];
 		//BAL.INIT_MULTIPLY_WEIGHTS = BAL.TRY_MULTIPLY_WEIGHTS[random.nextInt(BAL.TRY_MULTIPLY_WEIGHTS.length)];
 
-		int h_size = BAL.INIT_HIDDEN_LAYER_SIZE; 
-		double lambda = BAL.INIT_LAMBDA; 
+		int h_size = BAL.INIT_HIDDEN_LAYER_SIZE;  
 		int max_epoch = BAL.INIT_MAX_EPOCHS; 
 
 		generateNetworkRunId(); 
@@ -367,7 +374,7 @@ public class BAL {
 				RealVector in = inputs.getRowVector(order_i);
 				RealVector out = outputs.getRowVector(order_i);
 
-				network.learn(in, out, lambda);
+				network.learn(in, out, calculateLambda(INIT_LAMBDA, epochs));
 
 				RealVector[] forwardPass = network.forwardPass(in); 
 
@@ -465,6 +472,13 @@ public class BAL {
 		System.out.println("Result=" + network_result);
 
 		return network_result; 
+	}
+
+	private static double calculateLambda(double init_lambda, double last_err) {
+		//return init_lambda; 
+		//return init_lambda * Math.max(1.0, (100 / (epochs + 50)));
+		
+		return init_lambda * Math.max(0.5, 2 * Math.abs(last_err)); 
 	}
 
 	//interpret activations on the output layer 
@@ -582,6 +596,12 @@ public class BAL {
 			this.BATCH_HO = new double[h_size+1][out_size];
 			this.BATCH_OH = new double[out_size+1][h_size];
 			this.BATCH_HI = new double[h_size+1][in_size];
+		}
+		if(LAMBDA_ERROR_MOMENTUM_IS){
+			this.ERR_IH = new double[in_size+1][h_size];
+			this.ERR_HO = new double[h_size+1][out_size];
+			this.ERR_OH = new double[out_size+1][h_size];
+			this.ERR_HI = new double[h_size+1][in_size];
 		}
 
 		this.measures = new ArrayList[MEASURE_COUNT]; 
@@ -890,13 +910,15 @@ public class BAL {
 	//learns on a weight matrix, other parameters are activations on needed layers 
 	//\delta w_{pq}^F = \lambda a_p^{F}(a_q^{B} - a_q^{F})
 	//\delta w_ij = lamda * a_pre * (a_post_other - a_post_self)  
-	private static void subLearn(RealMatrix w, RealVector a_pre, RealVector a_post_other, RealVector a_post_self, double lambda, double[][] mom, double[][] batch, boolean[] is_train_pre, boolean[] is_train_post){
+	private static void subLearn(RealMatrix w, RealVector a_pre, RealVector a_post_other, RealVector a_post_self, double[][] mom, double[][] batch, double [][] err, boolean[] is_train_pre, boolean[] is_train_post){
 		for(int i = 0 ; i < w.getRowDimension() ; i++){
 			if(!is_train_pre[i]) continue; //dropout 
 
 			for(int j = 0 ; j < w.getColumnDimension() ; j++){
 				if(!is_train_post[j]) continue; //dropout
 
+				double lambda = (LAMBDA_ERROR_MOMENTUM_IS) ? calculateLambda(INIT_LAMBDA, err[i][j]) : INIT_LAMBDA; 
+				
 				double w_value = w.getEntry(i, j); 
 				double dw = lambda * a_pre.getEntry(i) * (a_post_other.getEntry(j) - a_post_self.getEntry(j));
 
@@ -909,6 +931,9 @@ public class BAL {
 
 				if(INIT_MOMENTUM_IS){
 					mom[i][j] = dw; 
+				}
+				if(LAMBDA_ERROR_MOMENTUM_IS){
+					err[i][j] = a_post_other.getEntry(j) - a_post_self.getEntry(j); 
 				}
 			}
 		}
@@ -963,6 +988,8 @@ public class BAL {
 		boolean[] d_all = BAL.all_true_active_hidden;
 		boolean[] d_hidden = this.active_hidden; 
 
+		//System.out.println("Error matrix: " + printMatrix(MatrixUtils.createRealMatrix(ERR_HO)));
+		
 		//learn
 		if(WEIGHT_UPDATE_TYPE == BAL_WEIGHT_UPDATE){
 			//IS_PRINT = true; 
@@ -970,10 +997,10 @@ public class BAL {
 			RealVector[] backward = this.backwardPass(target);
 			//IS_PRINT = false; 
 			
-			subLearn(this.IH, forward[0], backward[1], forward[1], lambda, this.MOM_IH, this.BATCH_IH, d_all, d_hidden); 
-			subLearn(this.HO, forward[1], backward[2], forward[2], lambda, this.MOM_HO, this.BATCH_HO, d_hidden, d_all); 
-			subLearn(this.OH, backward[2], forward[1], backward[1], lambda, this.MOM_OH, this.BATCH_OH, d_all, d_hidden); 
-			subLearn(this.HI, backward[1], forward[0], backward[0], lambda, this.MOM_HI, this.BATCH_HI, d_hidden, d_all);
+			subLearn(this.IH, forward[0], backward[1], forward[1], this.MOM_IH, this.BATCH_IH, this.ERR_IH, d_all, d_hidden); 
+			subLearn(this.HO, forward[1], backward[2], forward[2], this.MOM_HO, this.BATCH_HO, this.ERR_HO, d_hidden, d_all); 
+			subLearn(this.OH, backward[2], forward[1], backward[1], this.MOM_OH, this.BATCH_OH, this.ERR_OH, d_all, d_hidden); 
+			subLearn(this.HI, backward[1], forward[0], backward[0], this.MOM_HI, this.BATCH_HI, this.ERR_HI, d_hidden, d_all);
 		}
 		if(WEIGHT_UPDATE_TYPE == BAL_RECIRC_WEIGHT_UPDATE){
 			/**/ 
@@ -982,16 +1009,16 @@ public class BAL {
 			RealVector[] backward = this.backwardPassWithRecirculation(target);
 			//IS_PRINT = false; 
 			
-			subLearn(this.IH, forward[0], backward[1], forward[1], lambda, this.MOM_IH, this.BATCH_IH, d_all, d_hidden); 
-			subLearn(this.HO, forward[1], backward[2], forward[2], lambda, this.MOM_HO, this.BATCH_HO, d_hidden, d_all); 
+			subLearn(this.IH, forward[0], backward[1], forward[1], this.MOM_IH, this.BATCH_IH, this.ERR_IH, d_all, d_hidden); 
+			subLearn(this.HO, forward[1], backward[2], forward[2], this.MOM_HO, this.BATCH_HO, this.ERR_HO, d_hidden, d_all); 
 			
 			if(INIT_SYMMETRIC_IS){
 				makeSymmetric(this.HI, this.IH, this.IH.getColumnDimension(), this.IH.getRowDimension() - (isBias(MATRIX_IH)?1:0));
 				makeSymmetric(this.OH, this.HO, this.HO.getColumnDimension(), this.HO.getRowDimension() - (isBias(MATRIX_HO)?1:0));
 			}
 			
-			subLearn(this.OH, backward[2], forward[1], backward[1], lambda, this.MOM_OH, this.BATCH_OH, d_all, d_hidden); 
-			subLearn(this.HI, backward[1], forward[0], backward[0], lambda, this.MOM_HI, this.BATCH_HI, d_hidden, d_all);
+			subLearn(this.OH, backward[2], forward[1], backward[1], this.MOM_OH, this.BATCH_OH, this.ERR_OH, d_all, d_hidden); 
+			subLearn(this.HI, backward[1], forward[0], backward[0], this.MOM_HI, this.BATCH_HI, this.ERR_HI, d_hidden, d_all);
 			
 			if(INIT_SYMMETRIC_IS){
 				makeSymmetric(this.IH, this.HI, this.HI.getColumnDimension(), this.HI.getRowDimension() - (isBias(MATRIX_HI)?1:0));
@@ -1016,8 +1043,8 @@ public class BAL {
 			//IS_PRINT = false; 
 			
 			//TODO why biased target? 
-			subLearn(this.IH, forward[0], bothward, forward[1], lambda, this.MOM_IH, this.BATCH_IH, d_all, d_hidden); 
-			subLearn(this.HO, forward[1], target, forward[2], lambda, this.MOM_HO, this.BATCH_HO, d_hidden, d_all); 
+			subLearn(this.IH, forward[0], bothward, forward[1], this.MOM_IH, this.BATCH_IH, this.ERR_IH, d_all, d_hidden); 
+			subLearn(this.HO, forward[1], target, forward[2], this.MOM_HO, this.BATCH_HO, this.ERR_HO, d_hidden, d_all); 
 			//subLearn(this.OH, biased_target, forward[1], bothward, lambda, this.MOM_OH, this.BATCH_OH, d_all, d_hidden); 
 			
 			makeSymmetric(this.OH, this.HO, this.HO.getColumnDimension(), this.HO.getRowDimension() - (isBias(MATRIX_HO)?1:0));
@@ -1598,11 +1625,13 @@ public class BAL {
 		INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3;  
 		INIT_LAMBDA = 0.7; 
 		INIT_MAX_EPOCHS = 10000;
-		INIT_RUNS = 1000; 
+		INIT_RUNS = 500; 
 		INIT_CANDIDATES_COUNT = 1;
 		INIT_SHUFFLE_IS = false;
 		INIT_BATCH_IS = false;
 		INIT_SYMMETRIC_IS = false; 	
+		
+		LAMBDA_ERROR_MOMENTUM_IS = true; 
 		
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 		RECIRCULATION_ITERATIONS_MAX = 200; //maximum number of iterations to approximate the underlying dynamic system  
