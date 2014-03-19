@@ -1,3 +1,5 @@
+
+//TODO patternSuccess, bitSuccess
 //TODO struktura, uvod 
 //TODO symmetric version of BAL, energy   
 //TODO generec implementation
@@ -5,9 +7,8 @@
 //TODO dynamicka rychlost ucenia 
   // MEASURE activation change 
   // kopirovat priebeh 
-  // momemntum 
-
-//TODO patternSuccess, bitSuccess  
+  // momemntum  
+  
 //TODO GeneRec Obojstranne vysokorozmerne
 
 //TODO GeneRec na nase autoasociativne problemy 

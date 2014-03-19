@@ -1,3 +1,43 @@
 %Experimental Results and Analysis – in this section you should show the quantitative results – charts and tables. Analyze the results by explaining and highlighting what is important on them in terms of your goals and what is bad. You should explain the strange results too.
 
 \section{Results and Analysis} 
+
+
+
+\subsection{TODO} 
+
+\subsubsection{Measure - Weight decay}
+A commonly-used bias or regularizing function is weight decay (e.g., Hinton, 1989a; Weigend et al., 1991).
+We implemented two commonly-used forms of weight decay in the Bp and GeneRec networks, simple
+weight decay and weight-elimination weight decay (Weigend et al., 1991). In simple weight decay, a con-
+stant fraction of the weight value is subtracted at each weight update, and weight-elimination is similar
+except that the rate of decay is a more complex function of the weight such that larger weights suffer rela-
+tively less decay than smaller ones (supporting a prior assumption of a bimodal distribution of weight values
+— one population of larger weights that are actually useful and another of near-zero weights that are not
+useful; see Weigend et al., 1991 for details).
+The results with these forms of weight decay for the 100 hidden unit network are shown in Figure 5.
+Although a small amount (.002; smaller amounts had progressively smaller effects) of simple weight de-
+cay appears to reliably improve generalization performance in both Bp and GeneRec, the difference is not
+substantial. The weight-elimination version of weight decay always appears to impair, rather than improve,
+performance. Although the specific forms of weight decay explored here were not overly successful in
+this task, it is possible that other forms might perform better. Nevertheless, most forms of weight decay
+\cite{o2001generalization} 
+
+\subsubsection{Dynamic learning rate} 
+%TODO citation 
+
+\subsubsection{Measure - Weight patterns} 
+An examination of the weights in the trained networks clearly shows why generalization is impaired in the
+interactive network (Figure 6). The units have not carved the input/output mapping into separable subsets
+that can be independently combined for the novel testing items — instead, each unit participates in the
+input/output mapping for multiple slots. Although this is true for both the backpropagation and GeneRec
+networks, it is particularly damaging for the interactive GeneRec network because of its attractor dynamics.
+In contrast, the feedforward backpropagation network is still capable of producing a roughly linear combi-
+nation of hidden unit activations that yields reasonable (though far from perfect) levels of generalization. \cite{o2001generalization} 
+
+Figure 7: Average pairwise overlap (normalized dot product or cosine) between hidden patterns corresponding to
+inputs that differ by a) 75\% (1 out of 4 slots different) and b) 50\% (2 out of 4 slots different). Feedforward back-
+propagation (Bp) remains much closer to a linear response level (75\% and 50\% hidden similarity, respectively) after
+training compared to interactive GeneRec, which shows evidence of attractor dynamics pulling the network away from
+a linear, combinatorial response to the inputs.
+

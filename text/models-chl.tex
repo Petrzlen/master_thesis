@@ -8,6 +8,11 @@
 
 The point of this article \cite{movellan1990contrastive} is that a convenient learning rule is derived from a standard Hopfield energy function. Then Movellan uses insights of annealing to improve the training phase and avoid the learning function to settle in local minima. These improvements are formalized in the next five rules applied sequentially:
 
+To assess the effect of interactivity, two different networks were compared on the combinatorial generaliza-
+tion task, a standard feedforward backpropagation network, and an interactive GeneRec network using the
+symmetric, midpoint variation learning rule which is equivalent to contrastive Hebbian learning (CHL) or a
+deterministic Boltzmann machine (DBM) \cite{o1996bio}, \cite{o2001generalization}. 
+
 \begin{enumerate}
 \item Activation are reset to random numbers after each learning phase. 
 
