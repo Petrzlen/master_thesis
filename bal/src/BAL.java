@@ -7,7 +7,7 @@
 //TODO dynamicka rychlost ucenia 
   // MEASURE activation change 
   // kopirovat priebeh 
-  // momemntum  
+  // momentum  
   
 //TODO GeneRec Obojstranne vysokorozmerne
 
@@ -259,6 +259,10 @@ public class BAL {
 	private static String NETWORK_RUN_ID = null;
 	private static int NETWORK_EPOCH = 0; 
 
+	private static boolean isMeasureAtEpoch(int epochs){
+		return MEASURE_IS && (MEASURE_SAVE_AFTER_EACH_RUN && epochs % BAL.MEASURE_RECORD_EACH == 0); 
+	}
+	
 	// if override_network != null then the provided netwoek will be used (usually loaded from file) 
 	public static double run(BAL override_network) throws FileNotFoundException{
 		NETWORK_EPOCH = 0; 
@@ -291,7 +295,7 @@ public class BAL {
 		BAL network = new BAL(inputs.getColumnDimension(), h_size, outputs.getColumnDimension()); 
 		for(int i=0; i<BAL.INIT_CANDIDATES_COUNT; i++){
 			BAL N = new BAL(inputs.getColumnDimension(), h_size, outputs.getColumnDimension()); 
-			double[] measure = N.measure(0, inputs, outputs); 
+			double[] measure = N.measure(0, inputs, outputs, false); 
 			double hd =  measure[BAL.MEASURE_HIDDEN_DIST];
 			double in_points = measure[BAL.MEASURE_IN_TRIANGLE];
 
@@ -321,7 +325,7 @@ public class BAL {
 
 		if(MEASURE_IS) { 
 			MEASURE_RUN_ID.put(pre_measure.size(), NETWORK_RUN_ID);
-			pre_measure.add(network.measure(0, inputs, outputs));
+			pre_measure.add(network.measure(0, inputs, outputs, true));
 		}
 
 		// shuffled order   
@@ -338,13 +342,13 @@ public class BAL {
 		int no_change_epochs=0; 
 
 		//Main learning loop 
-		int epochs=0;
-		for(epochs=0; epochs<max_epoch ; epochs++){
+		int epochs=1;
+		for(epochs=1; epochs<=max_epoch ; epochs++){
 			NETWORK_EPOCH = epochs; 
 			
-			if(MEASURE_IS && (MEASURE_SAVE_AFTER_EACH_RUN && epochs % BAL.MEASURE_RECORD_EACH == 0)){
+			if(isMeasureAtEpoch(epochs)){
 				//log.println(network.evaluate(inputs, outputs));
-				network.measure(epochs, inputs, outputs);
+				network.measure(epochs, inputs, outputs, true);
 			}
 
 			// which hidden representations should be saved 
@@ -400,18 +404,30 @@ public class BAL {
 				hidden_repre_cur.add(hidden_representation); 
 			}
 
+			boolean isStop = false; 
 			// no output change for CONVERGENCE_NO_CHANGE_FOR
 			no_change_epochs = (is_diffent_output) ? 0 : no_change_epochs + 1; 
 			if(no_change_epochs >= CONVERGENCE_NO_CHANGE_FOR){
 				log.println("Training stopped at epoch=" + epochs + " as no output change occured in last " + CONVERGENCE_NO_CHANGE_FOR + "epochs");
-				break;
+				isStop = true; 
 			}
 			
 			// we need to evaluate the performance on each input / output as when non-batch learning the total_error could be changed after weight change 
 			if(STOP_IF_NO_ERROR && network.evaluate(inputs, outputs) == 0.0){
 				epochs_needed_to_no_error.add(epochs); 
 				log.println("Training stopped at epoch=" + epochs + " as all outputs given correctly");
-				break;
+				isStop = true; 
+			}
+			
+			if(isStop){
+				if(MEASURE_IS){
+					for(int e = epochs + 1; e <= max_epoch ; e++){
+						if(isMeasureAtEpoch(e)){
+							network.measure(e, inputs, outputs, true); 
+						}
+					}
+				}
+				break; 
 			}
 		}
 
@@ -453,7 +469,7 @@ public class BAL {
 		}
 
 		if(MEASURE_IS) {
-			post_measure.add(network.measure(epochs, inputs, outputs));
+			post_measure.add(network.measure(epochs, inputs, outputs, false));
 		}
 
 		if(HIDDEN_REPRESENTATION_IS){
@@ -1133,17 +1149,16 @@ public class BAL {
 
 	//collect monitoring=measure data, epoch is used as identifier
 	//  !this data is also stored into measures array 
-	public double[] measure(int epoch, RealMatrix in, RealMatrix target){
+	public double[] measure(int epoch, RealMatrix in, RealMatrix target, boolean isSave){
 		double n = in.getRowDimension(); 
+		double[] result = new double[MEASURE_COUNT]; 
+		
+		if(MEASURE_EPOCH < MEASURE_COUNT) result[MEASURE_EPOCH] = ((double)epoch); 
+		if(MEASURE_SIGMA < MEASURE_COUNT) result[MEASURE_SIGMA] = BAL.INIT_NORMAL_DISTRIBUTION_SIGMA; 
+		if(MEASURE_LAMBDA < MEASURE_COUNT) result[MEASURE_LAMBDA] = BAL.INIT_LAMBDA; 
+		if(MEASURE_MOMENTUM < MEASURE_COUNT) result[MEASURE_MOMENTUM] = BAL.INIT_MOMENTUM; 
 
-		if(MEASURE_EPOCH < MEASURE_COUNT) this.measures[MEASURE_EPOCH].add((double)epoch); 
-		if(MEASURE_SIGMA < MEASURE_COUNT) this.measures[MEASURE_SIGMA].add(BAL.INIT_NORMAL_DISTRIBUTION_SIGMA); 
-		if(MEASURE_LAMBDA < MEASURE_COUNT) this.measures[MEASURE_LAMBDA].add(BAL.INIT_LAMBDA); 
-		if(MEASURE_MOMENTUM < MEASURE_COUNT) this.measures[MEASURE_MOMENTUM].add(BAL.INIT_MOMENTUM); 
-		//this.measures[MEASURE_NOISE_SPAN].add(BAL.INIT_NOISE_SPAN); 
-		//this.measures[MEASURE_MULTIPLY_WEIGHTS].add(BAL.INIT_MULTIPLY_WEIGHTS - 1); 
-
-		if(MEASURE_ERROR < MEASURE_COUNT) this.measures[MEASURE_ERROR].add(this.evaluate(in, target)); 
+		if(MEASURE_ERROR < MEASURE_COUNT) result[MEASURE_ERROR] = this.evaluate(in, target); 
 
 		if(MEASURE_HIDDEN_FOR_BACK_DIST < MEASURE_COUNT 
 				|| MEASURE_OUTPUT_FOR_BACK_DIST < MEASURE_COUNT 
@@ -1174,9 +1189,9 @@ public class BAL {
 					first_second_sum += output_arr[output_arr.length-1] / output_arr[output_arr.length-2];
 				}
 			}
-			if(MEASURE_HIDDEN_FOR_BACK_DIST < MEASURE_COUNT) this.measures[MEASURE_HIDDEN_FOR_BACK_DIST].add(hidden_for_back_dist); 
-			if(MEASURE_OUTPUT_FOR_BACK_DIST < MEASURE_COUNT) this.measures[MEASURE_OUTPUT_FOR_BACK_DIST].add(output_for_back_dist); 
-			if(MEASURE_FIRST_SECOND_RATIO < MEASURE_COUNT) this.measures[MEASURE_FIRST_SECOND_RATIO].add(first_second_sum); 
+			if(MEASURE_HIDDEN_FOR_BACK_DIST < MEASURE_COUNT) result[MEASURE_HIDDEN_FOR_BACK_DIST] = hidden_for_back_dist; 
+			if(MEASURE_OUTPUT_FOR_BACK_DIST < MEASURE_COUNT) result[MEASURE_OUTPUT_FOR_BACK_DIST] = output_for_back_dist; 
+			if(MEASURE_FIRST_SECOND_RATIO < MEASURE_COUNT) result[MEASURE_FIRST_SECOND_RATIO] = first_second_sum; 
 
 			if(MEASURE_HIDDEN_DIST < MEASURE_COUNT){
 				for(int i=0; i<forward_hiddens.size() ; i++){
@@ -1185,7 +1200,7 @@ public class BAL {
 					}
 				}
 
-				this.measures[MEASURE_HIDDEN_DIST].add(hidden_dist);  
+				result[MEASURE_HIDDEN_DIST] = hidden_dist;  
 			}
 
 			if(MEASURE_IN_TRIANGLE < MEASURE_COUNT){
@@ -1194,7 +1209,7 @@ public class BAL {
 					hidden_points.add(new Point((int)(1000.0 * forward_hiddens.get(i).getEntry(0)), (int)(1000.0 * forward_hiddens.get(i).getEntry(1)))); 
 				}
 				ArrayList<Point> convex_hull = ConvexHull.execute(hidden_points); 
-				this.measures[MEASURE_IN_TRIANGLE].add((double)(hidden_points.size() - convex_hull.size()));
+				result[MEASURE_IN_TRIANGLE] = (double)(hidden_points.size() - convex_hull.size());
 
 				/*//DEVELOPER DEBUG 
 				log.println("Hidden points");
@@ -1212,14 +1227,14 @@ public class BAL {
 				this.forwardPassWithRecirculation(in.getRowVector(i));
 				this.backwardPassWithRecirculation(target.getRowVector(i));
 			}
-			this.measures[MEASURE_FLUCTUATION].add(max_fluctuation); 
+			result[MEASURE_FLUCTUATION] = max_fluctuation; 
 			max_fluctuation = 0.0; 
 		}
 		
 		if(MEASURE_MATRIX_AVG_W < MEASURE_COUNT){
 			double matrix_avg_w = 0.0;
 			matrix_avg_w = (sumAbsoluteValuesOfMatrixEntries(this.IH) + sumAbsoluteValuesOfMatrixEntries(this.HO) + sumAbsoluteValuesOfMatrixEntries(this.OH) + sumAbsoluteValuesOfMatrixEntries(this.IH)) / (this.IH.getColumnDimension()*this.IH.getRowDimension() + this.HO.getColumnDimension()*this.HO.getRowDimension()+ this.OH.getColumnDimension()*this.OH.getRowDimension()+ this.HI.getColumnDimension()*this.HI.getRowDimension()); 
-			this.measures[MEASURE_MATRIX_AVG_W].add(matrix_avg_w);
+			result[MEASURE_MATRIX_AVG_W] = matrix_avg_w;
 		}
 
 		if(MEASURE_MATRIX_SIMILARITY < MEASURE_COUNT){
@@ -1230,12 +1245,13 @@ public class BAL {
 				RealMatrix diff_OH_IH = this.OH.subtract(this.IH);
 				matrix_similarity = (sumAbsoluteValuesOfMatrixEntries(diff_HO_HI) + sumAbsoluteValuesOfMatrixEntries(diff_OH_IH)) / (this.IH.getColumnDimension()*this.IH.getRowDimension() + this.HI.getColumnDimension()*this.HI.getRowDimension());
 			}   
-			this.measures[MEASURE_MATRIX_SIMILARITY].add(matrix_similarity);
+			result[MEASURE_MATRIX_SIMILARITY] = matrix_similarity;
 		}
-
-		double[] result = new double[MEASURE_COUNT]; 
-		for(int i=0; i<MEASURE_COUNT; i++){
-			result[i] = this.measures[i].get(this.measures[i].size()-1); 
+ 
+		if(isSave){
+			for(int i=0; i<MEASURE_COUNT; i++){
+				this.measures[i].add(result[i]); 
+			}
 		}
 		return result; 
 	}
@@ -1625,8 +1641,8 @@ public class BAL {
 
 		INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3;  
 		INIT_LAMBDA = 0.7; 
-		INIT_MAX_EPOCHS = 10000;
-		INIT_RUNS = 500; 
+		INIT_MAX_EPOCHS = 1000000;
+		INIT_RUNS = 50; 
 		INIT_CANDIDATES_COUNT = 1;
 		INIT_SHUFFLE_IS = false;
 		INIT_BATCH_IS = false;
