@@ -2231,7 +2231,7 @@ epoch	err	sigma	lambda	momentum	h_dist	h_f_b_dist	m_avg_w	m_sim	first_second	o_f
     4-3-4 about 100% succes rate with about 20 epochs (ranged from 5 to 700) 
     
              : when bias on each matrix: 
-    4-2-4: seems to add a little chaos with a slighty worser performance (but maybe bad sigma) 
+    4-2-4: seems to add a little chaos with a slighty worse performance (but maybe bad sigma) 
       err sigma lambda momentum success sample_ratio
       0.0 1.0 0.03 0.1 84.15841584158416 85/101
       0.0 1.0 0.1 0.1 88.17204301075269 82/93

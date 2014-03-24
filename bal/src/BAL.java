@@ -1,4 +1,3 @@
-
 //TODO patternSuccess, bitSuccess
 //TODO struktura, uvod 
 //TODO symmetric version of BAL, energy   
@@ -12,14 +11,7 @@
 //TODO GeneRec Obojstranne vysokorozmerne
 
 //TODO GeneRec na nase autoasociativne problemy 
-//  TODO iterative activation calculation 
-
-//TODO Refactor 
-//TODO some memory leak / time explosion when: 
-//	public static  int INIT_MAX_EPOCHS = 1000000;
-//	public static  int INIT_RUNS = 250; 	
-//	public static  int CONVERGENCE_NO_CHANGE_FOR = ; 
-//	public static  int CONVERGENCE_NO_CHANGE_FOR = 10000000; 
+//  TODO iterative activation calculation  
 
 //TODO O'Really - kedy podobny backpropagation 
 //  -- ci sa naozaj snazi minimalizovat gradient 
@@ -27,9 +19,6 @@
 //TODO ==> ako rozlisit uspesne a neuspesne od inicializacie (v batch mode)
 //TODO binarny klasifikator na good/bad vah 
 
-//TODO graf od poctu epoch
-
-//TODO v result vypisat aj pocet epoch
 //TODO pridat deliace ciary 
 //TODO porovnat vahove matice pri viacnasobnom behu rovnakej siete
 //TODO inicializovat protilahle matice zavisle na sebe 

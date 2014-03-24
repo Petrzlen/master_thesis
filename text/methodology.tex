@@ -2,9 +2,49 @@
 
 \section{Methodology and Design}
 
-\subsection{Environment} 
+\subsection{Models}
+
+\subsubsection{Previous} 
+
+\begin{itemize} 
+\item CHL
+\item GeneRec 
+\item BAL
+\end{itemize}  
+
+\subsubsection{Candidate selection} 
+Hidden distance (over 70\%) over in triangle (68.3 \%). 
+
+\input{tried-bal-recirculation}
+  
+\subsubsection{Long training} 
+even after 800,000 epochs there are some networks for which the error change
+
+\subsubsection{Other} 
+\begin{itemize} 
+\item Momentum
+\item Weight initialization 
+\item Dynamic weight lambda (no change after few tries TODO test again) 
+\item Batch mode (i.e. no shuffle and therefore deterministic)
+\item Multilayer GeneRec - 42\% on handwritten digit recognition 
+\item Dropout TODO (5\%,10\%,20\%,50\% chances)
+\item TODO Noise 
+\item TODO !Presenting in-out on which it has errors (based on rerun shuffle data). 
+\end{itemize} 
 
 \subsection{Evaluation methods} 
+
+\subsubsection{Success rate} 
+
+\begin{itemize}
+\item Overall success. 
+\item Bit success. 
+\item Pattern success. 
+\end{itemize} 
+
+\subsubsection{Epochs needed for convergence} 
+
+
 
 \subsection{Experiments}  
 

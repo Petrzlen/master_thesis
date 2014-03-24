@@ -62,6 +62,21 @@ sqlite3 measure.sqlite <<< "SELECT lambda, sigma, AVG(success) AS 'success' FROM
 # hidden dist depending on the error 
 # SELECT err, AVG(h_dist) FROM data WHERE epoch = (SELECT MAX(epoch) FROM data) GROUP BY err;
 
+# ======== MUTLI DIMENSIONAL DATA ======== (TODO) 
+# GNUPLOT: splot "./bal/data/hdist_stats_0.csv" using 1:2:3 with lines lt rgb "blue"
+# sample file: 
+##sigma  lambda  success
+#1       0.001   0.4
+#1       0.003   8.75
+#1       0.01    30.8
+#1       0.03    47.03389830508475
+#1       0.1     54.112554112554115
+#1       0.3     56.97211155378486
+#1       1       57.3394495412844
+#1.3     0.001   0.8264462809917356
+#1.3     0.003   14.354066985645932
+#1.3     0.01    32.5
+
 # ========== PRE MEASURE vs POST MEASURE ===========
 
 # do some correlations and covariances of measures 
