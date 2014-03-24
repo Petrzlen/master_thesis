@@ -109,6 +109,7 @@ public class BAL {
 	public static boolean INIT_SHUFFLE_IS = false;
 	public static boolean INIT_BATCH_IS = false;
 	public static boolean INIT_SYMMETRIC_IS = true; 
+	public static boolean INIT_TRAIN_ONLY_ON_ERROR = false; // network is trained only on samples which give error 
 
 	//which hidden layer neurons are active (bias is not counted), used for dropout
 	public static boolean DROPOUT_IS = false; //TODO check some runs, it gives error 
@@ -149,7 +150,8 @@ public class BAL {
 	public static int HIDDEN_REPRESENTATION_AFTER = 200;
 	public static int HIDDEN_REPRESENTATION_ONLY_EACH = 50;
 
-	public static  boolean PRINT_NETWORK_IS = false; //!TODO should be turned-off most of the times ! 
+	public static  boolean PRINT_NETWORK_IS = false;
+	public static  boolean PRINT_NETWORK_TO_FILE_IS = false; //!TODO should be turned-off most of the times ! 
 
 	//=======================  "TELEMETRY" of the network in time =========================== 
 	//TODO Consider as a MEASURE (avg_weight_change) 
@@ -304,12 +306,17 @@ public class BAL {
 		}
 
 		if(PRINT_NETWORK_IS){
+			System.out.println("----------Network before run: --------------");
+			System.out.println(network.printNetwork());
+			
 			log.println("----------Network before run: --------------"); 
 			log.println(network.printNetwork());
 
-			PrintWriter pw = new PrintWriter("data/networks/" + NETWORK_RUN_ID + "_pre.bal"); 
-			pw.write(network.printNetwork());
-			pw.close(); 
+			if(PRINT_NETWORK_TO_FILE_IS){
+				PrintWriter pw = new PrintWriter("data/networks/" + NETWORK_RUN_ID + "_pre.bal"); 
+				pw.write(network.printNetwork());
+				pw.close(); 
+			}
 		}
 
 		if(MEASURE_IS) { 
@@ -423,10 +430,15 @@ public class BAL {
 		if(PRINT_NETWORK_IS){
 			log.println("---------- Network after run: --------------");
 			log.println(network.printNetwork());
+			
+			System.out.println("----------Network after run: --------------");
+			System.out.println(network.printNetwork());
 
-			PrintWriter pw = new PrintWriter("data/networks/" + NETWORK_RUN_ID + "_post.bal"); 
-			pw.write(network.printNetwork());
-			pw.close(); 
+			if(PRINT_NETWORK_TO_FILE_IS){
+				PrintWriter pw = new PrintWriter("data/networks/" + NETWORK_RUN_ID + "_post.bal"); 
+				pw.write(network.printNetwork());
+				pw.close(); 
+			}
 		}
 
 		//print forward pass activations 
@@ -435,15 +447,20 @@ public class BAL {
 
 			if(PRINT_NETWORK_IS){
 				log.println("Forward pass:");
+				System.out.println("Forward pass:");
+				
 				for(int j=0; j<forward.length; j++){
 					log.print(BAL.printVector(forward[j]));
+					System.out.print(BAL.printVector(forward[j]));
 				}
 			}
 
 			BAL.postprocessOutput(forward[2]);
+			
 			log.print("Given:   " + BAL.printVector(forward[2]));
-			log.print("Expected:" + BAL.printVector(outputs.getRowVector(i)));
-			log.println();
+			log.println("Expected:" + BAL.printVector(outputs.getRowVector(i)));
+			System.out.print("Given:   " + BAL.printVector(forward[2]));
+			System.out.println("Expected:" + BAL.printVector(outputs.getRowVector(i)));
 		}
 		//print backward pass activations  
 		if(PRINT_NETWORK_IS){
@@ -451,8 +468,11 @@ public class BAL {
 				RealVector[] backward = network.backwardPass(outputs.getRowVector(i));
 
 				log.println("Backward pass:");
+				System.out.println("Backward pass:");
+				
 				for(int j=0; j<3; j++){
 					log.print(BAL.printVector(backward[j]));
+					System.out.print(BAL.printVector(backward[j]));
 				}
 			}
 		}
@@ -986,6 +1006,13 @@ public class BAL {
 
 	//learn on one input-output mapping
 	public void learn(RealVector in, RealVector target, double lambda){
+		if(INIT_TRAIN_ONLY_ON_ERROR){
+			if(evaluate(in, target) == 0.0){
+				//System.out.println("skip learning on " + printVector(in));
+				return;
+			}
+		}
+		
 		if(DROPOUT_IS){
 			for(int i=0; i<this.active_hidden.length ; i++){
 				this.active_hidden[i] = BAL.random.nextBoolean(); 
@@ -1630,12 +1657,13 @@ public class BAL {
 
 		INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3;  
 		INIT_LAMBDA = 0.7; 
-		INIT_MAX_EPOCHS = 1000000;
+		INIT_MAX_EPOCHS = 30000;
 		INIT_RUNS = 50; 
 		INIT_CANDIDATES_COUNT = 1;
 		INIT_SHUFFLE_IS = false;
 		INIT_BATCH_IS = false;
 		INIT_SYMMETRIC_IS = false; 	
+		INIT_TRAIN_ONLY_ON_ERROR = true; 
 		
 		LAMBDA_ERROR_MOMENTUM_IS = true; 
 		
@@ -1657,7 +1685,8 @@ public class BAL {
 		HIDDEN_REPRESENTATION_AFTER = 200;
 		HIDDEN_REPRESENTATION_ONLY_EACH = 200;
 
-		PRINT_NETWORK_IS = false;  
+		PRINT_NETWORK_IS = true;  
+		PRINT_NETWORK_TO_FILE_IS = false;
 		
 		experiment_Default();
 	}

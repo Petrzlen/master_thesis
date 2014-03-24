@@ -2338,4 +2338,30 @@ err sigma lambda momentum success sample_ratio
 
 Avg epochs: 2100
 
+========================= 24th of March ======================
+Text: 
+- BAL (roughly) 
+- Datasets
+- notes -> methodology & results & analysis 
+
+Tried training only on samples which are not learned:
+INIT_TRAIN_ONLY_ON_ERROR = true 
+
+And it lead to significant improvement (over 10\%) 
+
+err sigma lambda momentum success sample_ratio
+0.0 2.3 0.7 0.1 62.0 124/200
+1.0 2.3 0.7 0.1 21.5 43/200
+2.0 2.3 0.7 0.1 11.0 22/200
+3.0 2.3 0.7 0.1 4.5 9/200
+4.0 2.3 0.7 0.1 1.0 2/200
+
+Avg epochs: 2251
+
+Vau, such result. TODO: find citation "neural networks training on error samples" - not found. 
+
+
+TODO: Analyse why stop learning in error state (there is also difference between expected and given on HO and HI) 
+- but activations on hidden seems settled (print weight update matrices) 
+
 
