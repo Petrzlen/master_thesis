@@ -2365,3 +2365,62 @@ TODO: Analyse why stop learning in error state (there is also difference between
 - but activations on hidden seems settled (print weight update matrices) 
 
 
+
+=========================== 25th of March (36d to go) ====================
+Examining activations closely. 
+
+Activations on the hidden layer tend to be same 
+and IH \approx OH and HI \approx HO (bias makes the difference) 
+
+IH, OH tend to have low weights, but HI and HO arbitrary big (pushing to 0.9999... and 0.000... resp.) 
+
+When SHUFFLE_IS = false && INIT_TRAIN_ONLY_ON_ERROR = true then we observed oscialtion between several states (when activations on the hidden layer where settled) 
+
+====== Without shuffle and INIT_TRAIN_ONLY_ON_ERROR = true: 
+PostMeasure : GroupBy
+err sigma lambda momentum success sample_ratio
+0.0 2.3 0.7 0.0 59.099999999999994 591/1000
+1.0 2.3 0.7 0.0 29.299999999999997 293/1000
+2.0 2.3 0.7 0.0 8.9 89/1000
+3.0 2.3 0.7 0.0 2.5 25/1000
+4.0 2.3 0.7 0.0 0.2 2/1000
+
+Avg epochs: 2146
+
+====== With shuffle and INIT_TRAIN_ONLY_ON_ERROR = true: 
+PostMeasure : GroupBy
+err sigma lambda momentum success sample_ratio
+0.0 2.3 0.7 0.0 61.5 615/1000
+1.0 2.3 0.7 0.0 23.0 230/1000
+2.0 2.3 0.7 0.0 12.0 120/1000
+3.0 2.3 0.7 0.0 3.4000000000000004 34/1000
+4.0 2.3 0.7 0.0 0.1 1/1000
+
+Avg epochs: 2052
+
+====== Without shuffle and INIT_TRAIN_ONLY_ON_ERROR = false: 
+err sigma lambda momentum success sample_ratio
+0.0 2.3 0.7 0.0 57.199999999999996 572/1000
+1.0 2.3 0.7 0.0 32.1 321/1000
+2.0 2.3 0.7 0.0 10.2 102/1000
+3.0 2.3 0.7 0.0 0.4 4/1000
+4.0 2.3 0.7 0.0 0.1 1/1000
+
+Avg epochs: 3014
+
+
+====== With shuffle and INIT_TRAIN_ONLY_ON_ERROR = false: 
+PostMeasure : GroupBy
+err sigma lambda momentum success sample_ratio
+0.0 2.3 0.7 0.0 62.4 624/1000
+1.0 2.3 0.7 0.0 30.2 302/1000
+2.0 2.3 0.7 0.0 7.1 71/1000
+3.0 2.3 0.7 0.0 0.3 3/1000
+
+Avg epochs: 2182
+
+INTERESTING => Shuffle helps success and epochs, INIT_TRAIN_ONLY_ON_ERROR helps epochs
+
+TODO: more investigation on why not learned 
+====== With shuffle and INIT_TRAIN_ONLY_ON_ERROR = false === 
+== How last activations looked like 
