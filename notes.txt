@@ -2466,4 +2466,151 @@ Hidden activations are stable:
 =========================== 26th of March (35d to go) ====================
 
 
+epoch | error 
+29987: 2.0
+29988: 1.0
+29989: 1.0
+29990: 1.0
+29991: 1.0
+29992: 1.0
+29993: 1.0
+29994: 2.0
 
+==== error 0 29995
+Forward pass:
+1 0 0 0 1
+0.9129 0.1672 1
+0.4805 0.0347 0.0001 0.0014
+Given:   0 0 0 0
+Expected:1 0 0 0
+
+#MOM_HO
+3 4
+0.332 -0.0222 -0.0001 -0.0009
+0.0608 -0.0041 -0 -0.0002
+0.3637 -0.0243 -0.0001 -0.001
+
+==== error 1 29995
+Forward pass:
+0 1 0 0 1
+0.9753 0.1476 1
+0.6907 0.963 0 0.0019
+Given:   1 1 0 0
+Expected:0 1 0 0
+
+#MOM_HO
+3 4
+-0.4716 0.0253 -0 -0.0013
+-0.0714 0.0038 -0 -0.0002
+-0.4835 0.0259 -0 -0.0014
+
+Conclusion: 
+  As the activations on the hidden layer are held constant then the weight change on the 
+  HI and HO depend mostly on these activations. By presenting the network with 
+  both 0-1 and 1-0 erros it could occur it will never learn both as it will be pushed from
+  one side to another. 
+  
+  Possible solution: 
+    Ensure IH, OH will be settled late enough 
+      TODO: try different lambda for these layers
+      TODO: try some noise (bias or weight) - 
+      so the forward / backward hidden activation will be not same
+      TODO: what else? 
+
+epoch | error 
+29983: 1.0
+29984: 1.0
+29985: 1.0
+29986: 1.0
+29987: 1.0
+29988: 1.0
+29989: 1.0
+29990: 1.0
+29991: 1.0
+29992: 1.0
+29993: 1.0
+29994: 1.0
+
+
+==== error 0 29995
+Forward pass:
+1 0 0 0 1
+0.4276 0.2185 1
+0.3316 0.0002 0.0013 0.007
+Given:   0 0 0 0
+Expected:1 0 0 0
+
+#MOM_HO
+3 4
+0.2001 -0.0001 -0.0004 -0.0021
+0.1022 -0 -0.0002 -0.0011
+0.4679 -0.0001 -0.0009 -0.0049
+
+==== error 3 29995
+Forward pass:
+0 0 0 1 1
+0.5431 0.2943 1
+0.5071 0.0005 0 0.9925
+Given:   1 0 0 1
+Expected:0 0 0 1
+
+#MOM_HO
+3 4
+-0.1928 -0.0002 -0 0.0028
+-0.1045 -0.0001 -0 0.0015
+-0.355 -0.0004 -0 0.0052
+
+
+==== error 0 29996
+Forward pass:
+1 0 0 0 1
+0.4276 0.2185 1
+0.2941 0.0002 0.0013 0.007
+Given:   0 0 0 0
+Expected:1 0 0 0
+
+#MOM_HO
+3 4
+0.2113 -0.0001 -0.0004 -0.0021
+0.108 -0 -0.0002 -0.0011
+0.4942 -0.0001 -0.0009 -0.0049
+
+==== error 3 29996
+Forward pass:
+0 0 0 1 1
+0.5431 0.2943 1
+0.529 0.0005 0 0.9925
+Given:   1 0 0 1
+Expected:0 0 0 1
+
+#MOM_HO
+3 4
+-0.2011 -0.0002 -0 0.0029
+-0.109 -0.0001 -0 0.0015
+-0.3703 -0.0004 -0 0.0052
+
+
+==============  try different lambda for these layers ===============
+I set different lambda for IH and OH - so the network should settle hidden activations later. 
+First 100 runs suggest 69% success (62% baseline). 
+
+Shit (for 0.3): 
+err sigma lambda momentum success sample_ratio
+0.0 2.3 0.7 0.0 62.4 624/1000
+1.0 2.3 0.7 0.0 31.7 317/1000
+2.0 2.3 0.7 0.0 5.7 57/1000
+3.0 2.3 0.7 0.0 0.2 2/1000
+
+Avg epochs: 2548
+
+Hell yeah!: 
+err	sigma	lambda	lambda_ithr	momentum success sample_ratio
+0.0	2.3	0.7	0.01	0.0	78.99159663865547 94/119
+0.0	2.3	0.7	0.02	0.0	68.75 77/112
+0.0	2.3	0.7	0.05	0.0	67.16417910447761 90/134
+0.0	2.3	0.7	0.1	0.0	60.37735849056604 64/106
+0.0	2.3	0.7	0.2	0.0	54.285714285714285 57/105
+0.0	2.3	0.7	0.3	0.0	66.33663366336634 67/101
+0.0	2.3	0.7	0.5	0.0	67.02127659574468 63/94
+0.0	2.3	0.7	0.7	0.0	60.17699115044248 68/113
+0.0	2.3	0.7	1.0	0.0	63.793103448275865 74/116
