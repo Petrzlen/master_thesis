@@ -2424,3 +2424,46 @@ INTERESTING => Shuffle helps success and epochs, INIT_TRAIN_ONLY_ON_ERROR helps 
 TODO: more investigation on why not learned 
 ====== With shuffle and INIT_TRAIN_ONLY_ON_ERROR = false === 
 == How last activations looked like 
+
+
+Epoch | Error 
+29966: 2.0
+29967: 1.0
+29968: 2.0
+29969: 1.0
+29970: 1.0
+29971: 2.0
+29972: 1.0
+29973: 2.0
+29974: 1.0
+29975: 1.0
+29976: 2.0
+29977: 1.0
+29978: 1.0
+29979: 1.0
+29980: 1.0
+29981: 1.0
+29982: 2.0
+29983: 2.0
+29984: 2.0
+29985: 2.0
+29986: 2.0
+29987: 2.0
+29988: 1.0
+29989: 1.0
+29990: 2.0
+29991: 2.0
+29992: 2.0
+29993: 2.0
+29994: 2.0
+
+Resembles oscilation 
+Hidden activations are stable: 
+0.1037 0.0722 1
+0.1051 0.0567 1
+
+
+=========================== 26th of March (35d to go) ====================
+
+
+

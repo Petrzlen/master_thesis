@@ -72,13 +72,15 @@ import org.apache.commons.math3.linear.RealVector;
 public class BAL {
 	//manage IO and run BAL 
 	public static void main(String[] args) throws IOException {
+		DECIMAL_FORMAT.setMaximumFractionDigits(4);
+		
 		//experiment_Default();
 		//experiment_DifferentHiddenSizes("k12");
 		//experiment_RerunGoodBad();
 		experiment_TestImplementation();
 	}
 	
-	private static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#");
+	private static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0"); 
 
 	private static boolean IS_PRINT = false; 
 
@@ -377,15 +379,19 @@ public class BAL {
 				RealVector in = inputs.getRowVector(order_i);
 				RealVector out = outputs.getRowVector(order_i);
 
-				if(epochs > INIT_MAX_EPOCHS - 5) {// && network.evaluate(in, out) > 0.0){
+				boolean print_state_is = epochs > INIT_MAX_EPOCHS - 6 && network.evaluate(in, out) > 0.0;  
+				if(print_state_is){
 					System.out.println("==== error " + order_i + " " + epochs);
 					printForwardPass(network.forwardPass(in), out);
 					printBackwardPass(network.backwardPass(out));
-					System.out.println(network.printMomentum());
 				}
 				
 				network.learn(in, out, calculateLambda(INIT_LAMBDA, epochs));
 
+				if(print_state_is){
+					System.out.println(network.printMomentum());
+				}
+				
 				RealVector[] forwardPass = network.forwardPass(in); 
 
 				if(is_save_hidden_representation){
@@ -480,10 +486,10 @@ public class BAL {
 	}
 
 	private static double calculateLambda(double init_lambda, double last_err) {
-		//return init_lambda; 
+		return init_lambda; 
 		//return init_lambda * Math.max(1.0, (100 / (epochs + 50)));
 
-		return init_lambda * Math.max(0.5, 2 * Math.abs(last_err)); 
+		//return init_lambda * Math.max(0.5, 2 * Math.abs(last_err)); 
 	}
 
 	//interpret activations on the output layer 
@@ -1714,6 +1720,7 @@ public class BAL {
 
 		INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3;  
 		INIT_LAMBDA = 0.7; 
+		INIT_MOMENTUM = 0.0; 
 		INIT_MAX_EPOCHS = 30000;
 		INIT_RUNS = 10; 
 		INIT_CANDIDATES_COUNT = 1;
