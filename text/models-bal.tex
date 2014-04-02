@@ -7,11 +7,12 @@ that allows completely bidirectional associations to be established (GeneRec
 focuses on input-to-output mapping). Unlike GeneRec, BAL uses two pairs of
 weight matrices for each activation phase. In addition, in BAL we do not use
 dynamical settling process but compute the activations in one step as described
-in the following table: \cite{farkas2013bal}.
+in the following table: \citet{farkas2013bal}.
 
+%TODO prekreslit do IPE 
 \begin{center} 
-\includegraphics{img/table_bal.png} 
-\cite{farkas2013bal} 
+\includegraphics[scale=0.5]{img/table_bal.png} 
+\citet{farkas2013bal} 
 \end{center}
 
 We avoid input-output notation of layers as used in GeneRec, because in our
@@ -37,7 +38,7 @@ $$
 \Delta w_{pq}^B = \lambda a^B_p(a_q^F - a_q^B)
 $$
 All units have trainable thresholds (biases) that are updated in the same way
-as regular weights (being fed with a constant input 1) \cite{farkas2013bal}.
+as regular weights (being fed with a constant input 1) \citet{farkas2013bal}.
  
 
 

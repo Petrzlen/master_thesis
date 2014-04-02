@@ -1,7 +1,10 @@
 % The theory and concepts of your work. For example, if you work on compiler you can mention about how compiler works without getting much into detail.
 
-\paragraph{Network.}
-%TODO Use some standard notation - reader is someone who knows something about the field (no deep knowledge) 
+TODO Use some standard notation - reader is someone who knows something about the field (no deep knowledge) 
+TODO from book Haykin 
+
+\paragraph{Neural network.}
+
 In general we can define a neural network as a directed weighted graph. Each \emph{unit} (vertex) has its \emph{activation} and usually it changes in discrete time. The \emph{state} of a neural network are current \emph{weights} of edges and current activations. 
 
 \paragraph{Net inuput.}
@@ -26,7 +29,7 @@ where $y_j$ are the activations on output units and $t_j$ are the target values.
 
 \paragraph{Learning rule.}
 As soon as the error function is defined for the network we can derive an easy rule which applies gradient descent: 
-$$\frac{\delta E}{\delta w_{ji}}$$
+$$\frac{\partial E}{\partial w_{ji}}$$
 for each weight. The learning rule describes how to change weights to decrease the error functions.
 
 \paragraph{Input layer.}
@@ -42,7 +45,7 @@ Set of units which are both not input or output.
 %TODO necessary? 
 Threshold unit $\theta$ is a form of bias. We can see it as an activator. If the treshold value is high then the activity of the corresponding unit is high and if the treshold value is low then the activity of the corresponding unit is low. 
 
-The treshold term can be elimated by giving every unit an extra input connection whose activity level is fixed at 1. The weight on this special connection is the negative of the treshold, and it can be learned in just the same way as the other weights  \cite{hinton1988learning}.
+The treshold term can be elimated by giving every unit an extra input connection whose activity level is fixed at 1. The weight on this special connection is the negative of the treshold, and it can be learned in just the same way as the other weights  \citet{hinton1988learning}.
 
 This method is usually assumed in all papers. 
 

@@ -88,6 +88,22 @@ The analysis presented earlier in the paper shows that GeneRec should compute th
   
 (PINnc89.pdf) 
 
+\paragraph{Generec-Bias} 
+Therefore we tried several settings: 
+\begin{itemize} 
+\item No bias - two patterns for 4-2-4, three patterns for 4-3-4, all four patterns for 4-4-4
+\item Bias only on the input layer:  
+4-2-4 best network error = 3.0 (tended to have two very profiled (0.95+, 0, 0, 0) and two very even (0.5, 0.5, 0.5, 0.5)  \\
+4-3-4 about 75\% success rate 
+\item Bias on both input and hidden layers: 
+    4-2-4 0.0 1.0 0.5 0.1 91.74311926605505 100/109, almost no 1.0 errors 
+          epochs ranged from 9 to 4500 \\ 
+    4-3-4 about 100\% succes rate with about 20 epochs (epoch ranged from 5 to 700) 
+\item Bias on all matrices (IH, HO, OH): 
+    seems to add a little chaos with a slighty worse performance (but maybe bad sigma)
+
+\end{itemize} 
+
 $$r_x\frac{dx_i}{dt} = -x_i + \sum_j w_{ij} f(x_j) + I_i$$
 TODO: Frome where comes this equation? 
 
@@ -136,7 +152,7 @@ cay appears to reliably improve generalization performance in both Bp and GeneRe
 substantial. The weight-elimination version of weight decay always appears to impair, rather than improve,
 performance. Although the specific forms of weight decay explored here were not overly successful in
 this task, it is possible that other forms might perform better. Nevertheless, most forms of weight decay
-\cite{o2001generalization} 
+\citet{o2001generalization} 
 
 \subsubsection{Measure - Weight patterns} 
 An examination of the weights in the trained networks clearly shows why generalization is impaired in the
@@ -145,7 +161,7 @@ that can be independently combined for the novel testing items — instead, each
 input/output mapping for multiple slots. Although this is true for both the backpropagation and GeneRec
 networks, it is particularly damaging for the interactive GeneRec network because of its attractor dynamics.
 In contrast, the feedforward backpropagation network is still capable of producing a roughly linear combi-
-nation of hidden unit activations that yields reasonable (though far from perfect) levels of generalization. \cite{o2001generalization} 
+nation of hidden unit activations that yields reasonable (though far from perfect) levels of generalization. \citet{o2001generalization} 
 
 Figure 7: Average pairwise overlap (normalized dot product or cosine) between hidden patterns corresponding to
 inputs that differ by a) 75\% (1 out of 4 slots different) and b) 50\% (2 out of 4 slots different). Feedforward back-

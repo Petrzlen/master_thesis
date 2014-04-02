@@ -3,7 +3,7 @@
 
 %TODO byt strucny ako sa len da
 %TODO uvod & prehlad = preco je tento vysledok dolezity
-
+%TODO 4-5 riadkov na jeden odstavec 
 
 
 \documentclass[12pt,a4paper]{article}
@@ -33,6 +33,9 @@
 \usepackage[small,bf]{caption}
 \usepackage[T1]{fontenc}   
 
+\usepackage{apalike}
+\let\bibhang\relax
+\usepackage[authoryear]{natbib}
                                   
 \hypersetup{%  http://www.tug.org/applications/hyperref/
     bookmarksnumbered,
@@ -167,17 +170,10 @@
 % 2) Implementation – in implementation section you should mention the tools that you use to implement, the target environment (e.g. linux, windows). Limitations (e.g. buffer sizes, connections number).
 %
 %If necessary you can add additional sections such as Discussion to discuss or emphasize on the interesting design points.
-
-%\newpage
-%    \input{design} % I think it's more appropriate to use only "Methodology" in my case 
-%\newpage
-%    \input{implementation}
    
 % ==================== 14. Experimental Results and Analysis ========================
 \newpage
     \input{methodology}
-\newpage
-    \input{implementation}
 \newpage
     \input{results_and_analysis}
     
@@ -199,6 +195,6 @@
 % ==================== 19. Assignment ========================
 %At the end of your thesis you can attach resources such as source code (or something like ASCII code table) that would improve the completeness of your thesis.
 \newpage
-    \input{appendixa}
+    \input{appendix-implementation}
 
 \end{document}
