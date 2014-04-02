@@ -64,7 +64,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
-import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.*;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -95,8 +95,6 @@ public class BAL {
 	private static boolean RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING = false; // average of last two activations will be used instead of the last one (intuition: more stable) 
 
 	private static boolean LAMBDA_ERROR_MOMENTUM_IS = false; 
-	private static double LAMBDA_ITHR_TRY[] = {0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0}; 
-	private static double LAMBDA_INPUT_TO_HIDDEN_RATIO = 0.3; 
 
 	private static PrintWriter log = null; 
 
@@ -134,11 +132,14 @@ public class BAL {
 	//public static double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {0.3, 0.5, 0.7, 1.0};
 
 	public static double INIT_LAMBDA = 0.7; 
-	public static  double TRY_LAMBDA[] = {0.7}; 
+	//public static  double TRY_LAMBDA[] = {0.7}; 
 	//public static  double TRY_LAMBDA[] = {0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2}; 
-	//public static  double TRY_LAMBDA[] = {0.03, 0.1, 0.3, 0.5, 0.7, 0.9, 1.1, 1.3, 1.5, 1.8, 2.2};
+	public static  double TRY_LAMBDA[] = {0.03, 0.1, 0.3, 0.5, 0.7, 1.1, 1.5, 2.0, 3.0};
 	//public static double TRY_LAMBDA[] = {0.7, 0.8, 0.9, 1.0, 1.1, 1.2}; 
 
+	private static double LAMBDA_IH_TRY[] = {0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 2.0}; 
+	private static double LAMBDA_IH = 0.001; 
+	
 	//public static  double TRY_NOISE_SPAN[] = {0.0, 0.003, 0.01, 0.03, 0.1, 0.3}; 
 	//public static  double TRY_MULTIPLY_WEIGHTS[] = {1.0, 1.00001, 1.00003, 1.0001, 1.0003, 1.001}; 
 
@@ -163,7 +164,10 @@ public class BAL {
 	//=======================  "TELEMETRY" of the network in time =========================== 
 	//TODO Consider as a MEASURE (avg_weight_change) 
 	public static Map<Integer, String> MEASURE_RUN_ID = new HashMap<Integer, String>(); 
-	public static  String[] MEASURE_HEADINGS = {"epoch", "err", "sigma", "lambda", "momentum", "h_dist","h_f_b_dist","m_avg_w","m_sim", "first_second", "o_f_b_dist", "in_triangle", "fluctuation", "lambda_ithr"};
+	public static  String[] MEASURE_HEADINGS = {
+		"epoch", "err", "sigma", "lambda", "momentum", 
+		"h_dist","h_f_b_dist","m_avg_w","m_sim", "first_second", 
+		"o_f_b_dist", "in_triangle", "fluctuation", "lambda_ih"};
 	public static  int MEASURE_EPOCH = 0;
 	public static  int MEASURE_ERROR = 1; //error function (RMSE) 
 	public static  int MEASURE_SIGMA = 2; 
@@ -198,12 +202,12 @@ public class BAL {
 	//how much differ activations when iterative method is used 
 	public static int MEASURE_FLUCTUATION = 12; 
 	
-	public static int MEASURE_LAMBDA_ITHR = 13; 
+	public static int MEASURE_LAMBDA_IH = 13; 
 
 	public static int MEASURE_COUNT = 14;  
 
 	//public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_IN_TRIANGLE};
-	public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_LAMBDA_ITHR, MEASURE_MOMENTUM};
+	public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_LAMBDA_IH, MEASURE_MOMENTUM};
 
 	public static  int MEASURE_GROUP_BY = MEASURE_ERROR;  
 
@@ -273,7 +277,7 @@ public class BAL {
 		BAL.INIT_NORMAL_DISTRIBUTION_SIGMA = BAL.TRY_NORMAL_DISTRIBUTION_SIGMA[random.nextInt(BAL.TRY_NORMAL_DISTRIBUTION_SIGMA.length)]; 
 		BAL.INIT_LAMBDA = BAL.TRY_LAMBDA[random.nextInt(BAL.TRY_LAMBDA.length)];
 		BAL.INIT_MOMENTUM = BAL.TRY_MOMENTUM[random.nextInt(BAL.TRY_MOMENTUM.length)];
-		BAL.LAMBDA_INPUT_TO_HIDDEN_RATIO = BAL.LAMBDA_ITHR_TRY[random.nextInt(BAL.LAMBDA_ITHR_TRY.length)];
+		BAL.LAMBDA_IH = BAL.LAMBDA_IH_TRY[random.nextInt(BAL.LAMBDA_IH_TRY.length)];
 		//BAL.INIT_NOISE_SPAN = BAL.TRY_NOISE_SPAN[random.nextInt(BAL.TRY_NOISE_SPAN.length)];
 		//BAL.INIT_MULTIPLY_WEIGHTS = BAL.TRY_MULTIPLY_WEIGHTS[random.nextInt(BAL.TRY_MULTIPLY_WEIGHTS.length)];
 
@@ -492,7 +496,7 @@ public class BAL {
 	}
 	private static double calculateLambda(double init_lambda, int weight_matrix) {
 		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL){
-			return init_lambda * ((weight_matrix == MATRIX_IH || weight_matrix == MATRIX_OH) ? LAMBDA_INPUT_TO_HIDDEN_RATIO : 1.0);
+			return init_lambda * ((weight_matrix == MATRIX_IH || weight_matrix == MATRIX_OH) ? LAMBDA_IH : 1.0);
 		}
 		else{
 			return init_lambda; 
@@ -1258,8 +1262,8 @@ public class BAL {
 			result[MEASURE_MATRIX_SIMILARITY] = matrix_similarity;
 		}
 		
-		if(MEASURE_LAMBDA_ITHR < MEASURE_COUNT){
-			result[MEASURE_LAMBDA_ITHR] = BAL.LAMBDA_INPUT_TO_HIDDEN_RATIO; 
+		if(MEASURE_LAMBDA_IH < MEASURE_COUNT){
+			result[MEASURE_LAMBDA_IH] = BAL.LAMBDA_IH; 
 		}
 
 		if(isSave){
@@ -1734,7 +1738,7 @@ public class BAL {
 		INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3;  
 		INIT_LAMBDA = 0.7; 
 		INIT_MAX_EPOCHS = 30000;
-		INIT_RUNS = 10000; 
+		INIT_RUNS = 50000; 
 		INIT_CANDIDATES_COUNT = 1;
 		INIT_SHUFFLE_IS = true;
 		INIT_BATCH_IS = false;
@@ -1742,7 +1746,7 @@ public class BAL {
 		INIT_TRAIN_ONLY_ON_ERROR = false; 
 
 		LAMBDA_ERROR_MOMENTUM_IS = false; 
-		LAMBDA_INPUT_TO_HIDDEN_RATIO = 0.3; //TODO add as measure  
+		LAMBDA_IH = 0.001;   
 
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 		RECIRCULATION_ITERATIONS_MAX = 200; //maximum number of iterations to approximate the underlying dynamic system  
