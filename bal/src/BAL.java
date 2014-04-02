@@ -496,7 +496,7 @@ public class BAL {
 	}
 	private static double calculateLambda(double init_lambda, int weight_matrix) {
 		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL){
-			return init_lambda * ((weight_matrix == MATRIX_IH || weight_matrix == MATRIX_OH) ? LAMBDA_IH : 1.0);
+			return  ((weight_matrix == MATRIX_IH || weight_matrix == MATRIX_OH) ? LAMBDA_IH : init_lambda);
 		}
 		else{
 			return init_lambda; 

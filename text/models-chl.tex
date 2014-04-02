@@ -27,13 +27,26 @@ deterministic Boltzmann machine (DBM) \citet{o1996bio}, \citet{o2001generalizati
 
 Movellan introduced notation for the plus (+) phase when both input and output are clamped and minus (-) phase when input is clamped and output is free. 
 
-%TODO: How the activations are changed? 
-%TODO: Are the activation of CHL same as in GeneRec (so just the update rule is changed?) 
-%TODO prekreslit do IPE 
-\begin{center} 
-\includegraphics{img/table_generec.png} 
-\citet{farkas2013bal} 
-\end{center} 
+%TODO: Check if correct 
+\begin{table}
+  \centering
+  \caption{Equilibrium network variables in CHL model \citet{farkas2013bal}.}
+  \label{tab:chl-states}
+  \begin{tabular}{|cccc|}
+    \hline
+    Layer & Phase & Net Input & Activation\\
+    \hline
+    Input (s)    & $-$ & - & $s_i$ = stimulus input\\
+    \hline
+    Hidden (h)   & $-$ & \hspace{0.3cm}$\eta^{-}_j = \sum_i w_{ij}s_i + \sum_k w_{kj}o^{-}_k$\hspace{0.3cm} &
+    $h^{-}_j = \sigma(\eta^{-}_j)$\hspace{0.3cm}\\
+          &  +  & $\eta^{+}_j = \sum_{i}w_{ij}s_i + \sum_k w_{kj}o^{+}_k$ & $h^{+}_{j} = \sigma(\eta^{+}_j)$ \\
+    \hline
+    Output (o) & $-$ & $\eta^{-}_k = \sum_j w_{jk}h_j$ & $o^{-}_k = \sigma(\eta^{-}_k)$\\
+           &  +  & - & $o^{+}_k$ = target output \\
+    \hline
+  \end{tabular}
+\end{table}
 
 \paragraph{Original equations.}
 Define a continuous Hopfield Energy function $F = E + S$ where

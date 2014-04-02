@@ -15,11 +15,32 @@ GeneRec: the expectation of the network (called \emph{minus}
 phase) and the training signal (also called \emph{plus} phase).
 \citet{schneider2009application} 
 
+\begin{table}
+  \centering
+  \caption{Equilibrium network variables in GeneRec model \citet{farkas2013bal}.}
+  \label{tab:gr-states}
+  \begin{tabular}{|cccc|}
+    \hline
+    Layer & Phase & Net Input & Activation\\
+    \hline
+    Input (s)    & $-$ & - & $s_i$ = stimulus input\\
+    \hline
+    Hidden (h)   & $-$ & \hspace{0.3cm}$\eta^{-}_j = \sum_i w_{ij}s_i + \sum_k w_{kj}o^{-}_k$\hspace{0.3cm} &
+    $h^{-}_j = \sigma(\eta^{-}_j)$\hspace{0.3cm}\\
+          &  +  & $\eta^{+}_j = \sum_{i}w_{ij}s_i + \sum_k w_{kj}o^{+}_k$ & $h^{+}_{j} = \sigma(\eta^{+}_j)$ \\
+    \hline
+    Output (o) & $-$ & $\eta^{-}_k = \sum_j w_{jk}h_j$ & $o^{-}_k = \sigma(\eta^{-}_k)$\\
+           &  +  & - & $o^{+}_k$ = target output \\
+    \hline
+  \end{tabular}
+\end{table}
 
-%TODO prekreslit do IPE 
-\begin{center} 
-\includegraphics{img/table_generec.png} \citet{farkas2013bal}
-\end{center} 
+The basic weight update rule in GeneRec is:
+\begin{equation}
+  \Delta w_{pq} = \lambda \ a^{-}_p(a^{+}_q - a^{-}_q)
+\label{eq:generec}
+\end{equation}
+where $a^{-}_p$ denotes the presynaptic and $a^{-}_q$ denotes the postsynaptic unit activation in minus phase, $a^{+}_p$ is the presynaptic activation from plus phase (in output-to-hidden direction) and $\lambda$ denotes the learning rate. The learning rule given in Eq.~\ref{eq:generec} is applied to both input-hidden and hidden-output weights.  Due to the lack of space, the reader is left to consult the original paper \citet{o1996bio} regarding the underlying math behind the derivation of the GeneRec learning rule.
 
 \paragraph{Minus phase.} When units xi are presented to the input layer A, there is the propagation of this stimulus to the hidden layer B (bottom-up propagation) (figure 1). At the same time, the previous output ok propagates from the output layer C to the hidden layer B (top- down propagation) (figure 2). Then the hidden activation \emph{minus} - minus phase - ($h^-$ ) is generated (sum of bottom-up and top-down propagations). The activation function $\sigma$ is sigmoid. Equation 1 shows the hidden activation calculus for one hidden unit j. wij are the synaptic weights from the input layer to the hidden layer and wjk are the synaptic weights from the hidden layer to the output layer (which are the same as the weights from the output layer to the hidden layer, because reciprocal weights are symmetric in GeneRec, that is, wjk = wkj \citet{o1996bio}). ok(t-1) is the previous output (output on time t - 1) \citet{orru2008sabio}.
 

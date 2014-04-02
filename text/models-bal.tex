@@ -1,44 +1,42 @@
 % If your work builds on top of an existing one, this is the place to describe the existing work in more detail, pointing out the parts that you extend or improve and why you extend or improve these parts.
 
-%TODO Reformulate 
-Bidirectional Activation-based Learning algorithm (BAL) shares with GeneRec
-the phase-based activations and unit types, but differs from it by the connectivity
-that allows completely bidirectional associations to be established (GeneRec
-focuses on input-to-output mapping). Unlike GeneRec, BAL uses two pairs of
-weight matrices for each activation phase. In addition, in BAL we do not use
-dynamical settling process but compute the activations in one step as described
-in the following table: \citet{farkas2013bal}.
+TODO Reformulate 
 
-%TODO prekreslit do IPE 
-\begin{center} 
-\includegraphics[scale=0.5]{img/table_bal.png} 
-\citet{farkas2013bal} 
-\end{center}
+ Bidirectional Activation-based Learning algorithm (BAL) shares with GeneRec the phase-based activations and unit types, but differs from it by the connectivity that allows completely bidirectional associations to be established (GeneRec focuses on input-to-output mapping). Unlike GeneRec, BAL uses two pairs of weight matrices for each activation phase. In addition, in BAL we do not use dynamical settling process but compute the activations in one step as described in Table \ref{tab:bal-states}.
 
-We avoid input-output notation of layers as used in GeneRec, because in our
-case not only output can be evoked by input presentation, but also vice versa.
-Hence, we label the two outer (visible) layers $x$ and $y$ and the hidden layer $h$.
-Let forward activation be denoted by subscript $F$, backward activation denoted
-by subscript $B$. Then during the forward pass, the $x$ units are clamped to $x^F$
-and we get the activations $x^F \Rightarrow h^F \Rightarrow y^F$. During the backward pass, the $y$
-units are clamped to $y^B$ and we get the activations $y^B \Rightarrow h^B \Rightarrow x^B$.
+\begin{table}
+  \centering
+  \caption{Activation phases and states in BAL model.}
+  \label{tab:bal-states}
+  \begin{tabular}{|cccl|}
+    \hline
+    Layer & Phase & Net Input & Activation\\
+    \hline
+    \Bx & F & - & $x^{\rm F}_i$ = stimulus\\ [1ex]
+    \Bh & F & \hspace{0.3cm}$\eta^{\rm F}_j = \sum_i w^{IH}_{ij}x^{F}_i$\hspace{0.3cm} & $h^{\rm F}_j = \sigma(\eta^{\rm F}_j)$\hspace{0.3cm}\\ [1ex]
+    \By & F & $\eta^{\rm F}_k = \sum_j w^{HO}_{jk}h^{F}_j$ & $y^{\rm F}_k = \sigma(\eta^{\rm F}_k)$\\ [1ex]
+    \hline
+    \By & B & - & $y^{\rm B}_k$ = stimulus\\ [1ex]
+    \Bh & B & $\eta^{\rm B}_j = \sum_k w^{OH}_{kj}y^{\rm B}_k$ & $h^{\rm B}_j = \sigma(\eta^{\rm B}_j)$\\ [1ex]
+    \Bx & B  & $\eta^{\rm B}_i = \sum_j w^{HI}_{ji}h^{\rm B}_j$ & $x^{\rm B}_i = \sigma(\eta^{\rm B}_i)$\\
+    \hline
+  \end{tabular}
+\end{table}
 
-The mechanism of weights update partially matches that of GeneRec. Each
-weight in BAL network (i.e. belonging to one of the four weight matrices) is
-updated using the same learning mechanism, according to which the weight
-difference is proportional to the product of the presynaptic (sending) unit ac-
-tivation ap and the difference of postsynaptic (receiving) unit activations aq ,
-corresponding to two activation phases ($F$ and $B$, in particular order). Namely,
-weights in $x$-to-$y$ direction (belonging to $h$ and $y$ units) are updated as
-$$
-\Delta w_{pq}^F = \lambda a_p^F(a_q^B - a_q^F)
-$$
-where, as in the GeneRec algorithm, $a^F_p$ denotes the presynaptic activity, $a^F_q$ is the postsynaptic activity, and $a^B_q$ denotes the postsynaptic activity from the opposite phase ($y$-to-$h$). Analogically, the weights in $y$-to-$x$ direction (belonging to $h$ and $x$ units) are updated as 
-$$
-\Delta w_{pq}^B = \lambda a^B_p(a_q^F - a_q^B)
-$$
-All units have trainable thresholds (biases) that are updated in the same way
-as regular weights (being fed with a constant input 1) \citet{farkas2013bal}.
+We avoid input-output notation of layers as used in GeneRec, because in our case not only output can be evoked by input presentation, but also vice versa. Hence, we label the two outer (visible) layers \Bx \ and \By \ and the hidden layer \Bh. Let forward activation be denoted by subscript F, backward activation denoted by subscript B. Then during the forward pass, the \Bx \ units are clamped to $\Bx^{\rm F}$ and we get the activations $\Bx^{\rm F}\rightarrow\Bh^{\rm F}\rightarrow$ $\By^{\rm F}$. During the backward pass, the \By \ units are clamped to $\By^{\rm B}$ and we get the activations $\By^{\rm B}$ $\rightarrow$ $\Bh^{\rm B}\rightarrow\Bx^{\rm B}$.
+
+The mechanism of weights update partially matches that of GeneRec. Each weight in BAL network (i.e.~belonging to one of the four weight matrices) is updated using the same learning mechanism, according to which the weight difference is proportional to the product of the presynaptic (sending) unit activation $a_p$ and the difference of postsynaptic (receiving) unit activations $a_q$, corresponding to two activation phases (F and B, in particular order). Namely, weights in \Bx-to-\By \ direction (belonging to \Bh \ and \By \ units) are updated as
+\begin{equation}
+\Delta w_{pq}^{\rm F} = \lambda \ a^{\rm F}_p(a^{\rm B}_q - a^{\rm F}_q),
+\end{equation}
+where, as in the GeneRec algorithm, $a^{\rm F}_p$ denotes the presynaptic activity, $a^{\rm F}_q$ is the postsynaptic activity, and $a^{\rm B}_q$ denotes the postsynaptic activity from the opposite phase (\By-to-\Bh). Analogically, the weights in \By-to-\Bx \ direction (belonging to \Bh \ and \Bx \ units) are updated as
+
+\begin{equation}
+\Delta w_{pq}^{\rm B} = \lambda \ a^{\rm B}_p(a^{\rm F}_q - a^{\rm B}_q)
+\end{equation}
+
+All units have trainable thresholds (biases) that are updated in the same way as regular weights (being fed with a constant input 1).
+
  
 
 
