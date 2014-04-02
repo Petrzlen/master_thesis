@@ -1,12 +1,24 @@
 \subsection{Models}
 
-\subsubsection{Previous} 
+In this section we describe our versions of BAL for which we ran experiments. We examined several common neural network modifications such as adding \emph{momentum} or learning in \emph{batch mode}. We also examined novel approaches to our knowledge such. In general onle few variants of the original BAL model were successful as we will see in the following chapter. 
 
+We ignored existing models which are trained non-locally such as: 
 \begin{itemize} 
-\item Contrastive Hebbian Learning
-\item GeneRec 
-\item Bidirectional Activation-based Learning algorithm
-\end{itemize}  
+\item Training feedforward networks with the Marquardt algorithm
+\item Extreme learning machine: a new learning scheme of feedforward neural networks
+\end{itemize} 
+Although they learning speed could be significantly better compared to traditional BP or our BAL. 
+
+\subsubsection{Two learning speeds} 
+TODO reformulate. 
+In this model we use two learning speeds. First, $\lambda_I$ for weights $W_{IH}$ and $W_{OH}$ and second, $\lambda_H$ for weights $W_{HI}$ and $W_{HO}$. Both $\lambda_I$ and $\lambda_H$ are constant for the whole learning phase and therefore this model is consistent with our bio-plausibility assumptions. 
+
+Our simulations show that setting $\lambda_I << \lambda_H$ could lead significantly better performance. Our intuitive explanation behind is that $h^F - h^B$ converges to zero slower and therefore error terms $(o - t)$ and $(i - s)$ could impact $W_{IH}$ and $W_{OH}$ for more epochs. 
+
+Moreover we can explain this model in terms of bio-plausibility. The perception of input to internal representation is changed only little over time and only the reconstruction to target pattern from internal representation is trained hard. 
+
+TODO make sure this idea is novel enough (haven't found so far) \\
+TODO try it also with CHL and GeneRec.  \\ 
 
 \subsubsection{Candidate selection} 
 Hidden distance (over 70\%) over in triangle (68.3 \%). 
