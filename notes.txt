@@ -2711,3 +2711,11 @@ err	sigma	lambda	lambda_ih	momentum success sample_ratio
 26.2476894639556380.0	2.3	2.0	2.0	0.0	26.247689463955638 142/541
 3.60205831903945130.0	2.3	3.0	2.0	0.0	3.6020583190394513 21/583
 
+
+====================== 3rd of April ==============
+Meeting with Farkas
+
+Simulations: 
+16-6-16 
+err	sigma	lambda	lambda_ih	momentum success sample_ratio
+0.0	2.3	0.7	3.0E-4	0.0	64.0 64/100

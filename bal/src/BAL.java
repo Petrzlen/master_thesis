@@ -133,12 +133,15 @@ public class BAL {
 
 	public static double INIT_LAMBDA = 0.7; 
 	//public static  double TRY_LAMBDA[] = {0.7}; 
-	//public static  double TRY_LAMBDA[] = {0.8, 1, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2}; 
-	public static  double TRY_LAMBDA[] = {0.03, 0.1, 0.3, 0.5, 0.7, 1.1, 1.5, 2.0, 3.0};
 	//public static double TRY_LAMBDA[] = {0.7, 0.8, 0.9, 1.0, 1.1, 1.2}; 
+	//public static  double TRY_LAMBDA[] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0}; 
+	//public static  double TRY_LAMBDA[] = {0.03, 0.1, 0.3, 0.5, 0.7, 1.1, 1.5, 2.0, 3.0}; 
+	public static  double TRY_LAMBDA[] = {0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0, 30.0, 100.0};
 
-	private static double LAMBDA_IH_TRY[] = {0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 2.0}; 
 	private static double LAMBDA_IH = 0.001; 
+	//private static double LAMBDA_IH_TRY[] = {0.0003};
+	//private static double LAMBDA_IH_TRY[] = {0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 2.0};
+	private static  double TRY_LAMBDA_IH[] = {0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0};
 	
 	//public static  double TRY_NOISE_SPAN[] = {0.0, 0.003, 0.01, 0.03, 0.1, 0.3}; 
 	//public static  double TRY_MULTIPLY_WEIGHTS[] = {1.0, 1.00001, 1.00003, 1.0001, 1.0003, 1.001}; 
@@ -277,7 +280,7 @@ public class BAL {
 		BAL.INIT_NORMAL_DISTRIBUTION_SIGMA = BAL.TRY_NORMAL_DISTRIBUTION_SIGMA[random.nextInt(BAL.TRY_NORMAL_DISTRIBUTION_SIGMA.length)]; 
 		BAL.INIT_LAMBDA = BAL.TRY_LAMBDA[random.nextInt(BAL.TRY_LAMBDA.length)];
 		BAL.INIT_MOMENTUM = BAL.TRY_MOMENTUM[random.nextInt(BAL.TRY_MOMENTUM.length)];
-		BAL.LAMBDA_IH = BAL.LAMBDA_IH_TRY[random.nextInt(BAL.LAMBDA_IH_TRY.length)];
+		BAL.LAMBDA_IH = BAL.TRY_LAMBDA_IH[random.nextInt(BAL.TRY_LAMBDA_IH.length)];
 		//BAL.INIT_NOISE_SPAN = BAL.TRY_NOISE_SPAN[random.nextInt(BAL.TRY_NOISE_SPAN.length)];
 		//BAL.INIT_MULTIPLY_WEIGHTS = BAL.TRY_MULTIPLY_WEIGHTS[random.nextInt(BAL.TRY_MULTIPLY_WEIGHTS.length)];
 
@@ -1729,16 +1732,20 @@ public class BAL {
 	public static void experiment_TestImplementation() throws IOException{
 		MEASURE_IS = true; 
 		MEASURE_SAVE_AFTER_EACH_RUN = true; 
-		MEASURE_RECORD_EACH = 100;
+		MEASURE_RECORD_EACH = 100000;
 
 		INPUT_FILEPATH = "auto4.in"; 
 		OUTPUT_FILEPATH = "auto4.in"; 
-		INIT_HIDDEN_LAYER_SIZE = 2; 
+		INIT_HIDDEN_LAYER_SIZE = 2;
+
+		//INPUT_FILEPATH = "k3.in"; 
+		//OUTPUT_FILEPATH = "k3.in"; 
+		//INIT_HIDDEN_LAYER_SIZE = 7; 
 
 		INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3;  
 		INIT_LAMBDA = 0.7; 
 		INIT_MAX_EPOCHS = 30000;
-		INIT_RUNS = 50000; 
+		INIT_RUNS = 30000; 
 		INIT_CANDIDATES_COUNT = 1;
 		INIT_SHUFFLE_IS = true;
 		INIT_BATCH_IS = false;
