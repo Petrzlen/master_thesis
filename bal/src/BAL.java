@@ -1,47 +1,23 @@
-//TODO patternSuccess, bitSuccess
-//TODO struktura, uvod 
-//TODO symmetric version of BAL, energy   
-//TODO generec implementation
-//TODO almeida-pineda iterative activation
+// ============== MUST =================
+//TODO patternSuccess, bitSuccess a forward a backward MEASURE
+//TODO experiment pozostavajuci zo skumanych modelov a ich performance na danych troch datasetoch
+//TODO speatna reprezentacia hand-written 
+//TODO original BAL - epochs don't correspond to the Farkas, Rebrova article
+
+// ============== NICE TO HAVE =========
+//TODO pridat deliace ciary do hidden activation (HI)
+//TODO rekonstrukcia (zmena zopar bitov, ci tam-speat da orig)
+//TODO noise
+//TODO speed up by only calculating what is necessary
+//TODO have a C++ implementation for fastest possible network
+//  TODO comment the final (i.e. best) solution and make it reusable (could be after deadline, helps on presentation)   
+
+// ============== OPTIONAL =============
 //TODO dynamicka rychlost ucenia 
-// MEASURE activation change 
-// kopirovat priebeh 
-// momentum  
-
-//TODO GeneRec Obojstranne vysokorozmerne
-
-//TODO GeneRec na nase autoasociativne problemy 
-//  TODO iterative activation calculation  
-
-//TODO O'Really - kedy podobny backpropagation 
-//  -- ci sa naozaj snazi minimalizovat gradient 
-
-//TODO ==> ako rozlisit uspesne a neuspesne od inicializacie (v batch mode)
-//TODO binarny klasifikator na good/bad vah 
-
-//TODO pridat deliace ciary 
-//TODO porovnat vahove matice pri viacnasobnom behu rovnakej siete
-//TODO inicializovat protilahle matice zavisle na sebe 
-
-//TODO zovseobecnenie siete
-
-//TODO measure min, max distance from target 
-//TODO dropout? 
-//TODO matematicky pohlad - o'really clanok aproximacia gradientu chyby
-//TODO rekonstrukcia (zmena zopar bitov, ci tam-speat da orig) 
-//TODO iny rozmer tasku (2-1-2), (8-3-8), (16-4-16)
-//TODO kvazi momentum -> odtlacanie hidden reprezentacii, -\delta w(t-1) 
-//TODO pocet epoch potrebnych na konvergenciu
-//TODO nie autoassoc ale permutovat vystupy (napr. 1000 na 0100)
-//TODO reprezentacia SUC/ERR 
-//TODO m_sim, h_f_b_dist -> jeden nasobkom druheho bias
+//TODO MEASURE activation change   
+//TODO dropout 
+//TODO kvazi momentum -> odtlacanie hidden reprezentacii, -\delta w(t-1)
 //TODO spektralna analyza
-//TODO bipolarna [-1, 1] vstupy
-//h_size = 3 => [9,10,1] for errors [0.0, 1.0, 2.0] 
-
-//TODO run simulations with adding noise / multiplying weights
-
-//TODO speed up by only calculating what is necessary 
 
 import java.awt.Point;
 import java.io.BufferedReader;
@@ -72,7 +48,7 @@ import org.apache.commons.math3.linear.RealVector;
 public class BAL {
 	//manage IO and run BAL 
 	public static void main(String[] args) throws IOException {
-		DECIMAL_FORMAT.setMaximumFractionDigits(4);
+		DECIMAL_FORMAT.setMaximumFractionDigits(7);
 		
 		//experiment_Default();
 		//experiment_DifferentHiddenSizes("k12");
@@ -136,12 +112,12 @@ public class BAL {
 	//public static double TRY_LAMBDA[] = {0.7, 0.8, 0.9, 1.0, 1.1, 1.2}; 
 	//public static  double TRY_LAMBDA[] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0}; 
 	//public static  double TRY_LAMBDA[] = {0.03, 0.1, 0.3, 0.5, 0.7, 1.1, 1.5, 2.0, 3.0}; 
-	public static  double TRY_LAMBDA[] = {0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0, 30.0, 100.0};
+	public static  double TRY_LAMBDA[] = {0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
 
 	private static double LAMBDA_IH = 0.001; 
 	//private static double LAMBDA_IH_TRY[] = {0.0003};
 	//private static double LAMBDA_IH_TRY[] = {0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 2.0};
-	private static  double TRY_LAMBDA_IH[] = {0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0};
+	public static  double TRY_LAMBDA_IH[] = {0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0};
 	
 	//public static  double TRY_NOISE_SPAN[] = {0.0, 0.003, 0.01, 0.03, 0.1, 0.3}; 
 	//public static  double TRY_MULTIPLY_WEIGHTS[] = {1.0, 1.00001, 1.00003, 1.0001, 1.0003, 1.001}; 
@@ -162,10 +138,11 @@ public class BAL {
 	public static int HIDDEN_REPRESENTATION_ONLY_EACH = 50;
 
 	public static  boolean PRINT_NETWORK_IS = false;
-	public static  boolean PRINT_NETWORK_TO_FILE_IS = false; //!TODO should be turned-off most of the times ! 
+	//Dump each network which was trained 
+	//NOTE: significantly decreases performance
+	public static  boolean PRINT_NETWORK_TO_FILE_IS = false;  
 
 	//=======================  "TELEMETRY" of the network in time =========================== 
-	//TODO Consider as a MEASURE (avg_weight_change) 
 	public static Map<Integer, String> MEASURE_RUN_ID = new HashMap<Integer, String>(); 
 	public static  String[] MEASURE_HEADINGS = {
 		"epoch", "err", "sigma", "lambda", "momentum", 
@@ -597,7 +574,6 @@ public class BAL {
 		this.OH = createInitMatrix(out_size+(isBias(MATRIX_OH)?1:0), h_size);
 		this.HI = createInitMatrix(h_size+(isBias(MATRIX_HI)?1:0), in_size);
 
-		// TODO how to cope with biases? 
 		if(INIT_SYMMETRIC_IS){
 			makeSymmetric(this.OH, this.HO, out_size, h_size);
 			makeSymmetric(this.HI, this.IH, h_size, in_size);
@@ -688,8 +664,7 @@ public class BAL {
 
 		this.BAL_construct_other(); 
 	}
-
-	//TODO consider k*n in exponent 
+ 
 	//f(net) on a whole layer  
 	private void applyNonlinearity(RealVector vector){
 		for(int i=0; i<vector.getDimension() ; i++){
@@ -766,7 +741,6 @@ public class BAL {
 
 		ArrayList<RealVector> h = new ArrayList<RealVector>();
 
-		//TODO when reached max, take average of last two
 		int cc = 0; 
 		double max_change = 0.0; 
 		for(cc=0; cc < RECIRCULATION_ITERATIONS_MAX ; cc++){
@@ -816,9 +790,9 @@ public class BAL {
 			System.out.print("forwardPassWithRecirculation : " + printVector(in));
 			System.out.println("  RUN_ID: " + NETWORK_RUN_ID);
 			System.out.println("  Epoch:  " + NETWORK_EPOCH);
-			System.out.println("  Max fluctuation: " + max_fluctuation);
+			System.out.println("  Max fluctuation: " + DECIMAL_FORMAT.format(max_fluctuation));
 			System.out.println("  Iteration count: " + cc);
-			System.out.println("  Recirc epsilon : " + RECIRCULATION_EPSILON);
+			System.out.println("  Recirc epsilon : " + DECIMAL_FORMAT.format(RECIRCULATION_EPSILON));
 			for(int i=2*RECIRCULATION_ITERATIONS_MAX-10; i<h.size() ; i += 2){System.out.print("  Hidden activations: " + printVector(h.get(i)));}
 			for(int i=2*RECIRCULATION_ITERATIONS_MAX-10+1; i<h.size() ; i += 2){System.out.print("  Output activations: " + printVector(h.get(i)));}
 			System.out.println("Network: " + this.printNetwork());
@@ -854,7 +828,6 @@ public class BAL {
 		return backward; 
 	}
 
-	//
 	private RealVector[] backwardPassWithRecirculation(RealVector out){
 		RealVector[] backward = new RealVector[3]; 
 		backward[2] = addBias(out, MATRIX_OH);
@@ -866,7 +839,6 @@ public class BAL {
 
 		ArrayList<RealVector> h = new ArrayList<RealVector>(); 
 
-		//TODO when reached max, take average of last two 
 		int cc = 0; 
 		double max_change = 0.0; 
 		for(cc=0; cc < RECIRCULATION_ITERATIONS_MAX ; cc++){
@@ -908,9 +880,9 @@ public class BAL {
 			System.out.print("backwardPassWithRecirculation : " + printVector(out));
 			System.out.println("  RUN_ID: " + NETWORK_RUN_ID);
 			System.out.println("  Epoch:  " + NETWORK_EPOCH);
-			System.out.println("  Max fluctuation: " + max_fluctuation);
+			System.out.println("  Max fluctuation: " + DECIMAL_FORMAT.format(max_fluctuation));
 			System.out.println("  Iteration count: " + cc);
-			System.out.println("  Recirc epsilon : " + RECIRCULATION_EPSILON);
+			System.out.println("  Recirc epsilon : " + DECIMAL_FORMAT.format(RECIRCULATION_EPSILON));
 			for(int i=2*RECIRCULATION_ITERATIONS_MAX-10; i<h.size() ; i += 2){System.out.print("  Hidden activations: " + printVector(h.get(i)));}
 			for(int i=2*RECIRCULATION_ITERATIONS_MAX-10+1; i<h.size() ; i += 2){System.out.print("  Input activations: " + printVector(h.get(i)));}
 			System.out.println("Network: " + this.printNetwork());
@@ -1058,25 +1030,15 @@ public class BAL {
 				makeSymmetric(this.IH, this.HI, this.HI.getColumnDimension(), this.HI.getRowDimension() - (isBias(MATRIX_HI)?1:0));
 				makeSymmetric(this.HO, this.OH, this.OH.getColumnDimension(), this.OH.getRowDimension() - (isBias(MATRIX_OH)?1:0));
 			}
-			/*/
-			//TODO not working - zero activations on INPUT / OUTPUT (two 
-			//IS_PRINT = true; 
-			RealVector[] forward = this.forwardPassWithRecirculation(in);
-			RealVector[] backward = this.backwardPassWithRecirculation(target);
-			RealVector bothward = this.bothwardPass(in, target); 
-
-			 // => two indipendent GeneRecs 
-			 */
 		}
 		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC) {
 			//symmetric version 
 			//IS_PRINT = true; 
-			RealVector[] forward = this.forwardPassWithRecirculation(in); // TODO HO = OH 
+			RealVector[] forward = this.forwardPassWithRecirculation(in); 
 			RealVector bothward = this.bothwardPass(in, target); 
 			//RealVector biased_target = addBias(target); 
 			//IS_PRINT = false; 
 
-			//TODO why biased target? 
 			subLearn(this.IH, forward[0], bothward, forward[1], calculateLambda(INIT_LAMBDA, MATRIX_IH), this.MOM_IH, this.BATCH_IH, this.ERR_IH, d_all, d_hidden); 
 			subLearn(this.HO, forward[1], target, forward[2], calculateLambda(INIT_LAMBDA, MATRIX_HO), this.MOM_HO, this.BATCH_HO, this.ERR_HO, d_hidden, d_all); 
 			//subLearn(this.OH, biased_target, forward[1], bothward, lambda, this.MOM_OH, this.BATCH_OH, d_all, d_hidden); 
@@ -1094,7 +1056,7 @@ public class BAL {
 			System.out.println("Network:\n" + printNetwork()); */ 
 		}
 		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_CHL){
-			RealVector[] forward = this.forwardPassWithRecirculation(in); // TODO HO = OH 
+			RealVector[] forward = this.forwardPassWithRecirculation(in); 
 			RealVector bothward = this.bothwardPass(in, target); 
 
 			subCHLLearn(this.IH, forward[0], forward[1], forward[0], bothward, calculateLambda(INIT_LAMBDA, MATRIX_IH));
@@ -1277,7 +1239,6 @@ public class BAL {
 		return result; 
 	}
 
-	// TODO comment it 
 	private static void measureGroupBY(ArrayList<double[]> measures) {
 		int m = BAL.MEASURE_GROUP_BY_COLS.length; 
 		//List<Map<Double, Integer>> group_ids = new ArrayList<Map<Double,Integer>>();
@@ -1293,9 +1254,9 @@ public class BAL {
 				int id = BAL.MEASURE_GROUP_BY_COLS[j]; 
 				double val = measures.get(i)[id];
 
-				s_child += val + "\t";
+				s_child += DECIMAL_FORMAT.format(val) + "\t";
 				if(id != BAL.MEASURE_GROUP_BY){
-					s_parent += val + "\t"; 
+					s_parent += DECIMAL_FORMAT.format(val) + "\t"; 
 				}
 			}
 			child2parent.put(s_child, s_parent);
@@ -1321,7 +1282,7 @@ public class BAL {
 		for(Entry<String, Integer> entry : counts_child.entrySet()){
 			Integer child_count = entry.getValue();
 			Integer parent_count = counts_parent.get(child2parent.get(entry.getKey())); 
-			result.add(entry.getKey() + (100.0*((double)child_count / (double)parent_count)) + " " + child_count + "/" + parent_count);
+			result.add(entry.getKey() + DECIMAL_FORMAT.format(100.0*((double)child_count / (double)parent_count)) + " " + child_count + "/" + parent_count);
 		}
 		Collections.sort(result); 
 		for(String s : result){
@@ -1341,7 +1302,7 @@ public class BAL {
 		}
 
 		for(int j=0; j<measures.get(0).length ; j++){
-			log.println("avg("+BAL.MEASURE_HEADINGS[j]+")=" + (sum[j] / ((double)measures.size())));
+			log.println("avg("+BAL.MEASURE_HEADINGS[j]+")=" + DECIMAL_FORMAT.format(sum[j] / ((double)measures.size())));
 		}
 	}
 
@@ -1366,7 +1327,6 @@ public class BAL {
 		return MatrixUtils.createRealMatrix(data); 
 	}
 
-	// TODO java.String.join ? 
 	public static String printVector(RealVector v){
 		StringBuilder sb = new StringBuilder();
 
@@ -1412,7 +1372,6 @@ public class BAL {
 				if(j!=0){
 					sb.append(' ');
 				}
-				//TODO round 
 				sb.append(DECIMAL_FORMAT.format(m[i][j]));
 			}
 			sb.append('\n');
@@ -1493,7 +1452,7 @@ public class BAL {
 		}
 	}
 
-	//TODO Refactor with printPreAndPostMeasures()
+	//TODO Refactor: merge with printPreAndPostMeasures()
 	//saves this.measures into file 
 	public boolean saveMeasures(String run_id, PrintWriter writer){
 		if(!MEASURE_IS) return true; 
@@ -1503,7 +1462,6 @@ public class BAL {
 			m[j] = 1;
 		}
 
-		//writer.println(this.measures[0].size() + " " + this.measures.length);
 		writer.write("RUN_ID");
 		for(int i=0; i<MEASURE_HEADINGS.length ; i++){
 			writer.write("\t");
@@ -1548,8 +1506,6 @@ public class BAL {
 		post_writer.println();
 
 		for(int i=0; i<pre_measure.size() ; i++){
-			//#DEVELOPER
-			//pre_measure.get(i)[MEASURE_ERROR] = post_measure.get(i)[MEASURE_ERROR];
 			for(int j=0; j<MEASURE_COUNT ; j++){
 				if(j != 0){
 					pre_writer.write(' ');
@@ -1744,8 +1700,8 @@ public class BAL {
 
 		INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3;  
 		INIT_LAMBDA = 0.7; 
-		INIT_MAX_EPOCHS = 30000;
-		INIT_RUNS = 30000; 
+		INIT_MAX_EPOCHS = 500000;
+		INIT_RUNS = 50000; 
 		INIT_CANDIDATES_COUNT = 1;
 		INIT_SHUFFLE_IS = true;
 		INIT_BATCH_IS = false;

@@ -71,7 +71,7 @@ set logscale y
 set yrange [] reverse
 
 set zlabel "Success"
-set zrange [50:91] 
 splot "../lambda_2d.dat" using 1:2:3 with lines
      
+#TODO epoch_to_lambdas.pdf (from post measure) 
 
