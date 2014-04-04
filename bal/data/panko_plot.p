@@ -1,3 +1,7 @@
+# TODO Rotate left labels 
+# TODO error bars 
+# TODO hidden activations = merge with bal/data/hr 
+
 set   autoscale # scale axes automatically
 unset log # remove any log-scaling
 unset label # remove any previous labels
@@ -59,6 +63,7 @@ set ylabel "Lambda"
 set zlabel "Success"
 splot "post_success_lambda_sigma.dat" using 1:2:3 with lines lt rgb "blue"
 
+#TODO plot also epochs needed 
 set dgrid3d 15,15 
 set title "Lambda_IH and Lambda_HI to success"
 set output 'success_to_lambdas.pdf'

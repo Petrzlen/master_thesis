@@ -5,7 +5,6 @@
 %TODO uvod & prehlad = preco je tento vysledok dolezity
 %TODO 4-5 riadkov na jeden odstavec 
 
-
 \documentclass[12pt,a4paper]{article}
 
 \usepackage[utf8]{inputenc}
@@ -138,7 +137,8 @@
 \tableofcontents
 
 % ==================== 6. Table of Figures ========================
-%    \listoffigures
+\newpage
+    \listoffigures
 % ==================== 7. Table of Tables ========================
 %    \listoftables
 % ==================== 8. Table of Abbrevations ========================
@@ -172,9 +172,9 @@
    
 % ==================== 14. Experimental Results and Analysis ========================
 \newpage
-    \input{methodology}
+    \input{sim-}
 \newpage
-    \input{results_and_analysis}
+    \input{results}
     
 % ==================== 16. Conclusion ========================
 % This chapter should conclude on your contribution. It should highlight the key results from the research work. In this section you should avoid mentioning new terms and statements not discussed throughout the main text. Also general aspects of the research work shouldn’t be repeated here. Conclusion shouldn’t be the abstract written in past tense. The conclusion should derive the important facts out of your work and results that you obtained.
@@ -184,7 +184,7 @@
 % ==================== 17. Future Work ========================
 %What left unfinished from your work? What are you future plans to develop better your work?
 \newpage
-    \include{future_work}
+    \include{future-work}
 
 % ==================== 18. Bibliography ========================
 %Put a list of references.
@@ -194,6 +194,6 @@
 % ==================== 19. Assignment ========================
 %At the end of your thesis you can attach resources such as source code (or something like ASCII code table) that would improve the completeness of your thesis.
 \newpage
-    \input{appendix-implementation}
+    \input{appendix-impl}
 
 \end{document}
