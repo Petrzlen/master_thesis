@@ -2857,3 +2857,62 @@ MAX_EPOCH=30,000
 0.0	2.3	30.0	3.0	0.0	69.11764705882352 141/204
 0.0	2.3	30.0	3.0E-4	0.0	88.26815642458101 158/179
 0.0	2.3	30.0	3.0E-5	0.0	71.67381974248927 167/233
+
+
+============== 05th April 2014 ==================
+Finished my long simulation for two lambdas. There seems to be an indeed very interesting behaviour. Must test on other datasets and on the cogsci server. 
+
+First time in history some 100%s occured (from 60 simulations). They tended be somewhere here:
+public static  double TRY_LAMBDA[] = {1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
+public static  double TRY_LAMBDA_IH[] = {0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001};
+
+So now we are running for these (117 cases) 
+	
+Config used: 
+		MEASURE_IS = true; 
+		MEASURE_SAVE_AFTER_EACH_RUN = true; 
+		MEASURE_RECORD_EACH = 100000;
+
+		INPUT_FILEPATH = "auto4.in"; 
+		OUTPUT_FILEPATH = "auto4.in"; 
+		INIT_HIDDEN_LAYER_SIZE = 2;
+
+		//INPUT_FILEPATH = "k3.in"; 
+		//OUTPUT_FILEPATH = "k3.in"; 
+		//INIT_HIDDEN_LAYER_SIZE = 7; 
+
+		INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3;  
+		INIT_LAMBDA = 0.7; 
+		INIT_MAX_EPOCHS = 500000;
+		INIT_RUNS = 20000; 
+		INIT_CANDIDATES_COUNT = 1;
+		INIT_SHUFFLE_IS = true;
+		INIT_BATCH_IS = false;
+		INIT_SYMMETRIC_IS = false; 	
+		INIT_TRAIN_ONLY_ON_ERROR = false; 
+
+		LAMBDA_ERROR_MOMENTUM_IS = false; 
+		LAMBDA_IH = 0.001;   
+
+		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
+		RECIRCULATION_ITERATIONS_MAX = 200; //maximum number of iterations to approximate the underlying dynamic system  
+		RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING = true;
+
+		DROPOUT_IS = false; 
+		CONVERGENCE_NO_CHANGE_FOR = INIT_MAX_EPOCHS; 
+
+		INIT_MOMENTUM_IS = true;
+		INIT_MOMENTUM = 0.0;  
+
+		INIT_NORMAL_DISTRIBUTION_MU = 0;
+		NORMAL_DISTRIBUTION_SPAN = 15; 
+
+		HIDDEN_REPRESENTATION_IS = false;
+		HIDDEN_REPRESENTATION_DIRECTORY = "data/test/"; 
+		HIDDEN_REPRESENTATION_EACH = 1; 
+		HIDDEN_REPRESENTATION_AFTER = 200;
+		HIDDEN_REPRESENTATION_ONLY_EACH = 200;
+
+		PRINT_NETWORK_IS = false;  
+		PRINT_NETWORK_TO_FILE_IS = false;	
+
