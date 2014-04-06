@@ -1,13 +1,127 @@
 
-\subsubsection{Other} 
-\begin{itemize} 
-\item Momentum
-\item Weight initialization 
-\item Dynamic weight lambda (no change after few tries TODO test again) 
-\item Batch mode (i.e. no shuffle and therefore deterministic)
-\item Multilayer GeneRec - 42\% on handwritten digit recognition 
-\item Dropout TODO (5\%,10\%,20\%,50\% chances)
-\item Presenting in-out on which it has errors (based on rerun shuffle data) - worked. 
-\item TODO Noise 
-\item Ensemble -> should work as we have over 50\% success
+\subsubsection{Other}
+
+%==========================================================
+\paragraph{Momentum.}
+
+Momentum is an alternative learning rule which takes into consideration the weight changes from the last epoch or even several epoch. We can formally write it as: 
+
+\begin{equation}
+\Delta w_{ij}(t) = \lambda (a_i(b_j - a_j)) + \mu w_{ij}(t-1), 
+\end{equation} 
+
+Note that $(a_i(b_j - a_j))$ is only an example of a standard learning rule. Our motivation to try this approach was to push the network from a possible local minima to global minima. 
+
+TODO citations.  
+
+%==========================================================
+\paragraph{Batch mode.}
+
+Instead of updateing weights after each training sample we accumulate the weight changes for the whole epoch and update it only afterwards. So shuffling of the training samples is no more necesarry. Therefore after the weights are initialized the learning algorithm becomes deterministic.
+
+Before using the batch update method we observed oscilations of weight changes. Mostly it occured when the hidden activations settled (ref) but te network was still giving errors. Then the weight update on one sample gave error on other sample and back. We therefore tried batch update but the same behaviour occured as the oscilation was only shifted to two epochs instead of one.  
+
+TODO expand 
+
+TODO citations. 
+
+(i.e. no shuffle and therefore deterministic)
+
+%==========================================================
+\paragraph{Rerun} 
+
+In this experiment we first randomly initialized weights, saved and trained $N$ BAL networks. Then we re--trained each of the $N$ networks $k$-times and how the success changed. So we could decide if the network performance depended on the shuffling of the training samples or other network parameters. 
+
+\begin{lstlisting}
+All bad: 
+err sigma lambda momentum success sample_ratio
+0.0 2.3 0.7 0.0 19.296918767507005 6889/35700
+1.0 2.3 0.7 0.0 68.05602240896359 24296/35700
+2.0 2.3 0.7 0.0 12.644257703081232 4514/35700
+3.0 2.3 0.7 0.0 0.0028011204481792717 1/35700
+
+All good: 
+err sigma lambda momentum success sample_ratio
+0.0 2.3 0.7 0.0 99.98911353032659 64293/64300
+1.0 2.3 0.7 0.0 0.01088646967340591 7/64300
+//TODO overit ci dobre rozdelilo good / bad
+\end{lstlisting}
+
+We see that the networks which were successfull in the first run remained successfull in the re--runs. On the other side of the unsuccessfull networks changed their performance after re--run. 
+
+%==========================================================
+\paragraph{Weight initialization.} 
+
+Based on \citet{o1996bio} we used the following probability distribution for weight initialization: 
+
+\begin{equation} 
+\frac{1}{\sqrt{2\pi \sigma^2} e^{-\frac{(x-\mu)^2}{2\sigma^2}},
+\end{equation} 
+
+where $\sigma$ is one of the network parameters (ref) and $\mu = 0$ as the expected value of the normal distribution. 
+
+Our motivation to try this approach came from the fact that most of the BAL networks were capable to learn the given tasks easily, but others converged to error states (ref). Therefore we believed that there should exists a classifier which separates the successfull weight initialization from the unsuccessfull ones (ref - future work). 
+
+TODO references.  
+
+%==========================================================
+\paragraph{Hidden activations.}
+
+We observed that hidden activations tend to settle fast (TODO more exact). Therefore there are cases where it is impossible for $W_{HI}$ and $W_{HO}$ to learn the given task. Intuitively, this is because after settling the hidden activations for each input the network is reduced to a two-layer network. This behaviour is demonstrated by the \emph{in\_triangle} measure (ref). 
+
+Explaination why the hidden activations tend to settle fast could be given by the learning rule: 
+\begin{equation} 
+\Delta w_{ij} = a_i(b_j - a_j),
+%TODO correct label / ref 
+\end{equation} 
+
+which for the $W^{IH}$ and $W^{OH}$ give
+\begin{equation} 
+\Delta W^{IH}_{ij} = s^F_i(h^B_j - h^F_j) \\ 
+\Delta W^{OH}_{ij} = o^B_i(h^F_j - h^B_j). 
+\end{equation} 
+We see that both terms $(h^B_j - h^F_j)$ and $(h^F_j - h^B_j)$ push $W^{IH}$ and $W^{OH}$ in a way that $h^B_j = h^F_j$. 
+
+This experiment was the main reason to start experimenting with the two lambda model (ref). 
+
+%==========================================================
+\paragraph{Dropout}
+Based on the work the work \citet{hinton2012improving} we implemented the Dropout method of learning. Its main idea is to in each epoch to choose randomly half of the hidden layer neurons which will be ignored. The motivation is to prevent co--adaption of the hidden layer neurons \citep{hinton2012improving}. 
+
+We combined this idea with the BAL model on the 4-2-4 encoder task. This model was not able to learn anything. 
+(5\%,10\%,20\%,50\% chances)
+
+TODO more simulations. 
+TODO citations.  
+
+%==========================================================
+\paragraph{Noise} 
+
+Motivated by the \emph{chaotic} behaviour of nature we tried adding noise to weight changes. We hoped that the possible noise could prevent settling of hidden activations to fast (ref). 
+
+TODO more simulations. 
+TODO citations.  
+
+%==========================================================
+\paragraph{Dynamic weight lambda.} 
+
+The idea is to have learning speed for each weight separately and dependent on error: 
+\begin{equation}
+\Delta w_{ij}(t) = \lambda_{ij}(b_j(t-1) - a_j(t-1), \lambda_{ij}^{t-1})(a_i(t)(b_j(t) - a_j(t))),
+\end{equation}
+
+where $b_j(t-1) - a_j(t-1)$ is the error term and $\lambda_{ij}^{t-1}$ is the learning speed from the last epoch. 
+TODO should be combined with batch, yes? 
+
+This model was inspiration for the two lambda model (ref). 
+
+TODO more simulations. 
+TODO citations.  
+
+%==========================================================
+\paragraph{Multilayer GeneRec}
+
+When we begun analysing the GeneRec algortihm (ref) we also implemented a version with two hidden layers for which we extended the learning rule. It achieved 42\% on handwritten digit recognition. 
+TODO expand. 
+
 \end{itemize} 
