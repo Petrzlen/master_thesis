@@ -108,18 +108,19 @@ public class BAL {
 	//public static double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {0.3, 0.5, 0.7, 1.0};
 
 	public static double INIT_LAMBDA = 0.7; 
-	//public static  double TRY_LAMBDA[] = {0.7}; 
+	public static  double TRY_LAMBDA[] = {0.7}; 
 	//public static double TRY_LAMBDA[] = {0.7, 0.8, 0.9, 1.0, 1.1, 1.2}; 
 	//public static  double TRY_LAMBDA[] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0}; 
 	//public static  double TRY_LAMBDA[] = {0.03, 0.1, 0.3, 0.5, 0.7, 1.1, 1.5, 2.0, 3.0}; 
 	//public static  double TRY_LAMBDA[] = {0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
-	public static  double TRY_LAMBDA[] = {1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
+	//public static  double TRY_LAMBDA[] = {1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
 	
-	private static double LAMBDA_IH = 0.001; 
+	private static double LAMBDA_IH = 0.001;
+	public static  double TRY_LAMBDA_IH[] = {0.7};
 	//private static double LAMBDA_IH_TRY[] = {0.0003};
-	//private static double LAMBDA_IH_TRY[] = {0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 2.0};
+	//public static  double TRY_LAMBDA_IH[] = {0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 2.0};
 	//public static  double TRY_LAMBDA_IH[] = {0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0};
-	public static  double TRY_LAMBDA_IH[] = {0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001};
+	//public static  double TRY_LAMBDA_IH[] = {0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001};
 	
 	//public static  double TRY_NOISE_SPAN[] = {0.0, 0.003, 0.01, 0.03, 0.1, 0.3}; 
 	//public static  double TRY_MULTIPLY_WEIGHTS[] = {1.0, 1.00001, 1.00003, 1.0001, 1.0003, 1.001}; 
@@ -397,9 +398,10 @@ public class BAL {
 				last_outputs[order_i] = forwardPass[2]; */
 			}
 			
+			/*
 			if(epochs > INIT_MAX_EPOCHS - 20 ){
 				System.out.println(epochs + ": " + network.evaluate(inputs, outputs));
-			}
+			}*/ 
 
 			if(INIT_BATCH_IS){
 				updateTwoDimArray(network.IH, network.BATCH_IH);
@@ -486,7 +488,7 @@ public class BAL {
 		
 		//return init_lambda * Math.max(1.0, (100 / (epochs + 50)));
 
-		//return init_lambda * Math.max(0.5, 2 * Math.abs(last_err)); 
+		//return init_lambda * Math.max(0.5, 2 * Math.abs(last_err)); // last error has no reason 
 	}
 
 	//interpret activations on the output layer 
@@ -1696,16 +1698,17 @@ public class BAL {
 		INPUT_FILEPATH = "auto4.in"; 
 		OUTPUT_FILEPATH = "auto4.in"; 
 		INIT_HIDDEN_LAYER_SIZE = 2;
+		INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3;  
 		*/
 
-		INPUT_FILEPATH = "k3.in"; 
-		OUTPUT_FILEPATH = "k3.in"; 
-		INIT_HIDDEN_LAYER_SIZE = 4; 
+		INPUT_FILEPATH = "k12.in"; 
+		OUTPUT_FILEPATH = "k12.in"; 
+		INIT_HIDDEN_LAYER_SIZE = 50;
+		INIT_NORMAL_DISTRIBUTION_SIGMA = 12.0;   
 
-		INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3;  
 		INIT_LAMBDA = 0.7; 
-		INIT_MAX_EPOCHS = 500000;
-		INIT_RUNS = 2000; 
+		INIT_MAX_EPOCHS = 10000;
+		INIT_RUNS = 100; 
 		INIT_CANDIDATES_COUNT = 1;
 		INIT_SHUFFLE_IS = true;
 		INIT_BATCH_IS = false;
