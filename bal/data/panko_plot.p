@@ -80,3 +80,8 @@ splot "../lambda_2d.dat" using 1:2:3 with lines
      
 #TODO epoch_to_lambdas.pdf (from post measure) 
 
+set dgrid3d 15,15 
+set title "Lambda_IH and Lambda_HI (precise)"
+set output 'precise_lambda.pdf'
+
+splot "../precise_lambda.dat" using 1:2:3 with lines
