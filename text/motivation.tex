@@ -1,3 +1,4 @@
+% ==================== 10. Motivation (or Problem Definition and Proposed Solution) =====
 %In this chapter you have to concisely explain the problem that you want to solve and the goal of your solution. This part should contain:
 
 % 1) Detailed analysis of the problem and its limitations (e.g. what is the bottleneck and difficulties).
@@ -9,110 +10,32 @@
 % If necessary you may divide this chapter in sections and subsections.
 
 \subsection*{Motivation}
-TODO add bidirectional (it could be that neurons in brain are connected that way) 
+% 1) Detailed analysis of the problem and its limitations (e.g. what is the bottleneck and difficulties).
+In this thesis we analyse the Bidirectional Activation--based Learning algorithm (BAL) designed by \citet{farkas2013bal} \ref{models-bal}. The two main advantages of BAL over standard models such as Backpropagation are: 
 
-\subsubsection{O'Reilly} 
-It corresponds to O'Reillys motivations \citet{o1998six}.
+\begin{itemize} 
 
-O'Reilly presents what he thinks as biologically plausible. In the end of this review we provide citations from this article which shortly explain the most important concepts of NN design. 
+\item \emph{Bidirectional activation propagation.} In neural network models such as Backpropagation \ref{models-bp} only the \emph{forward}--mapping is learned. But in BAL, also the \emph{backward} mapping is learned while learning the forward--mapping. This could be used in various problems such as robotics (TODO citation, reference, icube). Moreover, the bidirectionality of the architecture is necessary to simulate a biological electrical synapse, which can be bidirectional \citep{kandel1995essentials}, \citep{rosa2002biologically} and there is evidence that the cerebral cortex is connected in a bidirectional way and distributed representations prevail in it \citep{o2000computational}, \citep{da2011advances}. 
 
-Article also contains interesting references to several experiments. It also presents the Leabra model (PhD thesis of O'Reilly) which is presented as a base model for other NN which can be derived from Leabra. The question how to merge the proposed principles is dicussed, especially the case of competiveness and distributed representation. 
+\item \emph{Biological plausibility.} We believe that inspiration by natural neural networks will bring results in the long run. Therefore we follow the six principles of biological plausibility stated by \citet{hinton1988learning}. The main principle is \emph{bidirectional activation propagation} mentioned above. The second principle \emph{distributed representations} states that "A distributed representation uses multiple active neuron--like processing units to encode information (as opposed to a single unit, localist representation), and the same unit can participate in multiple representations. Each unit in a distributed representation can be thought of as representing a single feature, with information being encoded by particular combinations of such features \citep{hinton1988learning}". We understand this principle as "to have as little global information as possible". Biologically plausible models are used to simulate BioAnt by \citet{schneider2009application} and cells by \citet{nawrocki2012monitoring}. 
 
-\paragraph{Biological realism.} Moreover, computational mechanisms that violate
-known biological properties should not be relied upon. 
+\end{itemize} 
 
-A criticism of back-propagation is that it is neurally implausible (and hard to implement in hardware) because it requires all the connections to be used backward and it requires the units to use different input-output functions for the forward and backward passes \citet{hinton1988learning}.
+% 3) You should clearly state and explain your goal and objectives. You should provide analytical study (mathematical model) of your solution (What is the upper and lower bound of your performance or improvements). You should also mention about the qualitative benefit of your solution such as easy programming etc..
+\paragraph{Goal.}
+While BAL performs well on high--dimensional tasks the authors were not able to learn low--dimensional tasks with 100\% reliability. Other models such as Backpropagation \citep{rumelhart1986learning} \ref{models-bp} learn these tasks with 100\% reliability. We wanted to find out the reasons for this performance gap and hoped that by solving it we could increase the performance of BAL also for the high--dimensional tasks. 
 
-\paragraph{Distributed representations.} A distributed representation
-uses multiple active neuron-like processing units to encode
-information (as opposed to a single unit, localist represen-
-tation), and the same unit can participate in multiple repre-
-sentations. Each unit in a distributed representation can be
-thought of as representing a single feature, with information
-being encoded by particular combinations of such features \citet{hinton1988learning}.
+%It corresponds to O'Reillys motivations \citet{o1998six}.
+%\paragraph{Biological realism.} Moreover, computational mechanisms that violate known biological properties should not be relied upon. 
 
-\paragraph{Inhibitory competition.} Inhibitory competition arises when mutual
-inhibition among a set of units (i.e. as mediated by in-
-hibitory interneurons) prevents all but a subset of them
-from becoming active at a time.  Furthermore, most learn-
-ing mechanisms (including those discussed later) are
-affected by this selection process such that only the selected
-representations are refined over time through learning, re-
-sulting in an effective differentiation and distribution of
-representations. More generally, it seems as though the world can be usefully
-represented in terms of a large number of categories with a
-large number of exemplars per category (animals, furniture,
-trees, etc.) \citet{hinton1988learning}. 
+%\paragraph{Distributed representations.} A distributed representation uses multiple active neuron-like processing units to encode information (as opposed to a single unit, localist representation), and the same unit can participate in multiple representations. Each unit in a distributed representation can be thought of as representing a single feature, with information being encoded by particular combinations of such features \citet{hinton1988learning}.
 
-\paragraph{Bidirectional activation propagation (interactivity).} They showed that
-interactivity could explain the counterintuitive finding that
-higher-level word processing can influence lower-level letter
-perception. More recently, Vecera and O’Reilly showed
-that bidirectional constraint satisfaction can model people’s
-ability to resolve ambiguous visual inputs in favor of familiar
-versus novel objects \citet{hinton1988learning}. 
+%\paragraph{Inhibitory competition.} Inhibitory competition arises when mutual inhibition among a set of units (i.e. as mediated by inhibitory interneurons) prevents all but a subset of the from becoming active at a time.  Furthermore, most learning mechanisms (including those discussed later) are affected by this selection process such that only the selected representations are refined over time through learning, resulting in an effective differentiation and distribution of representations. More generally, it seems as though the world can be usefully represented in terms of a large number of categories with a large number of exemplars per category (animals, furniture, trees, etc.) \citet{hinton1988learning}. 
 
-\paragraph{Error-driven task learning.} Error-driven learning (also called ‘supervised’ learning) is
-important for shaping representations according to task de-
-mands by learning to minimize the difference (i.e. the error)
-between a desired outcome and what the network actually
-produced \citet{hinton1988learning}. 
+%\paragraph{Bidirectional activation propagation (interactivity).} They showed that interactivity could explain the counterintuitive finding that higher-level word processing can influence lower-level letter perception. More recently, Vecera and O’Reilly showed that bidirectional constraint satisfaction can model people’s ability to resolve ambiguous visual inputs in favor of familiar versus novel objects \citet{hinton1988learning}. 
 
-\paragraph{Hebbian model learning.} That something like correlational structure is important.
-Hebbian learning mechanisms represent this correlational
-structure, encoding the extent to which different things co-
-occur in the environment \citet{hinton1988learning}.
+%\paragraph{Error-driven task learning.} Error-driven learning (also called ‘supervised’ learning) is important for shaping representations according to task de-mands by learning to minimize the difference (i.e. the error) between a desired outcome and what the network actually produced \citet{hinton1988learning}. 
 
-\subsubsection{Da} 
-
-\citet{da2011advances} 
-
-There is evidence that the cerebral cortex is connected in a
-bi-directional way and distributed representations prevail in
-it \citet{o2000computational}. So, more biologically plausible connectionist models
-should present some of the following characteristics \citet{orru2008sabio}:
-
-\paragraph{Distributed representation.} Generalization and reduction
-of the network size can be obtained if the adopted
-representation is distributed, since connections among
-units are able to support a large number of different
-patterns and create new concepts without allocation of
-new hardware;
-
-\paragraph{Inhibitory competition.} Neurons that are next to the
-“winner” neuron receive a negative stimulus, strengthen-
-ing the winner neuron (a kind of winner-takes-all). Dur-
-ing a lateral inhibition, a neuron excitets an inhibitory
-inter-neuron that makes a feed-back connection on the
-first neuron \citet{o1998six};
-
-\paragraph{Bi-directional activation propagation.} Hidden layers re-
-ceive stimuli from the input layer and from the output
-layer. The bi-directionality of the architecture is neces-
-sary to simulate a biological electrical synapse, which
-can be bi-directional \citet{kandel1995essentials}, \citet{rosa2002biologically};
-
-\paragraph{Error-driven task learning.} In GeneRec, the error is
-calculated considering the local difference in synapses,
-based on neurophysiological properties \citet{o1998six}, in contrast
-to back-propagation, which requires error signals prop-
-agate from the output layer towards the input layer.
-
-\subsubsection{Usage} 
-
-BioAnt \citet{schneider2009application} 
-Cells \citet{nawrocki2012monitoring} 
+%\paragraph{Hebbian model learning.} That something like correlational structure is important. Hebbian learning mechanisms represent this correlational structure, encoding the extent to which different things co--occur in the environment \citet{hinton1988learning}.
 
 
-\subsubsection{Other} 
-\paragraph{Hebbian nature.}
-%TODO make it a lot shorter 
-%TODO: Read and citet from Hebbs's original article (Hebb, D.O. (1949). The organization of behavior. New York: Wiley \& Sons). 
-
-(Wiki) Hebbian theory is a scientific theory in biological neuroscience which explains the adaptation of neurons in the brain during the learning process. It describes a basic mechanism for synaptic plasticity wherein an increase in synaptic efficacy arises from the presynaptic cell's repeated and persistent stimulation of the postsynaptic cell. Introduced by Donald Hebb in 1949, it is also called Hebb's rule, Hebb's postulate, and cell assembly theory, and states:
-
-    "Let us assume that the persistence or repetition of a reverberatory activity (or "trace") tends to induce lasting cellular changes that add to its stability. When an axon of cell A is near enough to excitet a cell B and repeatedly or persistently takes part in firing it, some growth process or metabolic change takes place in one or both cells such that A's efficiency, as one of the cells firing B, is increased."
-
-The theory is often summarized as "Cells that fire together, wire together.".[1] It attempts to explain "associative learning", in which simultaneous activation of cells leads to pronounced increases in synaptic strength between those cells. Such learning is known as Hebbian learning.
-
-\includegraphics[width=12cm]{img/bio_plausability_o1998six.png}
