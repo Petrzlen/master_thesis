@@ -13,15 +13,17 @@ In this section we will describe the basics of artificial neural networks. We wi
 \label{sec:perceptron} 
 
 %=============================================================
-\subsubsection{Multilayer Feedword Networks} 
+\subsubsection{Multilayer Feedworward Networks} 
 
-In general we can define a neural network as a directed weighted graph. Each \emph{unit} (vertex) has its \emph{activation} and usually it changes in discrete time. The \emph{state} of a neural network are current \emph{weights} of edges and current activations. 
+We will define multilayer feedforward networks as in \citet{haykin1994neural}. First, we define a \emph{layered} neural network where neurons are organised to form layers. In the simplest version we have an \emph{input layer} of source nodes and an \emph{output layer} which is formed by aforementioned perceptrons. In other words this is a \emph{feedforward} or \emph{acyclic} type of network as the \emph{activation}, i.e. outputs of the neurons are computed from the input to the output layer and never \emph{backwards}. 
 
-\paragraph{Input layer.}
-Subset of units on which the input values are \emph{clamped}. If the input value for unit $x_i$ is $s_i$ then the activation for unit $x_i$ is simply $s_i$. 
+Multilayer neural network has one or more \emph{hidden layers} in addition to the input and ouput layer as shown on figure~\ref{fig:multilayer}: 
 
-\paragraph{Output layer.}
-Similary as the input layer, output layer is a subset of units which activations we treat as the output. 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/multilayer.pdf}    
+  \caption{Fully connected feedforward multilayer with one hidden layer and one output layer. The source nodes supply the activation pattern, i.e. input vector, which is applied to second layer neurons. The output signal of the hidden layer is used as the input for the output layer. As shown by \citet{cybenko1989approximation} the three layer network is an universal approximator continuous functions on compact subsets of $\mathbb{R}^n$.} 
+  \label{fig:multilayer}
+\end{figure}
 
-\paragraph{Hidden layer.}
-Set of units which are both not input or output. 
+There exists several methods for training multilayer networks. First, we will describe the most common Backpropagation in \ref{models-bp} and then methods related to our work such as CHL \ref{models-chl}, GeneRec \ref{models-generec} and BAL \ref{models-bal}. 
