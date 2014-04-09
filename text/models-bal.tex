@@ -1,5 +1,6 @@
 %==================== 12.   Background overview (optional) ======
 \subsection{Bidirectional Activation-based Learning algorithm} 
+\label{models-bal} 
 % If your work builds on top of an existing one, this is the place to describe the existing work in more detail, pointing out the parts that you extend or improve and why you extend or improve these parts.
 
 TODO Reformulate 
@@ -8,8 +9,6 @@ TODO Reformulate
 
 \begin{table}
   \centering
-  \caption{Activation phases and states in BAL model.}
-  \label{tab:bal-states}
   \begin{tabular}{|cccl|}
     \hline
     Layer & Phase & Net Input & Activation\\
@@ -23,6 +22,8 @@ TODO Reformulate
     \Bx & B  & $\eta^{\rm B}_i = \sum_j w^{HI}_{ji}h^{\rm B}_j$ & $x^{\rm B}_i = \sigma(\eta^{\rm B}_i)$\\
     \hline
   \end{tabular}
+  \caption{Activation phases and states in the BAL model \citep{farkas2013bal}.}
+  \label{tab:bal-states}
 \end{table}
 
 We avoid input-output notation of layers as used in GeneRec, because in our case not only output can be evoked by input presentation, but also vice versa. Hence, we label the two outer (visible) layers \Bx \ and \By \ and the hidden layer \Bh. Let forward activation be denoted by subscript F, backward activation denoted by subscript B. Then during the forward pass, the \Bx \ units are clamped to $\Bx^{\rm F}$ and we get the activations $\Bx^{\rm F}\rightarrow\Bh^{\rm F}\rightarrow$ $\By^{\rm F}$. During the backward pass, the \By \ units are clamped to $\By^{\rm B}$ and we get the activations $\By^{\rm B}$ $\rightarrow$ $\Bh^{\rm B}\rightarrow\Bx^{\rm B}$.

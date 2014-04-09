@@ -1,17 +1,15 @@
 \subsubsection{Contrastive Hebbian Learning}
+\label{models-chl} 
 
 \paragraph{My notes.}
-%TODO citations 
-%TODO rewrite 
-%TODO shorten 
-%TODO write it as a comparison to BAL and GeneRec, i.e. put it into context 
+TODO citations 
+TODO rewrite 
+TODO shorten 
+TODO write it as a comparison to BAL and GeneRec, i.e. put it into context 
 
 The point of this article \citet{movellan1990contrastive} is that a convenient learning rule is derived from a standard Hopfield energy function. Then Movellan uses insights of annealing to improve the training phase and avoid the learning function to settle in local minima. These improvements are formalized in the next five rules applied sequentially:
 
-To assess the effect of interactivity, two different networks were compared on the combinatorial generaliza-
-tion task, a standard feedforward backpropagation network, and an interactive GeneRec network using the
-symmetric, midpoint variation learning rule which is equivalent to contrastive Hebbian learning (CHL) or a
-deterministic Boltzmann machine (DBM) \citet{o1996bio}, \citet{o2001generalization}. 
+To assess the effect of interactivity, two different networks were compared on the combinatorial generalization task, a standard feedforward backpropagation network, and an interactive GeneRec network using the symmetric, midpoint variation learning rule which is equivalent to contrastive Hebbian learning (CHL) or a deterministic Boltzmann machine (DBM) \citet{o1996bio}, \citet{o2001generalization}. 
 
 \begin{enumerate}
 \item Activation are reset to random numbers after each learning phase. 
@@ -27,11 +25,9 @@ deterministic Boltzmann machine (DBM) \citet{o1996bio}, \citet{o2001generalizati
 
 Movellan introduced notation for the plus (+) phase when both input and output are clamped and minus (-) phase when input is clamped and output is free. 
 
-%TODO: Check if correct 
+TODO: Check if correct 
 \begin{table}
   \centering
-  \caption{Equilibrium network variables in CHL model \citet{farkas2013bal}.}
-  \label{tab:chl-states}
   \begin{tabular}{|cccc|}
     \hline
     Layer & Phase & Net Input & Activation\\
@@ -46,6 +42,8 @@ Movellan introduced notation for the plus (+) phase when both input and output a
            &  +  & - & $o^{+}_k$ = target output \\
     \hline
   \end{tabular}
+  \caption{Equilibrium network variables in CHL model \citep{movellan1990contrastive}.}
+  \label{tab:chl-states}
 \end{table}
 
 \paragraph{Original equations.}
@@ -53,7 +51,7 @@ Define a continuous Hopfield Energy function $F = E + S$ where
 $$ E = -\frac{1}{2}\sum_i\sum_ja_iw_{ij}a_j$$
 and 
 $$ S = \sum_i \int_{rest}^{a_i} f_i^{-1}(a)da.$$
-and $a^T = [a_1,\ldots,a_n]$ is the activation vector, $f_i$ is bounded, monotically increasing, differentiable activation function \citet{movellan1990contrastive}.
+and $a^T = [a_1,\ldots,a_n]$ is the activation vector, $f_i$ is bounded, monotically increasing, differentiable activation function \citep{movellan1990contrastive}.
 
 \paragraph{Simplified model.}
 

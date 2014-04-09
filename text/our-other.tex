@@ -13,6 +13,13 @@ Momentum is an alternative learning rule which takes into consideration the weig
 
 Note that $(a_i(b_j - a_j))$ is only an example of a standard learning rule. Our motivation to try this approach was to push the network from a possible local minima to global minima. 
 
+Adding momentum:
+$$
+\Delta w(t) = -\epsilon \partial E/ \partial w(t) + \alpha \Delta w(t-1).
+$$
+models-bp. 
+
+
 TODO citations.  
 
 %==========================================================
@@ -99,6 +106,8 @@ TODO citations.
 \paragraph{Noise} 
 
 Motivated by the \emph{chaotic} behaviour of nature we tried adding noise to weight changes. We hoped that the possible noise could prevent settling of hidden activations to fast (ref). 
+
+Annealing schedules: In search of the continuous Boltzmann machine. This may be achieved in interactive networks by injecting some form of noise to the net input of each unit. The standard deviation of the noise distribution plays a similar effect to the temperature parameter in descrete Boltzmann machines \citet{movellan1990contrastive}. 
 
 TODO more simulations. 
 TODO citations.  
