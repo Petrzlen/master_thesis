@@ -7,6 +7,10 @@ TODO rewrite
 TODO shorten 
 TODO write it as a comparison to BAL and GeneRec, i.e. put it into context 
 
+The main idea \emph{Contrastive Hebbian Learning} by \citet{movellan1990contrastive} is to have two activation phases in an aribtrary Hopfield network \citep{hopfield1984neurons}. In the first phase, called \emph{minus phase} and denoted \uv{-}, only the input vector is \emph{clamped}, i.e. presented to the underlying network. In the second phase, called \emph{plus phase} and denoted \uv{+}, both the input and target are clambed to the underlying network. The learning is based on the difference of these two activations. 
+
+As Hopfield networks in general could be recurrent 
+
 The point of this article \citet{movellan1990contrastive} is that a convenient learning rule is derived from a standard Hopfield energy function. Then Movellan uses insights of annealing to improve the training phase and avoid the learning function to settle in local minima. These improvements are formalized in the next five rules applied sequentially:
 
 To assess the effect of interactivity, two different networks were compared on the combinatorial generalization task, a standard feedforward backpropagation network, and an interactive GeneRec network using the symmetric, midpoint variation learning rule which is equivalent to contrastive Hebbian learning (CHL) or a deterministic Boltzmann machine (DBM) \citet{o1996bio}, \citet{o2001generalization}. 

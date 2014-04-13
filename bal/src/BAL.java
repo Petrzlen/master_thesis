@@ -51,9 +51,9 @@ public class BAL {
 		DECIMAL_FORMAT.setMaximumFractionDigits(7);
 		
 		//experiment_Default();
-		//experiment_DifferentHiddenSizes("k12");
+		experiment_DifferentHiddenSizes("k3");
 		//experiment_RerunGoodBad();
-		experiment_TestImplementation();
+		//experiment_TestImplementation();
 	}
 	
 	private static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0"); 
@@ -109,21 +109,21 @@ public class BAL {
 
 	public static double INIT_LAMBDA = 0.7; 
 	//public static  double TRY_LAMBDA[] = {0.7}; 
+	public static  double TRY_LAMBDA[] = {2000.0}; 
 	//public static double TRY_LAMBDA[] = {0.7, 0.8, 0.9, 1.0, 1.1, 1.2}; 
 	//public static  double TRY_LAMBDA[] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0}; 
 	//public static  double TRY_LAMBDA[] = {0.03, 0.1, 0.3, 0.5, 0.7, 1.1, 1.5, 2.0, 3.0}; 
 	//public static  double TRY_LAMBDA[] = {0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
 	//public static  double TRY_LAMBDA[] = {1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
-	public static  double TRY_LAMBDA[] = {20000.0, 50000.0, 100000.0, 200000.0, 500000.0, 1000000.0, 2000000.0, 5000000.0, 10000000.0};
+	//public static  double TRY_LAMBDA[] = {20000.0, 50000.0, 100000.0, 200000.0, 500000.0, 1000000.0, 2000000.0, 5000000.0, 10000000.0};
 	
-	private static double LAMBDA_IH = 0.001;
-	//public static  double TRY_LAMBDA_IH[] = {0.7};
-	//private static double LAMBDA_IH_TRY[] = {0.0003};
+	private static double LAMBDA_IH = 0.0001;
+	private static double TRY_LAMBDA_IH[] = {0.0001};
 	//public static  double TRY_LAMBDA_IH[] = {0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 2.0};
-	public static  double TRY_LAMBDA_IH[] = {0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
+	/*public static  double TRY_LAMBDA_IH[] = {0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
 											 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 
 											 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
-											 100.0};
+											 100.0}; */
 	//public static  double TRY_LAMBDA_IH[] = {0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001};
 	
 	//public static  double TRY_NOISE_SPAN[] = {0.0, 0.003, 0.01, 0.03, 0.1, 0.3}; 
@@ -154,9 +154,10 @@ public class BAL {
 	public static  String[] MEASURE_HEADINGS = {
 		"epoch", "err", "sigma", "lambda", "momentum", 
 		"h_dist","h_f_b_dist","m_avg_w","m_sim", "first_second", 
-		"o_f_b_dist", "in_triangle", "fluctuation", "lambda_ih"};
+		"o_f_b_dist", "in_triangle", "fluctuation", "lambda_ih",  
+		"bit_succ_f", "bit_succ_b", "pat_succ_f", "pat_succ_b"};
 	public static  int MEASURE_EPOCH = 0;
-	public static  int MEASURE_ERROR = 1; //error function (RMSE) 
+	public static  int MEASURE_ERROR = 1; //error function (RMSE), bitSucc forward 
 	public static  int MEASURE_SIGMA = 2; 
 	public static  int MEASURE_LAMBDA = 3; 
 	public static  int MEASURE_MOMENTUM = 4;
@@ -175,7 +176,7 @@ public class BAL {
 	public static  int MEASURE_MATRIX_SIMILARITY = 8;
 
 	//sum of ratio of (a_1, a_2) where a_i is the i-th biggest output 
-	public static  int MEASURE_FIRST_SECOND_RATIO = 9;
+	public static  int MEASURE_FIRST_SECOND_RATIO = 9; //!DEPRECATED
 
 	//public static  int MEASURE_NOISE_SPAN = 9; 
 	//public static  int MEASURE_MULTIPLY_WEIGHTS = 9; 
@@ -191,7 +192,15 @@ public class BAL {
 	
 	public static int MEASURE_LAMBDA_IH = 13; 
 
-	public static int MEASURE_COUNT = 14;  
+	public static int MEASURE_BITSUCC_FORWARD = 14;  
+
+	public static int MEASURE_BITSUCC_BACKWARD = 15;  
+
+	public static int MEASURE_PATSUCC_FORWARD = 16;  
+
+	public static int MEASURE_PATSUCC_BACKWARD = 17; 
+	
+	public static int MEASURE_COUNT = 18;  
 
 	//public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_IN_TRIANGLE};
 	public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_LAMBDA_IH, MEASURE_MOMENTUM};
@@ -1082,7 +1091,7 @@ public class BAL {
 
 		double error = 0.0; 
 		for(int i=0; i<target.getDimension() ; i++){
-			error += Math.pow(given_activation.getEntry(i) - target.getEntry(i), 2); 
+			error += (given_activation.getEntry(i) - target.getEntry(i)) * (given_activation.getEntry(i) - target.getEntry(i)); 
 		}
 
 		return error;  
@@ -1150,12 +1159,21 @@ public class BAL {
 		if(MEASURE_HIDDEN_FOR_BACK_DIST < MEASURE_COUNT 
 				|| MEASURE_OUTPUT_FOR_BACK_DIST < MEASURE_COUNT 
 				|| MEASURE_FIRST_SECOND_RATIO < MEASURE_COUNT 
-				|| MEASURE_HIDDEN_DIST < MEASURE_COUNT ){
+				|| MEASURE_HIDDEN_DIST < MEASURE_COUNT 
+				|| MEASURE_BITSUCC_FORWARD < MEASURE_COUNT
+				|| MEASURE_BITSUCC_BACKWARD < MEASURE_COUNT
+				|| MEASURE_PATSUCC_FORWARD < MEASURE_COUNT
+				|| MEASURE_PATSUCC_BACKWARD < MEASURE_COUNT){
 			ArrayList<RealVector> forward_hiddens = new ArrayList<RealVector>(); 
 			double hidden_dist = 0.0;
 			double hidden_for_back_dist = 0.0;
 			double output_for_back_dist = 0.0;
 
+			double bitsucc_f = 0.0; 
+			double bitsucc_b = 0.0; 
+			double patsucc_f = 0.0; 
+			double patsucc_b = 0.0;
+			
 			double first_second_sum = 0.0; 
 			for(int i=0; i<in.getRowDimension(); i++){
 				RealVector[] forward = this.forwardPass(in.getRowVector(i));
@@ -1175,11 +1193,24 @@ public class BAL {
 					Arrays.sort(output_arr); 
 					first_second_sum += output_arr[output_arr.length-1] / output_arr[output_arr.length-2];
 				}
+				
+				double err_f = this.error(forward[2], target.getRowVector(i));
+				double err_b = this.error(backward[0], in.getRowVector(i)); 
+				bitsucc_f += (target.getRowVector(i).getDimension() - err_f) / ((double)(target.getRowVector(i).getDimension())); 
+				bitsucc_b += (in.getRowVector(i).getDimension() - err_b) / ((double)(in.getRowVector(i).getDimension()));  
+				patsucc_f += (err_f <= 0.0) ? 1.0 : 0.0; 
+				patsucc_b += (err_b <= 0.0) ? 1.0 : 0.0;
 			}
 			if(MEASURE_HIDDEN_FOR_BACK_DIST < MEASURE_COUNT) result[MEASURE_HIDDEN_FOR_BACK_DIST] = hidden_for_back_dist; 
 			if(MEASURE_OUTPUT_FOR_BACK_DIST < MEASURE_COUNT) result[MEASURE_OUTPUT_FOR_BACK_DIST] = output_for_back_dist; 
-			if(MEASURE_FIRST_SECOND_RATIO < MEASURE_COUNT) result[MEASURE_FIRST_SECOND_RATIO] = first_second_sum; 
+			//!DEPRECATED 
+			if(MEASURE_FIRST_SECOND_RATIO < MEASURE_COUNT) result[MEASURE_FIRST_SECOND_RATIO] = 0.0; 
 
+			if(MEASURE_BITSUCC_FORWARD < MEASURE_COUNT) result[MEASURE_BITSUCC_FORWARD] = bitsucc_f / ((double)(target.getRowDimension()));
+			if(MEASURE_BITSUCC_BACKWARD < MEASURE_COUNT) result[MEASURE_BITSUCC_BACKWARD] = bitsucc_b / ((double)(in.getRowDimension()));
+			if(MEASURE_PATSUCC_FORWARD < MEASURE_COUNT) result[MEASURE_PATSUCC_FORWARD] = patsucc_f / ((double)(target.getRowDimension()));
+			if(MEASURE_PATSUCC_BACKWARD < MEASURE_COUNT) result[MEASURE_PATSUCC_BACKWARD] = patsucc_b / ((double)(in.getRowDimension()));
+			
 			if(MEASURE_HIDDEN_DIST < MEASURE_COUNT){
 				for(int i=0; i<forward_hiddens.size() ; i++){
 					for(int j=i+1; j<forward_hiddens.size() ; j++){
@@ -1504,8 +1535,8 @@ public class BAL {
 
 		for(int i=0; i<MEASURE_HEADINGS.length ; i++){
 			if(i != 0){
-				pre_writer.write(' ');
-				post_writer.write(' ');
+				pre_writer.write('\t');
+				post_writer.write('\t');
 			}
 			pre_writer.write(MEASURE_HEADINGS[i]); 
 			post_writer.write(MEASURE_HEADINGS[i]); 
@@ -1516,11 +1547,11 @@ public class BAL {
 		for(int i=0; i<pre_measure.size() ; i++){
 			for(int j=0; j<MEASURE_COUNT ; j++){
 				if(j != 0){
-					pre_writer.write(' ');
-					post_writer.write(' ');
+					pre_writer.write('\t');
+					post_writer.write('\t');
 				}
-				pre_writer.print(pre_measure.get(i)[j]); 
-				post_writer.print(post_measure.get(i)[j]); 
+				pre_writer.print(DECIMAL_FORMAT.format(pre_measure.get(i)[j])); 
+				post_writer.print(DECIMAL_FORMAT.format(post_measure.get(i)[j])); 
 			}
 			pre_writer.println();
 			post_writer.println();
@@ -1669,25 +1700,55 @@ public class BAL {
 	// TODO test 
 	public static void experiment_DifferentHiddenSizes(String input_prefix) throws IOException{
 		MEASURE_IS = true; 
-		MEASURE_SAVE_AFTER_EACH_RUN = false; 
-		MEASURE_RECORD_EACH = 50;
+		MEASURE_SAVE_AFTER_EACH_RUN = true; 
+		MEASURE_RECORD_EACH = 10000;
 
 		INPUT_FILEPATH = input_prefix + ".in"; 
 		OUTPUT_FILEPATH = input_prefix + ".out"; 
-
-		CONVERGENCE_NO_CHANGE_FOR = 10; 
-		INIT_MAX_EPOCHS = 10000;
-
-		INIT_RUNS = 1; 
+		
+		INIT_LAMBDA = 0.7; 
+		INIT_MAX_EPOCHS = 5000;
+		INIT_RUNS = 10000; 
 		INIT_CANDIDATES_COUNT = 0;
+		INIT_SHUFFLE_IS = true;
+		INIT_BATCH_IS = false;
+		INIT_SYMMETRIC_IS = false; 	
+		INIT_TRAIN_ONLY_ON_ERROR = false; 
 
-		PRINT_NETWORK_IS = false; 
+		LAMBDA_ERROR_MOMENTUM_IS = false; 
+		LAMBDA_IH = 0.001;   
 
-		TRY_NORMAL_DISTRIBUTION_SIGMA = new double[] {1.0}; 
-		TRY_LAMBDA = new double[] {0.2}; 
-		TRY_MOMENTUM = new double[] {0.0}; 
+		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
+		RECIRCULATION_ITERATIONS_MAX = 200; //maximum number of iterations to approximate the underlying dynamic system  
+		RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING = true;
 
-		for(int h=5; h<=144; h += h/8 + 1){
+		DROPOUT_IS = false; 
+		CONVERGENCE_NO_CHANGE_FOR = INIT_MAX_EPOCHS; 
+
+		INIT_MOMENTUM_IS = true;
+		INIT_MOMENTUM = 0.0;  
+
+		INIT_NORMAL_DISTRIBUTION_MU = 0;
+		NORMAL_DISTRIBUTION_SPAN = 15; 
+
+		HIDDEN_REPRESENTATION_IS = false;
+		HIDDEN_REPRESENTATION_DIRECTORY = "data/" + input_prefix; 
+		HIDDEN_REPRESENTATION_EACH = 1; 
+		HIDDEN_REPRESENTATION_AFTER = 200;
+		HIDDEN_REPRESENTATION_ONLY_EACH = 200;
+
+		PRINT_NETWORK_IS = false;  
+		PRINT_NETWORK_TO_FILE_IS = false;
+
+		TRY_LAMBDA = new double[]{0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
+		
+		TRY_LAMBDA_IH = new double[]{0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
+												 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 
+												 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
+												 100.0};
+
+		//for(int h=3; h<=144; h += h/8 + 1){
+		for(int h=3; h<=20 ; h++){
 			INIT_HIDDEN_LAYER_SIZE = h; 
 			experiment_Default();
 		} 
@@ -1698,12 +1759,10 @@ public class BAL {
 		MEASURE_SAVE_AFTER_EACH_RUN = true; 
 		MEASURE_RECORD_EACH = 100000;
 
-		/*
 		INPUT_FILEPATH = "auto4.in"; 
 		OUTPUT_FILEPATH = "auto4.in"; 
 		INIT_HIDDEN_LAYER_SIZE = 2;
 		INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3;  
-		*/
 /* 
 		INPUT_FILEPATH = "k12.in"; 
 		OUTPUT_FILEPATH = "k12.in"; 
@@ -1711,8 +1770,8 @@ public class BAL {
 		INIT_NORMAL_DISTRIBUTION_SIGMA = 12.0;   
 */ 
 		INIT_LAMBDA = 0.7; 
-		INIT_MAX_EPOCHS = 500000;
-		INIT_RUNS = 25000; 
+		INIT_MAX_EPOCHS = 5000;
+		INIT_RUNS = 2500; 
 		INIT_CANDIDATES_COUNT = 1;
 		INIT_SHUFFLE_IS = true;
 		INIT_BATCH_IS = false;
