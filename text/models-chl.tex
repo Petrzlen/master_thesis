@@ -1,35 +1,11 @@
 \subsubsection{Contrastive Hebbian Learning}
 \label{models-chl} 
 
-\paragraph{My notes.}
-TODO citations 
-TODO rewrite 
-TODO shorten 
-TODO write it as a comparison to BAL and GeneRec, i.e. put it into context 
+%TODO write it as a comparison to BAL and GeneRec, i.e. put it into context 
 
-The main idea \emph{Contrastive Hebbian Learning} by \citet{movellan1990contrastive} is to have two activation phases in an aribtrary Hopfield network \citep{hopfield1984neurons}. In the first phase, called \emph{minus phase} and denoted \uv{-}, only the input vector is \emph{clamped}, i.e. presented to the underlying network. In the second phase, called \emph{plus phase} and denoted \uv{+}, both the input and target are clambed to the underlying network. The learning is based on the difference of these two activations. 
+The main idea of \emph{Contrastive Hebbian Learning} developed by \citet{movellan1990contrastive} is to have two activation phases in an aribtrary Hopfield network \citep{hopfield1984neurons}. In the first phase, called \emph{minus phase} and denoted \quotes{-}, only the input vector is \emph{clamped}, i.e. presented to the underlying network. In the second phase, called \emph{plus phase} and denoted \quotes{+}, both the input and target are clambed to the underlying network. The learning is based on the difference of these two activations. 
 
-As Hopfield networks in general could be recurrent 
-
-The point of this article \citet{movellan1990contrastive} is that a convenient learning rule is derived from a standard Hopfield energy function. Then Movellan uses insights of annealing to improve the training phase and avoid the learning function to settle in local minima. These improvements are formalized in the next five rules applied sequentially:
-
-To assess the effect of interactivity, two different networks were compared on the combinatorial generalization task, a standard feedforward backpropagation network, and an interactive GeneRec network using the symmetric, midpoint variation learning rule which is equivalent to contrastive Hebbian learning (CHL) or a deterministic Boltzmann machine (DBM) \citet{o1996bio}, \citet{o2001generalization}. 
-
-\begin{enumerate}
-\item Activation are reset to random numbers after each learning phase. 
-
-\item First settle for the clamped phase (+), and then, without resetting activations, free the output units and settle again. 
-
-\item Settle during the free pase and then, without resetting activations, clamp the output units and resettle again. 
-
-\item Sharpening Schedules (annealing Peterson and Hartman 1989)
-
-\item Annealing schedules: In search of the continuous Boltzmann machine. This may be achieved in interactive networks by injecting some form of noise to the net input of each unit. The standard deviation of the noise distribution plays a similar effect to the temperature parameter in descrete Boltzmann machines \citet{movellan1990contrastive}. 
-\end{enumerate}
-
-Movellan introduced notation for the plus (+) phase when both input and output are clamped and minus (-) phase when input is clamped and output is free. 
-
-TODO: Check if correct 
+%TODO: Check if correct 
 \begin{table}
   \centering
   \begin{tabular}{|cccc|}
@@ -50,24 +26,25 @@ TODO: Check if correct
   \label{tab:chl-states}
 \end{table}
 
-\paragraph{Original equations.}
-Define a continuous Hopfield Energy function $F = E + S$ where
-$$ E = -\frac{1}{2}\sum_i\sum_ja_iw_{ij}a_j$$
-and 
-$$ S = \sum_i \int_{rest}^{a_i} f_i^{-1}(a)da.$$
-and $a^T = [a_1,\ldots,a_n]$ is the activation vector, $f_i$ is bounded, monotically increasing, differentiable activation function \citep{movellan1990contrastive}.
 
-\paragraph{Simplified model.}
+Based on Hopfield energy function defined on figure~\ref{fig:models-chl-hopfield} a learning rule is derived by \citet{movellan1990contrastive}: 
+\begin{equation}
+\label{eq:models-chl-learning-rule}
+\Delta w_{ij} = a_i^{+}a_j^{+} - a_i^{-}a_j^{-}
+\end{equation}
+It could be shown that the learning rule \ref{eq:models-chl-learning-rule} decreases the Hopfield energy function \ref{eq:models-chl-hopfield-E} \citep{movellan1990contrastive}. Moreover it could be shown that the CHL learning rule is equivalent to Backpropagation while it is biologically more plausible \citep{o1996bio, o2001generalization}. 
 
-$$\frac{1}{\epsilon}\Delta w_{ij} = (a_i^+a_j^+)-(a_i^-a_j^-),$$
-where $a_i$ is the seind unit and $a_j$ is the receiving unit. 
-
-Decreasing the energy
-$$E = \sum_j\sum_i a_j a_i w_{ij}.$$
-
-\paragraph{O'Reillys conclusion.}
-
-The two phases of activation states used in CHL are the plus phase states, which result from both input
-and target being presented to the network, and provide a training signal when compared to the minus phase
-activations, which result from just the input pattern being presented \citet{o1996bio}. 
-
+\begin{figure}[H]
+  \centering
+  \begin{equation}
+    \label{eq:models-chl-hopfield-E}
+    E = -\frac{1}{2}\sum_i\sum_ja_iw_{ij}a_j
+  \end{equation} 
+  \begin{equation}
+    \label{eq:models-chl-hopfield-S}
+    S = \sum_i \int_{rest}^{a_i} f_i^{-1}(a)da
+  \end{equation} 
+  \caption{Definition of a continuous Hopfield Energy function $F = E + S$, where $a^T = [a_1,\ldots,a_n]$ is the activation vector, $f_i$ is bounded, monotically increasing, differentiable activation function \citep{movellan1990contrastive}.} 
+  \label{fig:models-chl-hopfield}
+\end{figure}
+   
