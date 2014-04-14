@@ -2,11 +2,16 @@
 
 \section{Results and Analysis} 
 
+\subsection{Two lambdas} 
+\label{sec:results-two-lambdas} 
+
+For all models tested on the 4-2-4 encoder task~\ref{sec:datasets-auto4} the two lambda model~\ref{sec:our-two-lambdas} had the best success rate as shown on figure~\ref{fig:results-two-lambdas-auto4-success}. 
+
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.8\textwidth]{img/success_to_lambdas.pdf}    
   \caption{Encoder 4-2-4: Performance of the two-lambda model with $\sigma = 2.3$ and $\mu = 0.0$.}
-  \label{fig:424-success_to_lambdas}
+  \label{fig:results-two-lambdas-auto4-success}
 \end{figure}
 \begin{figure}[t]
   \centering
@@ -15,6 +20,7 @@
   \label{fig:424-epoch_to_lambdas}
 \end{figure}
 
+\subsection{Other} 
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.8\textwidth]{../bal/data/stats/test/epoch_to_err.pdf}    

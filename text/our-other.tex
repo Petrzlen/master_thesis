@@ -65,6 +65,8 @@ err sigma lambda momentum success sample_ratio
 
 We see that the networks which were successfull in the first run remained successfull in the re--runs. On the other side of the unsuccessfull networks changed their performance after re--run. 
 
+
+
 %==========================================================
 \paragraph{Weight initialization.} 
 
@@ -82,6 +84,7 @@ TODO references.
 
 %==========================================================
 \paragraph{Hidden activations.}
+\label{sec:our-hidden-activation} 
 
 We observed that hidden activations tend to settle fast (TODO more exact). Therefore there are cases where it is impossible for $w_{HI}$ and $w_{HO}$ to learn the given task. Intuitively, this is because after settling the hidden activations for each input the network is reduced to a two-layer network. This behaviour is demonstrated by the \emph{in\_triangle} measure (ref). 
 

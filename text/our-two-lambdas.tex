@@ -1,11 +1,13 @@
 
 \subsubsection{Two learning speeds} 
-TODO reformulate. 
-In this model we use two learning speeds. First, $\lambda_I$ for weights $w_{IH}$ and $w_{OH}$ and second, $\lambda_H$ for weights $w_{HI}$ and $w_{HO}$. Both $\lambda_I$ and $\lambda_H$ are constant for the whole learning phase and therefore this model is consistent with our bio-plausibility assumptions. 
+\label{sec:our-two-lambdas}
 
-Our simulations show that setting $\lambda_I << \lambda_H$ could lead to significantly better performance in comparison to the standard BAL model. 
-
-Our intuitive explanation behind is that $h^F - h^B$ converges to zero slower and therefore error terms $(o - t)$ and $(i - s)$ could impact $w_{IH}$ and $w_{OH}$ for more epochs. Moreover we can explain this model in terms of bio-plausibility. The perception of input to internal representation is changed only little over time and only the reconstruction to target pattern from internal representation is trained hard. 
-
-TODO make sure this idea is novel enough (haven't found so far) \\
+TODO search more extensively for citations of similar articles. \\
 TODO try it also with CHL and GeneRec.  \\ 
+
+We proposed the \emph{two learning speed} model as a solution for the \emph{hidden activation settling} \ref{sec:our-hidden-activation}. As the name suggests this model uses two learning speeds. First learning speed~$\lambda_v$, i.e.~\emph{lambda visible}, for weights~$W^{IH}$ and~$W^{OH}$ and second learning speed $\lambda_h$, i.e.~\emph{lambda hidden}, for weights~$W^{HI}$ and~$W^{HO}$. Both~$\lambda_v$ and~$\lambda_h$ are constant for the whole learning phase and therefore this model is consistent with our biological plausibility assumptions. 
+
+Our simulations show that setting $\lambda_v \cdot \lambda_h \approx 1$ and $\lambda_v << \lambda_h$ could lead to significantly better performance in comparison to the standard BAL model \ref{sec:results-two-lambdas}. Our intuition explains it as follows: because $\lambda_v << 1$ thus $W^{IH}$ and $W^{OH}$ are updated only little and also activations $h^{\rm F}$ and $h^{\rm B}$ change only a little and $|h^{\rm F}- h^{\rm B}|$ converges to zero slower. Thus error terms $(y_j^{\rm B} - y_j^{\rm F})$ and $(x_j^{\rm F} - x_j^{\rm B})$ from the BAL learning rule \ref{eq:models-bal-learning-rule-forward} for $W^{HI}$ and $W^{HO}$ impact the weight change longer with {\bf non}--\emph{constant hidden activations} \ref{sec:our-hidden-activation}. 
+
+Moreover we can explain the Two Lambda model in terms of bio-plausibility. The perception of visible input to internal hidden representation is changed only little over time while the reconstruction to target pattern from these internal representation is trained hard. 
+
