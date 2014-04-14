@@ -83,7 +83,7 @@ TODO references.
 %==========================================================
 \paragraph{Hidden activations.}
 
-We observed that hidden activations tend to settle fast (TODO more exact). Therefore there are cases where it is impossible for $W_{HI}$ and $W_{HO}$ to learn the given task. Intuitively, this is because after settling the hidden activations for each input the network is reduced to a two-layer network. This behaviour is demonstrated by the \emph{in\_triangle} measure (ref). 
+We observed that hidden activations tend to settle fast (TODO more exact). Therefore there are cases where it is impossible for $w_{HI}$ and $w_{HO}$ to learn the given task. Intuitively, this is because after settling the hidden activations for each input the network is reduced to a two-layer network. This behaviour is demonstrated by the \emph{in\_triangle} measure (ref). 
 
 Explaination why the hidden activations tend to settle fast could be given by the learning rule: 
 \begin{equation} 
@@ -91,10 +91,10 @@ Explaination why the hidden activations tend to settle fast could be given by th
 %TODO correct label / ref 
 \end{equation} 
 
-which for the $W^{IH}$ and $W^{OH}$ give
+which for the $W^{IH}$ and $W^{OH}$ gives
 \begin{equation} 
-\Delta W^{IH}_{ij} = s^F_i(h^B_j - h^F_j) \\ 
-\Delta W^{OH}_{ij} = o^B_i(h^F_j - h^B_j). 
+\Delta w_{ij}^{IH} = s^F_i(h^B_j - h^F_j) \\ 
+\Delta w_{ij}^{OH} = o^B_i(h^F_j - h^B_j). 
 \end{equation} 
 We see that both terms $(h^B_j - h^F_j)$ and $(h^F_j - h^B_j)$ push $W^{IH}$ and $W^{OH}$ in a way that $h^B_j = h^F_j$. 
 

@@ -1,11 +1,11 @@
 
 \subsubsection{Two learning speeds} 
 TODO reformulate. 
-In this model we use two learning speeds. First, $\lambda_I$ for weights $W_{IH}$ and $W_{OH}$ and second, $\lambda_H$ for weights $W_{HI}$ and $W_{HO}$. Both $\lambda_I$ and $\lambda_H$ are constant for the whole learning phase and therefore this model is consistent with our bio-plausibility assumptions. 
+In this model we use two learning speeds. First, $\lambda_I$ for weights $w_{IH}$ and $w_{OH}$ and second, $\lambda_H$ for weights $w_{HI}$ and $w_{HO}$. Both $\lambda_I$ and $\lambda_H$ are constant for the whole learning phase and therefore this model is consistent with our bio-plausibility assumptions. 
 
 Our simulations show that setting $\lambda_I << \lambda_H$ could lead to significantly better performance in comparison to the standard BAL model. 
 
-Our intuitive explanation behind is that $h^F - h^B$ converges to zero slower and therefore error terms $(o - t)$ and $(i - s)$ could impact $W_{IH}$ and $W_{OH}$ for more epochs. Moreover we can explain this model in terms of bio-plausibility. The perception of input to internal representation is changed only little over time and only the reconstruction to target pattern from internal representation is trained hard. 
+Our intuitive explanation behind is that $h^F - h^B$ converges to zero slower and therefore error terms $(o - t)$ and $(i - s)$ could impact $w_{IH}$ and $w_{OH}$ for more epochs. Moreover we can explain this model in terms of bio-plausibility. The perception of input to internal representation is changed only little over time and only the reconstruction to target pattern from internal representation is trained hard. 
 
 TODO make sure this idea is novel enough (haven't found so far) \\
 TODO try it also with CHL and GeneRec.  \\ 

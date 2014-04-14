@@ -8,7 +8,7 @@ The \emph{Generalized recirculation algorithm}, or \emph{GeneRec}, was developed
 GeneRec uses three weight matrices $W^{IH}$, $W^{HO}$ and $W^{OH}$ for the input--hidden, hidden--output and output--hidden weights. It also has the \quotes{-} and \quotes{+} phases as CHL with same meaning, i.e. in the \emph{minus} phase only the input vector is clamped and in the \emph{plus} phase both input and target vectors are clamped as seen on table~\ref{tab:models-generec}. Generec uses the non--symmetric version of the CHL rule for all three weight matrices: 
 \begin{equation}
   \label{eq:models-generec-learning-rule}
-  \Delta W^{ij} = \lambda a^{-}_i(a^{+}_j - a^{-}_j)
+  \Delta w_{ij} = \lambda a^{-}_i(a^{+}_j - a^{-}_j)
 \end{equation}
 where $a^{-}_p$ denotes the presynaptic and $a^{-}_q$ denotes the postsynaptic unit activation in minus phase, $a^{+}_p$ is the presynaptic activation from plus phase and $\lambda$ denotes the learning rate. So for example when updating $W^{HI}$ then $a^{-}_i = h^{-}_i$, $a^{-}_j = o^{-}_j$ and $a^{+}_j = t_k$. 
 
@@ -22,11 +22,11 @@ The main difference between CHL and GeneRec is that GeneRec has layers and it's 
     \hline
     Input (s)    & $-$ & - & $s_i$ = \mbox{stimulus input} \\
     \hline
-    Hidden (h)   & $-$ & \hspace{0.3cm}$\eta^{-}_j = \sum_i W^{ij}s_i + \sum_k W^{kj}o^{-}_k$\hspace{0.3cm} &
+    Hidden (h)   & $-$ & \hspace{0.3cm}$\eta^{-}_j = \sum_i w_{ij}^{IH}s_i + \sum_k w_{kj}^{OH}o^{-}_k$\hspace{0.3cm} &
     $h^{-}_j = \sigma(\eta^{-}_j)$\hspace{0.3cm}\\
-          &  +  & $\eta^{+}_j = \sum_{i}W^{ij}s_i + \sum_k W^{kj}o^{+}_k$ & $h^{+}_{j} = \sigma(\eta^{+}_j)$ \\
+          &  +  & $\eta^{+}_j = \sum_{i}w_{ij}^{IH}s_i + \sum_k w_{kj}^{OH}o^{+}_k$ & $h^{+}_{j} = \sigma(\eta^{+}_j)$ \\
     \hline
-    Output (o) & $-$ & $\eta^{-}_k = \sum_j W^{jk}h_j$ & $o^{-}_k = \sigma(\eta^{-}_k)$\\
+    Output (o) & $-$ & $\eta^{-}_k = \sum_j w_{jk}^{HO}h_j$ & $o^{-}_k = \sigma(\eta^{-}_k)$\\
            &  +  & - & $o^{+}_k$ = \mbox{target output} \\
     \hline
   \end{tabular}
@@ -45,7 +45,7 @@ In case of the \emph{plus} phase only the hidden activations are necessary to co
   a_i(t+1) = \left\{
 	\begin{array}{ll}
 		s_i & \mbox{if } i \in \mbox{input} \nonumber \\
-		\phi(\sum_j W^{ji}a_j(t)) & \mbox{otherwise} \nonumber 
+		\phi(\sum_j w_{ji}a_j(t)) & \mbox{otherwise} \nonumber 
 	\end{array}
 \right. \\
 \end{align} 
@@ -60,19 +60,19 @@ where $a_i(t)$ is the activation of $i$--th unit in discrete time $t$. The rules
 \end{figure}
 
 \paragraph{Modifications.}
-It's important to note that \citet{o1996bio} proved that GeneRec converges if the learning rule~\ref{eq:models-generec-learning-rule} is a valid approximation to the error derivate and the weights beeing symmetric, i.e. $W^{HO} = W^{T}_{OH}$. \citet{o1996bio} based on CHL and the midpoint method for fradient computation \citep{press1990numerical} proposed two more learning rules for GeneRec: 
+It's important to note that \citet{o1996bio} proved that GeneRec converges if the learning rule~\ref{eq:models-generec-learning-rule} is a valid approximation to the error derivate and the weights beeing symmetric, i.e. $W^{HO} = W^{OH^{T}}$. \citet{o1996bio} based on CHL and the midpoint method for fradient computation \citep{press1990numerical} proposed two more learning rules for GeneRec: 
 \begin{equation}
   \label{eq:models-generec-learning-rule-mid}
-  \frac{1}{\lambda} \Delta W^{ij} =  \frac{1}{2}(a^{-}_i + a^{+}_i)(a^{+}_j - a^{-}_j)
+  \frac{1}{\lambda} \Delta w_{ij} =  \frac{1}{2}(a^{-}_i + a^{+}_i)(a^{+}_j - a^{-}_j)
 \end{equation}
 \begin{equation}
   \label{eq:models-generec-learning-rule-sym}
-  \frac{1}{\lambda} \Delta W^{ij} =  (a^{+}_j a^{-}_i - a^{-}_j a^{+}_i) - 2a^{-}_j a^{-}_i
+  \frac{1}{\lambda} \Delta w_{ij} =  (a^{+}_j a^{-}_i - a^{-}_j a^{+}_i) - 2a^{-}_j a^{-}_i
 \end{equation}
 where~\ref{eq:models-generec-learning-rule-mid} is called the \emph{midpoint learning rule} and~\ref{eq:models-generec-learning-rule-sym} is called the \emph{symmetric learning rule} which aims to preserve weight symmetry. By combining rules ref{eq:models-generec-learning-rule-mid} and \ref{eq:models-generec-learning-rule-sym} we get the following rule: 
 \begin{equation}
   \label{eq:models-generec-learning-rule-chl}
-  \frac{1}{\lambda} \Delta W^{ij} =  (a^{+}_i a^{+}_j) - (a^{-}_i a^{-}_j)
+  \frac{1}{\lambda} \Delta w_{ij} =  (a^{+}_i a^{+}_j) - (a^{-}_i a^{-}_j)
 \end{equation}
 which is indeed the CHL learning rule~\ref{eq:models-chl-learning-rule}. Thus we see that GeneRec is closely related to CHL. 
 
