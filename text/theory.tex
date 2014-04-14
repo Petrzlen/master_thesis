@@ -12,55 +12,8 @@ In this section we will describe the basics of artificial neural networks. We wi
 \input{theory-perceptron} 
 \label{sec:perceptron} 
 
-%=============================================================
-\subsubsection{Multilayer Feedworward Networks} 
-\label{sec:multilayer} 
+\input{theory-mutilayer}
 
-We will define multilayer feedforward networks as in \citet{haykin1994neural}. First, we define a \emph{layered} neural network where neurons are organised to form layers. In the simplest version we have an \emph{input layer} of source nodes and an \emph{output layer} which is formed by aforementioned perceptrons. In other words this is a \emph{feedforward} or \emph{acyclic} type of network as the \emph{activation}, i.e. outputs of the neurons are computed from the input to the output layer and never \emph{backwards}. 
+\input{theory-recurrent} 
 
-Multilayer neural network has one or more \emph{hidden layers} in addition to the input and ouput layer as shown on figure~\ref{fig:multilayer}: 
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.6\textwidth]{img/multilayer.pdf}    
-  \caption{Fully connected feedforward multilayer with one hidden layer and one output layer. The source nodes supply the activation pattern, i.e. input vector, which is applied to second layer neurons. The output signal of the hidden layer is used as the input for the output layer. As shown by \citet{cybenko1989approximation} the three layer network is an universal approximator continuous functions on compact subsets of $\mathbb{R}^n$.} 
-  \label{fig:multilayer}
-\end{figure}
-
-There exists several methods for training multilayer networks. First, we will describe the most common Backpropagation in \ref{models-bp} and then methods related to our work such as CHL \ref{models-chl}, GeneRec \ref{models-generec} and BAL \ref{models-bal}. 
-
-\subsubsection{Recurrent Networks}
-
-Recurrent networks arise problems with computing their activations. For example imagine a cycle of neurons. That means that output of a particular unit could affect its input. Therefore the activations in general couldn't be computed only by one forward pass. This introduces real--valued dynamic systems for computing the activations. We can observe that it holds that $\frac{\partial\eta}{\partial t} = 0$ for the activations of neurons in the fixed point state. There are several approaches solving these dynamic systems and deriving the learning rule \cite{pineda1987generalization, pearlmutter1989learning, williams1989learning, elman1990finding, haykin1994neural}. 
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.6\textwidth]{img/theory-recurrent.png}    
-  \caption{Simple Recurrent network designed by \citet{elman1990finding}. Image from \citep{haykin1994neural}.} 
-  \label{fig:theory-recurrent}
-\end{figure}
-
-An \emph{iterative method} is used by \citet{movellan1990contrastive} for computing activations. In the first step the input neurons have activations equal to the input vector and the other neurons have zero activation. In the next steps activations from the last step are used to compute activation in this step as shown in equation~\ref{eq:chl-activation}. This rule is iterated while the activation are settled. For particullar symmetric network it could be proved that activations will converge \citep{o1996bio}. For more general networks a dynamic system based on rule~\ref{eq:chl-activation} could be derived and a fixed point solution could be found by solving a set of non--linear equations (TODO ref). \citet{movellan1990contrastive} proposes using the method of simulated annealing \citep{kirkpatrick1983optimization,vcerny1985thermodynamical} to improve the learning rule and to avoid settling the network in a local minima. We experimented with the iterative method for a two--way GeneRec \ref{sec:our-bal-recirc}. 
-
-\begin{equation}
-\label{eq:chl-activation} 
-\eta_i(t+1) = \phi(\sum_j w_{ji}\eta_i(t)
-\end{equation}
-
-\subsubsection{Hopfield Networks}
-\label{sec:theory-hopfield}
-
-A \emph{Hopfield network} \citep{hopfield1984neurons} is a network with arbitrary connections defined only by one weight matrix $W$. Some of the units are chosen as the \emph{input units} which have stable activations for a given input pattern. We can treat a Hopfield network as a Recurrent neural network. A Hopfield network comes with an continuous error function for which usually the following function is chosen: 
-\begin{equation}
-  \label{eq:theory-hopfield-error}
-  E = -\frac{1}{2}\sum_i\sum_ja_iw_{ij}a_j
-\end{equation} 
-where $a_i$ is the activation of the $i$-th unit. The aim of the network is to settle the activations so that $E$ settles in a global minimum. Activation for the $i$-th unit is computed based on the following differential equation \citep{hopfield1984neurons}: 
-\begin{equation}
-  \label{eq:theory-hopfield-activation}
-  \frac{\partial a_i}{\partial t} = \alpha(-a_i + \phi(\eta_i)).
-\end{equation} 
-where $a^T = [a_1,\ldots,a_n]$ is the activation vector, $f_i$ is bounded, monotically increasing, differentiable activation function.
-
-It could be proven for equation~\ref{eq:theory-hopfield-activation} that if the weights are symmetric, i.e. $w_{ij} = w_{ji}$, the activations will settle in the minimal error state defined by~\ref{fig:theory-hopfield-activation} \citep{hopfield1984neurons}. This learning rule is typically used in \emph{interactive activation networks} studied by \citet{grossberg1978theory, mcclelland1981interactive}. 
-
+\input{theory-hopfield} 
