@@ -1,80 +1,79 @@
 \subsubsection{Generalized recirculation}
 \label{models-generec} 
 
-TODO rewrite and shorten a little 
-TODO use previously defined as CHL and Recirculation
-
 \paragraph{Introduction.} 
+The \emph{Generalized recirculation algorithm}, or \emph{GeneRec}, was developed by \citet{o1996bio}. It's a supervised algorithm which in comparison with Backpropagation \ref{models-bp} is argued to be a more biologically plausible model as error is computed locally as a difference between activations \citep{o1998six, o2001generalization, da2011advances, schneider2009application}. In summary, GeneRec is a combination of CHL \ref{models-chl} and the Recirculation algorithm \ref{models-recirc}. It overcomes limitations of the Recirculation algorithm to be an encoder by having a three layer network. For the error computation a backward weight matrix from output layer to hidden layer is used and the learning rule is derived from the CHL learning rule~\ref{eq:models-chl-learning-rule}. It could be proven that GeneRec, as Backpropagation, could learn arbitrary input--output mappings \citep{o1996bio}. 
 
-The \emph{Generalized recirculation algorithm}, or \emph{GeneRec}, was developed by \citet{o1996bio}. It's a supervised algorithm which in comparison with Backpropagation \ref{models-bp} is argued to be a more biologically plausible model \citep{o1998six, o2001generalization, da2011advances, schneider2009application}. In summary, GeneRec is a combination of CHL \ref{models-chl} and the Recirculation algorithm \ref{models-recirc}. It overcomes limitations of the Recirculation algorithm to be an encoder by having a three layer network. For the error computation a backward weight matrix from output layer to hidden layer is used and the learning rule is derived from the CHL learning rule~\ref{eq:models-chl-learning-rule}. It could be proven that GeneRec, as Backpropagation, could learn arbitrary input--output mappings \citep{o1996bio}. 
-
-GeneRec uses three weight matrices $W_{IH}$, $W_{HO}$ and $W_{OH}$ for the input--hidden, hidden--output and output--hidden weights. It also has the \quotes{-} and \quotes{+} phases as CHL and uses the non--symmetric version of the CHL rule: 
+\paragraph{Learning rule.} 
+GeneRec uses three weight matrices $W_{IH}$, $W_{HO}$ and $W_{OH}$ for the input--hidden, hidden--output and output--hidden weights. It also has the \quotes{-} and \quotes{+} phases as CHL with same meaning, i.e. in the \emph{minus} phase only the input vector is clamped and in the \emph{plus} phase both input and target vectors are clamped as seen on table~\ref{tab:models-generec}. Generec uses the non--symmetric version of the CHL rule for all three weight matrices: 
 \begin{equation}
   \label{eq:models-generec-learning-rule}
-  \Delta w_{ij} = \lambda \ a^{-}_i(a^{+}_j - a^{-}_j)
+  \Delta w_{ij} = \lambda a^{-}_i(a^{+}_j - a^{-}_j)
 \end{equation}
+where $a^{-}_p$ denotes the presynaptic and $a^{-}_q$ denotes the postsynaptic unit activation in minus phase, $a^{+}_p$ is the presynaptic activation from plus phase and $\lambda$ denotes the learning rate. So for example when updating $W_{HI}$ then $a^{-}_i = h^{-}_i$, $a^{-}_j = o^{-}_j$ and $a^{+}_j = t_k$. 
 
+\paragraph{Activation.} 
+The main difference between CHL and GeneRec is that GeneRec has layers and it's based more on Recurrent neural networks than on the Hopfield networks. Therefore, as shown in table~\ref{tab:models-generec}, we can compute the activations sequentially. 
 \begin{table}
   \centering
   \begin{tabular}{|cccc|}
     \hline
     Layer & Phase & Net Input & Activation\\
     \hline
-    Input (s)    & $-$ & - & $s_i$ = stimulus input\\
+    Input (s)    & $-$ & - & $s_i$ = \mbox{stimulus input} \\
     \hline
     Hidden (h)   & $-$ & \hspace{0.3cm}$\eta^{-}_j = \sum_i w_{ij}s_i + \sum_k w_{kj}o^{-}_k$\hspace{0.3cm} &
     $h^{-}_j = \sigma(\eta^{-}_j)$\hspace{0.3cm}\\
           &  +  & $\eta^{+}_j = \sum_{i}w_{ij}s_i + \sum_k w_{kj}o^{+}_k$ & $h^{+}_{j} = \sigma(\eta^{+}_j)$ \\
     \hline
     Output (o) & $-$ & $\eta^{-}_k = \sum_j w_{jk}h_j$ & $o^{-}_k = \sigma(\eta^{-}_k)$\\
-           &  +  & - & $o^{+}_k$ = target output \\
+           &  +  & - & $o^{+}_k$ = \mbox{target output} \\
     \hline
   \end{tabular}
-  \caption{Equilibrium network variables in GeneRec model \citet{o1996bio}. We can see inspiration from the Recirculation algorithm \ref{models-recirc} and a correspondence between $T$ and GeneRec phases. In particular $s^{-} \approx T=0$, $h^{-} \approx T=1$, $o^{-} \approx T=2$ and $h^{+}$ corresponds to $T=3$.}
-  \label{tab:generec}
+  \caption{Equilibrium network variables in GeneRec model \citet{o1996bio}. We can see the inspiration from the Recirculation algorithm \ref{models-recirc} and a correspondence between $T$ and GeneRec phases. In particular $s^{-} \approx T=0$, $h^{-} \approx T=1$, $o^{-} \approx T=2$ and $h^{+}$ corresponds to $T=3$. The activation flow is depicted on figure~\ref{fig:models-generec-phase}.}
+  \label{tab:models-generec}
 \end{table}
+In case of the \emph{plus} phase only the hidden activations are necessary to compute what could be achieved by computing $\phi(\eta_i)$. In case of the \emph{minus} phase where only inputs are clamped it's necessary to find an \emph{equilibrium} activation state for which the equations~\ref{tab:models-generec} hold. As dicussed in recurrent networks~\ref{sec:theory-recurrent} there are several approaches. In our implementation~\ref{sec:appendix-impl-generec} we choose the \emph{iterative method} with following rules for computing activations $a_i$: 
+\begin{align}
+  \label{eq:models-generec-activation}
+  a_i(0) = \left\{
+	\begin{array}{ll}
+		s_i & \mbox{if } i \in \mbox{input} \nonumber \\
+		0 & \mbox{otherwise} \nonumber 
+	\end{array}
+\right. \\
+  a_i(t+1) = \left\{
+	\begin{array}{ll}
+		s_i & \mbox{if } i \in \mbox{input} \nonumber \\
+		\phi(\sum_j w_{ji}a_j(t)) & \mbox{otherwise} \nonumber 
+	\end{array}
+\right. \\
+\end{align} 
+where $a_i(t)$ is the activation of $i$--th unit in discrete time $t$. The rules~\ref{eq:models-generec-activation} while are iterated while $|a_i(t+1) a_i(t)| > \epsilon$ for some unit $i$. This method is further discussed in \ref{sec:generec-fluctuation} and \citep{orru2008sabio}.
 
-The basic weight update rule in GeneRec is:
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.4\textwidth]{img/generec_minus_phase.png}
+  \includegraphics[width=0.4\textwidth]{img/generec_plus_phase.png}
+  \caption{Depicting the minus and plus phases of GeneRec \citet{orru2008sabio}. The activation equations are defined in table~\ref{tab:models-generec}. TODO redraw and merge} 
+  \label{fig:models-generec-phase}
+\end{figure}
+
+\paragraph{Modifications.}
+It's important to note that \citet{o1996bio} proved that GeneRec converges if the learning rule~\ref{eq:models-generec-learning-rule} is a valid approximation to the error derivate and the weights beeing symmetric, i.e. $W_{HO} = W^{T}_{OH}$. \citet{o1996bio} based on CHL and the midpoint method for fradient computation \citep{press1990numerical} proposed two more learning rules for GeneRec: 
 \begin{equation}
-\label{eq:generec}
+  \label{eq:models-generec-learning-rule-mid}
+  \frac{1}{\lambda} \Delta w_{ij} =  \frac{1}{2}(a^{-}_i + a^{+}_i)(a^{+}_j - a^{-}_j)
 \end{equation}
-where $a^{-}_p$ denotes the presynaptic and $a^{-}_q$ denotes the postsynaptic unit activation in minus phase, $a^{+}_p$ is the presynaptic activation from plus phase (in output-to-hidden direction) and $\lambda$ denotes the learning rate. The learning rule given in Eq.~\ref{eq:generec} is applied to both input-hidden and hidden-output weights.  Due to the lack of space, the reader is left to consult the original paper \citet{o1996bio} regarding the underlying math behind the derivation of the GeneRec learning rule.
+\begin{equation}
+  \label{eq:models-generec-learning-rule-sym}
+  \frac{1}{\lambda} \Delta w_{ij} =  (a^{+}_j a^{-}_i - a^{-}_j a^{+}_i) - 2a^{-}_j a^{-}_i
+\end{equation}
+where~\ref{eq:models-generec-learning-rule-mid} is called the \emph{midpoint learning rule} and~\ref{eq:models-generec-learning-rule-sym} is called the \emph{symmetric learning rule} which aims to preserve weight symmetry. By combining rules ref{eq:models-generec-learning-rule-mid} and \ref{eq:models-generec-learning-rule-sym} we get the following rule: 
+\begin{equation}
+  \label{eq:models-generec-learning-rule-chl}
+  \frac{1}{\lambda} \Delta w_{ij} =  (a^{+}_i a^{+}_j) - (a^{-}_i a^{-}_j)
+\end{equation}
+which is indeed the CHL learning rule~\ref{eq:models-chl-learning-rule}. Thus we see that GeneRec is closely related to CHL. 
 
-\paragraph{Minus phase.} When units xi are presented to the input layer A, there is the propagation of this stimulus to the hidden layer B (bottom-up propagation) (figure 1). At the same time, the previous output ok propagates from the output layer C to the hidden layer B (top- down propagation) (figure 2). Then the hidden activation \emph{minus} - minus phase - ($h^-$ ) is generated (sum of bottom-up and top-down propagations). The activation function $\sigma$ is sigmoid. Equation 1 shows the hidden activation calculus for one hidden unit j. wij are the synaptic weights from the input layer to the hidden layer and wjk are the synaptic weights from the hidden layer to the output layer (which are the same as the weights from the output layer to the hidden layer, because reciprocal weights are symmetric in GeneRec, that is, wjk = wkj \citet{o1996bio}). ok(t-1) is the previous output (output on time t - 1) \citet{orru2008sabio}.
-
-$$h_j^- = \sigma \left(\sum_{i=0}^A w_{ij} \cdot x_i + \sum_{k=1}^C w_{jk} \cdot o_k(t-1)\right)$$
-
-Finally, the real output ok(t) is generated through the propagation of the \emph{minus} layer activation to the output layer (figure 3), shown for one output unit k by equation 2 \citet{o1996bio}. Notice that the architecture employed is bi-directional. Recall that ok (t) (the current output on time t) is used in order to differentiate it from ok (t - 1) (the previous output on time t - 1).
-
-\begin{center} 
-\includegraphics[width=0.5\textwidth]{img/generec_minus_phase.png} \citet{orru2008sabio} 
-\end{center} 
-
-\paragraph{Plus phase.} Units xi are presented again to the input layer A; there is the propagation of this stimulus to the hidden layer B (bottom-up propagation) (figure 4). At the same time, the desired output yk propagates from the output layer C to the hidden layer B (top- down propagation) (figure 5). Then the hidden activation + \emph{plus} - plus phase - (hj) is generated, summin bottom-up and top-down propagations (equation 3) \citet{o1996bio}, \citet{orru2008sabio}.
-
-$$h_j^+ = \sigma\left( \sum_{i=0}^A w_{ij} \cdot x_i + \sum_{k=1}^C w_{jk} y_k \right)$$
-
-\begin{center} 
-\includegraphics[width=0.5\textwidth]{img/generec_plus_phase.png} \citet{orru2008sabio} 
-\end{center} 
-
-In order to make learning possible, synaptic weights $w$ are updated, based on h-, j  $h^+_j$, $o_k$ , $y_k$, $x_i$, and the learning rate $\eta$ (equations 4 and 5).
-
-%TODO equation labels with intext references 
-$$\Delta w_{jk} = \eta(y_k - o_k(t)) h^-_j $$
-
-$$\Delta w_{ij} = \eta(h^+_j - h^-_j) x_i$$
-
-Finally, O’Reilly \citet{o1998six} suggests, unlike backpropagation, that the teaching signal is just another state of “experience” in the network, that is, in GeneRec algorithm the teaching signal is exactly the “top-down” activation in the plus-phase.
-
-TODO reformulate 
-It was recently shown that backpropagation can be implemented in a more biologically plausible fashion using bidirectional activation propagation in an interactive network using the GeneRec algorithm \citet{o1996bio}, which is a generalization of the recirculation algorithm \citet{hinton1988learning}. In GeneRec, error information is propagated as two separate terms via standard activation propagation mechanisms in interactive networks, and the difference between these terms (which is the error signal) can be plausibly computed using the synaptic modification mechanisms underlying long term potentiation and depression (LTP/LTD). Versions of the GeneRec algorithm are equivalent to the other known ways of implementing powerful error-driven learning using interactive activation propagation instead of direct error propagation (e.g., the deterministic Boltzmann machine \citet{hinton1989deterministic} and Contrastive Hebbian Learning \citet{movellan1990contrastive}). Thus, several different approaches converge on the idea that the way to perform error-driven learning in a more biologically plausible manner is to use interactive networks, where error signals are communicated via top-down activation propagation \citet{o2001generalization}.
-
-%Copy from \citet{da2011advances} 
-
-%TODO \citet{nawrocki2012monitoring}.
-%TODO Some improvements \citet{da2008biological}. 
-
-To assess the effect of interactivity, two different networks were compared on the combinatorial generalization task, a standard feedforward backpropagation network, and an interactive GeneRec network using the symmetric, midpoint variation learning rule which is equivalent to contrastive Hebbian learning (CHL) or a deterministic Boltzmann machine (DBM) \citet{o1996bio}, \citet{o2001generalization}. 
- 
-\footnote{TODO: How to cope with biases (which are not symmetric)? We haven't found how GeneRec uses the Bias neuron.} 
+Note that we encountered some missing details in \citet{o1996bio} about how to implement the GeneRec algorithm which are further discussed in \ref{sec:appendix-impl-generec}.

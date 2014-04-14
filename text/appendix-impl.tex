@@ -10,11 +10,20 @@
 
 %Implementation – in implementation section you should mention the tools that you use to implement, the target environment (e.g. linux, windows). Limitations (e.g. buffer sizes, connections number).
 
-\subsection{Bias} 
+\subsection{GeneRec} 
+\label{sec:appendix-impl-generec} 
 
+Activation is computed as in \ref{eq:models-generec-activation}.
+
+\subsubsection{Bias} 
 %TODO reformulate
 %TODO add more recent citations 
 %TODO add results with / without bias 
 %TODO parse references 
 The use of such biases in neural networks has been discussed in the context of the fundamental bias/variance tradeoff \citet{geman1992neural}. This tradeoff emphasizes the fact that biases that are appropriate for the task can greatly facilitate learning and generalization by reducing the level of variance, where variance reflects the extent to which parameters are underconstrained by learning, and thus free to vary, causing random errors in generalization. These biases are also known as regularizers \citet{poggio1990networks}. However, inappropriate biases can obviously hurt performance by introducing systematic errors, such that there is no such thing as a single universally beneficial set of biases (Wolpert, 1996a; Wolpert, 1996b). 
+
+\subsubsection{Fluctuation} 
+\label{sec:generec-fluctuation}
+
+
 

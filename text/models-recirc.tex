@@ -4,9 +4,9 @@
 
 The \emph{Recirculation algorithm} designed by \citet{hinton1988learning} is an unsupervised neural letwork for learning encoder tasks. Motivation for such a model comes from interesting hidden representations of Backpropagation \ref{models-bp} with possible usage as an encoder. It has only two layers denoted \emph{visible layer} and \emph{hidden layer} as shown on figure~\ref{fig:models-recirc}. The aim of the network is to remember on the hidden layer the patterns presented to the visible layer. This could be used for compression if the hidden layer has less units than the visible layer. It also could be used as a content--accessed--memory where if novel patterns are presented to the network it could show the most similar stored pattern. 
 
-\begin{figure}[H]
+\begin{figure}[h]
   \centering
-\includegraphics[width=0.6\textwidth]{img/recirculation.png}
+\includegraphics[width=0.4\textwidth]{img/recirculation.png}
   \caption{The recirculation algorithm, as proposed by Hinton and McClelland (1988). Activation is propagated in four steps $T \in \{0,1,2,3\}$. At the first phase denoted by $T=0$ only the input vector $t$ is clamped on the visible layer, at $T=1$ a forward pass $h^{*}$ is computed from visible to hidden, at $T=2$ a reconstructed pattern $o_k$ as a function of hidden state $h^{*}$ at $T=1$ is computed and finally at $T=3$ a hidden state $h$ is computed from $o_k$.}
   \label{fig:models-recirc}
 \end{figure}

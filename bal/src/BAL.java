@@ -65,7 +65,8 @@ public class BAL {
 	private static int WEIGHT_UPDATE_BAL_RECIRC = 3; 
 	private static int WEIGHT_UPDATE_GENEREC = 4; // => INIT_SYMMETRIC_IS = true 
 	private static int WEIGHT_UPDATE_TYPE = WEIGHT_UPDATE_BAL;
-	// TODO not sure if CHL (it's more complicated) 
+	// TODO not sure if CHL (it's more complicated)
+	// TODO symmetric preserving GeneRec learning rule & midpoint method rule => ALSO TO BAL!!! 
 	private static boolean INIT_RECIRCULATION_IS = (WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_CHL || WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL_RECIRC || WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC); 
 	private static double RECIRCULATION_EPSILON = 0.01; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 	private static int RECIRCULATION_ITERATIONS_MAX = 20; //maximum number of iterations to approximate the underlying dynamic system  
