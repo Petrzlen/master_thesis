@@ -3,9 +3,7 @@
 \label{models-bal} 
 % If your work builds on top of an existing one, this is the place to describe the existing work in more detail, pointing out the parts that you extend or improve and why you extend or improve these parts.
 
-TODO Reformulate 
-
- Bidirectional Activation-based Learning algorithm (BAL) shares with GeneRec the phase-based activations and unit types, but differs from it by the connectivity that allows completely bidirectional associations to be established (GeneRec focuses on input-to-output mapping). Unlike GeneRec, BAL uses two pairs of weight matrices for each activation phase. In addition, in BAL we do not use dynamical settling process but compute the activations in one step as described in Table \ref{tab:bal-states}.
+Design of Bidirectional Activation-based Learning algorithm (BAL) by \citet{farkas2013bal} is motivated by the biological plausibility of GeneRec. BAL inherits the learning rule of GeneRec \ref{eq:models-generec-learning-rule} and also the two phases. But unlike GeneRec, BAL aims to learn bidirectional mapping between inputs and outputs and for this purpose it uses four weights $W^{IH}$, $W^{HO}$, $W^{OH}$ and $W^{HI}$. The design of BAL is symmetric as shown in table~\ref{tab:bal-activation} and thus we avoid calling inputs, outpus, minus phase or plus phase. We rather choose \emph{forward} and \emph{backward} which could be interchanged. Note that the forward activations are denoted as $a^{\rm F}$ and backward activations as $a^{\rm B}$. 
 
 \begin{table}
   \centering
@@ -22,23 +20,21 @@ TODO Reformulate
     \Bx & B  & $\eta^{\rm B}_i = \sum_j w^{HI}_{ji}h^{\rm B}_j$ & $x^{\rm B}_i = \sigma(\eta^{\rm B}_i)$\\
     \hline
   \end{tabular}
-  \caption{Activation phases and states in the BAL model \citep{farkas2013bal}.}
-  \label{tab:bal-states}
+  \caption{Activation phases and states in BAL \citep{farkas2013bal}. Where \Bx is the first activation layer, i.e. \emph{front layer}, \By is the third activation layer, i.e. \emph{back layer}, $F$ means \emph{forward pass} and $B$ means \emph{backward pass}. Layers \Bx and \By are \emph{visible} and layer \By is hidden. Note that all non--stimulus units have learnable biases and their weights are updated in a same way as regular weights. } 
+  \label{tab:bal-activation}
 \end{table}
 
-We avoid input-output notation of layers as used in GeneRec, because in our case not only output can be evoked by input presentation, but also vice versa. Hence, we label the two outer (visible) layers \Bx \ and \By \ and the hidden layer \Bh. Let forward activation be denoted by subscript F, backward activation denoted by subscript B. Then during the forward pass, the \Bx \ units are clamped to $\Bx^{\rm F}$ and we get the activations $\Bx^{\rm F}\rightarrow\Bh^{\rm F}\rightarrow$ $\By^{\rm F}$. During the backward pass, the \By \ units are clamped to $\By^{\rm B}$ and we get the activations $\By^{\rm B}$ $\rightarrow$ $\Bh^{\rm B}\rightarrow\Bx^{\rm B}$.
-
-The mechanism of weights update partially matches that of GeneRec. Each weight in BAL network (i.e.~belonging to one of the four weight matrices) is updated using the same learning mechanism, according to which the weight difference is proportional to the product of the presynaptic (sending) unit activation $a_p$ and the difference of postsynaptic (receiving) unit activations $a_q$, corresponding to two activation phases (F and B, in particular order). Namely, weights in \Bx-to-\By \ direction (belonging to \Bh \ and \By \ units) are updated as
+In the first phase called \emph{forward pass} the \emph{forward stimulus} is clamped and forward activations are computed. In the same way, in the second phase called \emph{backward pass} the \emph{backward stimulus} is clamped and backward activations are computed. We can imagine the backward pass as a reconstruction of the target pattern for the forward pass. For the learning rule the \emph{difference} between the forward pass and the backward pass is used: 
 \begin{equation}
-\Delta w_{pq}^{\rm F} = \lambda \ a^{\rm F}_p(a^{\rm B}_q - a^{\rm F}_q),
+  \label{eq:models-bal-learning-rule-forward}
+  \Delta W^{\rm F}_{pq} = \lambda \ a^{\rm F}_p(a^{\rm B}_q - a^{\rm F}_q),
 \end{equation}
-where, as in the GeneRec algorithm, $a^{\rm F}_p$ denotes the presynaptic activity, $a^{\rm F}_q$ is the postsynaptic activity, and $a^{\rm B}_q$ denotes the postsynaptic activity from the opposite phase (\By-to-\Bh). Analogically, the weights in \By-to-\Bx \ direction (belonging to \Bh \ and \Bx \ units) are updated as
-
+and for completeness we also provide the backward learning rule which is same as the forward learning rule~\ref{eq:models-bal-learning-rule-forward}: 
 \begin{equation}
-\Delta w_{pq}^{\rm B} = \lambda \ a^{\rm B}_p(a^{\rm F}_q - a^{\rm B}_q)
+  \label{eq:models-bal-learning-rule-backward}
+  \Delta W^{\rm B}_{pq} = \lambda \ a^{\rm B}_p(a^{\rm F}_q - a^{\rm B}_q). 
 \end{equation}
-
-All units have trainable thresholds (biases) that are updated in the same way as regular weights (being fed with a constant input 1).
+Both forward~\ref{eq:models-bal-learning-rule-forward} and backward~\ref{eq:models-bal-learning-rule-backward} learning rules are same as the basic GeneRec learning rule~\ref{eq:models-generec-learning-rule}. We experimented with different learning learning rules \ref{sec:our-learning-rules}. 
 
  
 

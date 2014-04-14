@@ -11,9 +11,9 @@ The main idea of \emph{Contrastive Hebbian Learning} developed by \citet{movella
 As mentioned previously CHL is based on Hopfield networks. Therefore it has an energy function $J$ which is based on the Helmholtz free energy function $F$ \citep{hinton1989deterministic}:
 \begin{equation}
   \label{eq:models-chl-helmholtz}
-  F = -\frac{1}{2}\sum_i\sum_ja_iw_{ij}a_j + \sum_i \int_{f(0)}^{a_i} f_i^{-1}(a)da
+  F = -\frac{1}{2}\sum_i\sum_ja_iW^{ij}a_j + \sum_i \int_{f(0)}^{a_i} f_i^{-1}(a)da
 \end{equation} 
-where $-\frac{1}{2}\sum_i\sum_ja_iw_{ij}a_j$ is the Hopfield energy function~\ref{eq:theory-hopfield-energy}. The \emph{contrastive} error function $J$ is defined as: 
+where $-\frac{1}{2}\sum_i\sum_ja_iW^{ij}a_j$ is the Hopfield energy function~\ref{eq:theory-hopfield-energy}. The \emph{contrastive} error function $J$ is defined as: 
 \begin{equation}
   \label{eq:models-chl-energy}
   J = \myequi{F^{+}} - \myequi{F^{-}}
@@ -23,7 +23,7 @@ where $\myequi{F^{+}}$ and $\myequi{F^{-}}$ respectively are the values of the e
 Based on the contrastive energy function~\ref{eq:models-chl-energy} a learning rule is derived by \citet{movellan1990contrastive}: 
 \begin{equation}
   \label{eq:models-chl-learning-rule}
-  \Delta w_{ij} = \myequi{a_i^{+}}\myequi{a_j^{+}} - \myequi{a_i^{-}}\myequi{a_j^{-}}
+  \Delta W^{ij} = \myequi{a_i^{+}}\myequi{a_j^{+}} - \myequi{a_i^{-}}\myequi{a_j^{-}}
 \end{equation}
 where $\myequi{a_i}$ and $\myequi{a_j}$ denote the equilibrium state activations of the $i$--th and $j$--th unit. It could be shown that the learning rule~\ref{eq:models-chl-learning-rule} decreases the energy function \ref{eq:models-chl-energy} \citep{movellan1990contrastive}. Moreover it could be shown that the CHL learning rule is equivalent to Backpropagation learning rule in terms of computability while it is biologically more plausible \citep{o1996bio, xie2003equivalence}. 
 
