@@ -27,7 +27,7 @@ We denote $X_I$, $H_I$ and $Y_I$ as the front, hidden and back activation \emph{
 \item	v\_f\_b\_dist - as h\_f\_b\_dist but for visible layer: $avg_{I}\left(dist(Y_I^{-},X_I^{+})\right)$. 
 \item matrix\_w - average weight of matrices $W^{IH}$, $W^{HO}$, $W^{OH}$ and $W^{HI}$. 
 \item matrix\_sim - sum of $|a_{ij} - b_{ij}|$ per pairs $(a,b) \in ((W^{IH}, W^{OH}),\, (W^{HI}, W^{HO}))$. 
-\item in\_triangle - for hidden size equal two: check if hidden representations of inputs form a convex polygon, i.e.~if the hidden representations are lineary separable \ref{sec:models-perceptron}. 
+\item \label{sec:our-in-triangle} in\_triangle - for hidden size equal two: check if hidden representations of inputs form a convex polygon, i.e.~if the hidden representations are lineary separable \ref{sec:models-perceptron}. 
 \item fluctuation - when treating the opposing weight matrices, i.e.~$w_IH$ to $w_HI$ and $w_HO$ to $w_OH$, as in GeneRec activation computation \ref{eq:models-generec-activation} then \emph{fluctuation} measures:
 \begin{equation}
   \label{eq:our-fluctuation}

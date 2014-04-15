@@ -48,22 +48,18 @@ We see that the networks which were successfull in the first run remained succes
 \paragraph{Hidden activations.}
 \label{sec:our-hidden-activation} 
 
-We observed that hidden activations tend to settle fast (TODO more exact). Therefore there are cases where it is impossible for $w_{HI}$ and $w_{HO}$ to learn the given task. Intuitively, this is because after settling the hidden activations for each input the network is reduced to a two-layer network. This behaviour is demonstrated by the \emph{in\_triangle} measure (ref). 
+We observed that hidden activations tend to settle fast \ref{sec:our-candidates}, i.e. the weight changes become close to zero because $|H^F - H^B| \approx \overrightarrow{0}$. Therefore the network is de--facto reduced to a two--layer network between the constant hidden activations and the target values. Thus \emph{at least} all cases when the hidden activations are not linearly separable it is impossible for $w_{HI}$ and $w_{HO}$ to learn targets. This behaviour is demonstrated by the \emph{in\_triangle} measure \ref{sec:our-in-triangle}. 
 
-Explaination why the hidden activations tend to settle fast could be given by the learning rule: 
+A more formal explaination why the hidden activations tend to settle fast could be given by the GeneRec learning rule \ref{eq:models-generec-learning-rule}: 
 \begin{equation} 
-\Delta w_{ij} = a_i(b_j - a_j),
-%TODO correct label / ref 
+  \Delta w_{ij} = a_i(b_j - a_j),
 \end{equation} 
-
-which for the $W^{IH}$ and $W^{OH}$ gives
+which for the $W^{IH}$ and $W^{OH}$ yields: 
 \begin{equation} 
-\Delta w_{ij}^{IH} = s^F_i(h^B_j - h^F_j) \\ 
-\Delta w_{ij}^{OH} = o^B_i(h^F_j - h^B_j). 
+  \Delta w_{ij}^{IH} = x^F_i(h^B_j - h^F_j) \\ 
+  \Delta w_{ij}^{OH} = y^B_i(h^F_j - h^B_j). 
 \end{equation} 
-We see that both terms $(h^B_j - h^F_j)$ and $(h^F_j - h^B_j)$ push $W^{IH}$ and $W^{OH}$ in a way that $h^B_j = h^F_j$. 
-
-This experiment was the main reason to start experimenting with the two lambda model (ref). 
+We see that both terms $(h^B_j - h^F_j)$ and $(h^F_j - h^B_j)$ push $W^{IH}$ and $W^{OH}$ in a way that $h^B_j = h^F_j$. This experiment was the main reason to start experimenting with the Two learning rate model \ref{sec:our-two-lambdas}. 
 
 %==========================================================
 %\paragraph{Dropout}
