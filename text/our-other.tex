@@ -12,18 +12,19 @@ Symmetry perserving rule~\ref{eq:models-generec-learning-rule-sym}, midpoint rul
 
 %==========================================================
 \paragraph{Momentum.}
+\label{sec:our-momentum}
 
 Momentum is an alternative learning rule which takes into consideration the weight changes from the last epoch or even several epoch. We can formally write it as: 
 
 \begin{equation}
-\Delta w_{ij}(t) = \lambda (a_i(b_j - a_j)) + \mu w_{ij}(t-1), 
+\Delta w_{ij}(t) = \lambda (a_i(b_j - a_j)) + \mu \Delta w_{ij}(t-1), 
 \end{equation} 
 
 Note that $(a_i(b_j - a_j))$ is only an example of a standard learning rule. Our motivation to try this approach was to push the network from a possible local minima to global minima. 
 
 Adding momentum:
 $$
-\Delta w(t) = -\epsilon \partial E/ \partial w(t) + \alpha \Delta w(t-1).
+\Delta w(t) = -\epsilon \frac{\partial E}{\partial w(t)} + \alpha \Delta w(t-1).
 $$
 models-bp. 
 
@@ -122,6 +123,9 @@ Annealing schedules: In search of the continuous Boltzmann machine. This may be 
 
 TODO more simulations. 
 TODO citations.  
+
+\paragraph{Long run} 
+even after 800,000 epochs there are some networks for which the error change
 
 %==========================================================
 \paragraph{Dynamic weight lambda.} 
