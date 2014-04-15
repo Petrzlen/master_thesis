@@ -1,53 +1,31 @@
-
 \subsubsection{Other}
-TODO consult the bio--plausibility of these models (as stated in motivation) 
+TODO introduction (brief, experiment settings) 
+
+%==========================================================
+\paragraph{Momentum}
+\label{sec:our-momentum}
+
+\citep{rumelhart1986learning, yu1997efficient} is an extension for any learning rule of form $\Delta w_{ij}(t) = L(i,j,t)$ by adding a \emph{momentum} term: 
+\begin{equation} 
+  \Delta w_{ij}(t) = L(i,j,t) + \mu \Delta w_{ij}(t-1).
+\end{equation} 
+It is argued that momentum could overcome settling in local minima by using the second derivate (TODO cite). 
+
+%==========================================================
+\paragraph{Batch mode} learning method changes how the weight update rule is applied. Instead of updateing weights after each training sample, weight changes are accumulated for the whole epoch, i.e.~summing all weight changes for each sample, and weights are updated in \emph{batch} (TODO citation). One can observe that shuffling of samples has no effect at all. Therefore after the weights are initialized the learning algorithm becomes deterministic.
 
 %==========================================================
 \paragraph{Different learning rules.}
 \label{sec:our-learning-rules}
 
-TODO run simulations 
-Symmetry perserving rule~\ref{eq:models-generec-learning-rule-sym}, midpoint rule~\ref{eq:models-generec-learning-rule-mid}, CHL rule~\ref{eq:models-generec-learning-rule-chl}. 
+Both for BAL \ref{sec:models-bal} and GeneRec \ref{sec:models-generec} is possible to try different learning rules mentioned in \ref{sec:models-generec-modifications}. We will denote such models as \emph{BAL-sym} and \emph{GR-sym} for symmetry perserving rule~\ref{eq:models-generec-learning-rule-sym}; \emph{BAL-mid} and \emph{GR-mid} for midpoint rule~\ref{eq:models-generec-learning-rule-mid} and \emph{BAL-chl} and \emph{GR-chl} for CHL rule~\ref{eq:models-generec-learning-rule-chl}. 
 
-
-%==========================================================
-\paragraph{Momentum.}
-\label{sec:our-momentum}
-
-Momentum is an alternative learning rule which takes into consideration the weight changes from the last epoch or even several epoch. We can formally write it as: 
-
-\begin{equation}
-\Delta w_{ij}(t) = \lambda (a_i(b_j - a_j)) + \mu \Delta w_{ij}(t-1), 
-\end{equation} 
-
-Note that $(a_i(b_j - a_j))$ is only an example of a standard learning rule. Our motivation to try this approach was to push the network from a possible local minima to global minima. 
-
-Adding momentum:
-$$
-\Delta w(t) = -\epsilon \frac{\partial E}{\partial w(t)} + \alpha \Delta w(t-1).
-$$
-models-bp. 
-
-
-TODO citations.  
+TODO not working with BAL -> analyse (GeneRec kind of ok) 
 
 %==========================================================
-\paragraph{Batch mode.}
+\paragraph{Rerun} was designed to test if shuffling of samples has effect to network performance. First, $N$ networks are created with random weights~\ref{sec:our-sigma} with same parameters then are saved and trained. Second, the networks are loaded and each network is re--trained $k$-times. At the end difference between performance of the $k$ networks and the original network is measured. In this way it could be decided if the network performance depended on the shuffling of the training samples or on other network parameters. 
 
-Instead of updateing weights after each training sample we accumulate the weight changes for the whole epoch and update it only afterwards. So shuffling of the training samples is no more necesarry. Therefore after the weights are initialized the learning algorithm becomes deterministic.
-
-Before using the batch update method we observed oscilations of weight changes. Mostly it occured when the hidden activations settled (ref) but te network was still giving errors. Then the weight update on one sample gave error on other sample and back. We therefore tried batch update but the same behaviour occured as the oscilation was only shifted to two epochs instead of one.  
-
-TODO expand 
-
-TODO citations. 
-
-(i.e. no shuffle and therefore deterministic)
-
-%==========================================================
-\paragraph{Rerun} 
-
-In this experiment we first randomly initialized weights, saved and trained $N$ BAL networks. Then we re--trained each of the $N$ networks $k$-times and how the success changed. So we could decide if the network performance depended on the shuffling of the training samples or other network parameters. 
+TODO rerun experiment (it has suspicious results) 
 
 \begin{lstlisting}
 All bad: 
@@ -65,23 +43,6 @@ err sigma lambda momentum success sample_ratio
 \end{lstlisting}
 
 We see that the networks which were successfull in the first run remained successfull in the re--runs. On the other side of the unsuccessfull networks changed their performance after re--run. 
-
-
-
-%==========================================================
-\paragraph{Weight initialization.} 
-
-Based on \citet{o1996bio} we used the following probability distribution for weight initialization: 
-
-\begin{equation} 
-\frac{1}{\sqrt{2\pi \sigma^2} e^{-\frac{(x-\mu)^2}{2\sigma^2}}},
-\end{equation} 
-
-where $\sigma$ is one of the network parameters (ref) and $\mu = 0$ as the expected value of the normal distribution. 
-
-Our motivation to try this approach came from the fact that most of the BAL networks were capable to learn the given tasks easily, but others converged to error states (ref). Therefore we believed that there should exists a classifier which separates the successfull weight initialization from the unsuccessfull ones (ref - future work). 
-
-TODO references.  
 
 %==========================================================
 \paragraph{Hidden activations.}
@@ -105,27 +66,23 @@ We see that both terms $(h^B_j - h^F_j)$ and $(h^F_j - h^B_j)$ push $W^{IH}$ and
 This experiment was the main reason to start experimenting with the two lambda model (ref). 
 
 %==========================================================
-\paragraph{Dropout}
-Based on the work the work \citet{hinton2012improving} we implemented the Dropout method of learning. Its main idea is to in each epoch to choose randomly half of the hidden layer neurons which will be ignored. The motivation is to prevent co--adaption of the hidden layer neurons \citep{hinton2012improving}. 
+%\paragraph{Dropout}
+%Based on the work the work \citet{hinton2012improving} we implemented the Dropout method of learning. Its main idea is to in each epoch to choose randomly half of the hidden layer neurons which will be ignored. The motivation is to prevent co--adaption of the hidden layer neurons \citep{hinton2012improving}. 
 
-We combined this idea with the BAL model on the 4-2-4 encoder task. This model was not able to learn anything. 
-(5\%,10\%,20\%,50\% chances)
+%We combined this idea with the BAL model on the 4-2-4 encoder task. This model was not able to learn anything. (5\%,10\%,20\%,50\% chances)
 
-TODO more simulations. 
-TODO citations.  
+%TODO more simulations. 
+%TODO citations.  
 
 %==========================================================
-\paragraph{Noise} 
+%\paragraph{Noise} 
 
-Motivated by the \emph{chaotic} behaviour of nature we tried adding noise to weight changes. We hoped that the possible noise could prevent settling of hidden activations to fast (ref). 
+%Motivated by the \emph{chaotic} behaviour of nature we tried adding noise to weight changes. We hoped that the possible noise could prevent settling of hidden activations to fast (ref). 
 
-Annealing schedules: In search of the continuous Boltzmann machine. This may be achieved in interactive networks by injecting some form of noise to the net input of each unit. The standard deviation of the noise distribution plays a similar effect to the temperature parameter in descrete Boltzmann machines \citet{movellan1990contrastive}. 
+%Annealing schedules: In search of the continuous Boltzmann machine. This may be achieved in interactive networks by injecting some form of noise to the net input of each unit. The standard deviation of the noise distribution plays a similar effect to the temperature parameter in descrete Boltzmann machines \citet{movellan1990contrastive}. 
 
-TODO more simulations. 
-TODO citations.  
-
-\paragraph{Long run} 
-even after 800,000 epochs there are some networks for which the error change
+%TODO more simulations. 
+%TODO citations.  
 
 %==========================================================
 \paragraph{Dynamic weight lambda.} 
