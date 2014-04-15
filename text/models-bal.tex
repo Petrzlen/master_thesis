@@ -6,6 +6,7 @@
 Design of Bidirectional Activation-based Learning algorithm (BAL) by \citet{farkas2013bal} is motivated by the biological plausibility of GeneRec. BAL inherits the learning rule of GeneRec \ref{eq:models-generec-learning-rule} and also the two phases. But unlike GeneRec, BAL aims to learn bidirectional mapping between inputs and outputs and for this purpose it uses four weights $W^{IH}$, $W^{HO}$, $W^{OH}$ and $W^{HI}$. The design of BAL is symmetric as shown in table~\ref{tab:bal-activation} and thus we avoid calling inputs, outpus, minus phase or plus phase. We rather choose \emph{forward} and \emph{backward} which could be interchanged. Note that the forward activations are denoted as $a^{\rm F}$ and backward activations as $a^{\rm B}$. 
 
 \begin{table}
+  \label{tab:models-bal-activation}
   \centering
   \begin{tabular}{|cccl|}
     \hline
@@ -21,7 +22,6 @@ Design of Bidirectional Activation-based Learning algorithm (BAL) by \citet{fark
     \hline
   \end{tabular}
   \caption{Activation phases and states in BAL \citep{farkas2013bal}. Where \Bx is the first activation layer, i.e. \emph{front layer}, \By is the third activation layer, i.e. \emph{back layer}, $F$ means \emph{forward pass} and $B$ means \emph{backward pass}. Layers \Bx and \By are \emph{visible} and layer \By is hidden. Note that all non--stimulus units have learnable biases and their weights are updated in a same way as regular weights. } 
-  \label{tab:bal-activation}
 \end{table}
 
 In the first phase called \emph{forward pass} the \emph{forward stimulus} is clamped and forward activations are computed. In the same way, in the second phase called \emph{backward pass} the \emph{backward stimulus} is clamped and backward activations are computed. We can imagine the backward pass as a reconstruction of the target pattern for the forward pass. For the learning rule the \emph{difference} between the forward pass and the backward pass is used: 
