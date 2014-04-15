@@ -29,7 +29,6 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,7 +39,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 
-import org.apache.commons.math3.linear.*;
+import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
@@ -51,9 +50,9 @@ public class BAL {
 		DECIMAL_FORMAT.setMaximumFractionDigits(7);
 		
 		//experiment_Default();
-		experiment_DifferentHiddenSizes("k3");
+		//experiment_DifferentHiddenSizes("k3");
 		//experiment_RerunGoodBad();
-		//experiment_TestImplementation();
+		experiment_TestImplementation();
 	}
 	
 	private static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0"); 
@@ -61,13 +60,18 @@ public class BAL {
 	private static boolean IS_PRINT = false; 
 
 	private static int WEIGHT_UPDATE_BAL = 1; 
-	private static int WEIGHT_UPDATE_CHL = 2;
+	private static int WEIGHT_UPDATE_GENEREC_CHL = 2; // works but slow 
 	private static int WEIGHT_UPDATE_BAL_RECIRC = 3; 
-	private static int WEIGHT_UPDATE_GENEREC = 4; // => INIT_SYMMETRIC_IS = true 
-	private static int WEIGHT_UPDATE_TYPE = WEIGHT_UPDATE_BAL;
+	private static int WEIGHT_UPDATE_GENEREC = 4; // => INIT_SYMMETRIC_IS = true
+	private static int WEIGHT_UPDATE_GENEREC_SYM = 5; // => INIT_SYMMETRIC_IS = true
+	private static int WEIGHT_UPDATE_GENEREC_MID = 6; // => INIT_SYMMETRIC_IS = true 
+	private static int WEIGHT_UPDATE_BAL_SYM = 7; // non of BAL other learning rule works 
+	private static int WEIGHT_UPDATE_BAL_MID = 8; 
+	private static int WEIGHT_UPDATE_BAL_CHL = 9; 
+	private static int WEIGHT_UPDATE_TYPE = WEIGHT_UPDATE_GENEREC_CHL;
 	// TODO not sure if CHL (it's more complicated)
 	// TODO symmetric preserving GeneRec learning rule & midpoint method rule => ALSO TO BAL!!! 
-	private static boolean INIT_RECIRCULATION_IS = (WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_CHL || WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL_RECIRC || WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC); 
+	private static boolean INIT_RECIRCULATION_IS = (WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC_CHL || WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL_RECIRC || WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC); 
 	private static double RECIRCULATION_EPSILON = 0.01; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 	private static int RECIRCULATION_ITERATIONS_MAX = 20; //maximum number of iterations to approximate the underlying dynamic system  
 	private static boolean RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING = false; // average of last two activations will be used instead of the last one (intuition: more stable) 
@@ -268,7 +272,10 @@ public class BAL {
 	public static double run(BAL override_network) throws FileNotFoundException{
 		NETWORK_EPOCH = 0; 
 		max_fluctuation = 0.0; 
-		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC || WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_CHL) {
+		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC || 
+				WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC_CHL || 
+				WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC_MID || 
+				WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC_SYM) {
 			INIT_SYMMETRIC_IS = true; 
 		}
 
@@ -956,7 +963,7 @@ public class BAL {
 			}
 		}
 	}
-
+	
 	private static void subCHLLearn(RealMatrix w, RealVector a_minus_i, RealVector a_minus_j, RealVector a_plus_i, RealVector a_plus_j, double lambda){
 		/*
 		System.out.println("subCHLLearn: ");
@@ -967,12 +974,28 @@ public class BAL {
 		System.out.print("  a_minus_j:" + printVector(a_minus_j));
 		 */
 
+		int RULE = 0; 
+		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL_SYM || WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC_SYM){
+			RULE = 1; 
+		} 
+		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL_MID || WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC_MID){
+			RULE = 2; 
+		}
+		
 		for(int i = 0 ; i < w.getRowDimension() ; i++){
 			for(int j = 0 ; j < w.getColumnDimension() ; j++){
 				//System.out.println("  " + i + "," + j);
 				double w_value = w.getEntry(i, j);
 
-				double dw = lambda * ((a_plus_i.getEntry(i) * a_plus_j.getEntry(j)) - (a_minus_i.getEntry(i) * a_minus_j.getEntry(j)));
+				double dw = 0.0; 
+				double aim = a_minus_i.getEntry(i); 
+				double aip = a_plus_i.getEntry(i); 
+				double ajm = a_minus_j.getEntry(j); 
+				double ajp = a_plus_j.getEntry(j);
+				
+				if(RULE == 0) dw = lambda * ((aip * ajp) - (aim * ajm));
+				if(RULE == 1) dw = (ajp*aim + ajm*aip) - 2*ajm*aim; 
+				if(RULE == 2) dw = lambda * (1/2) * (aim + aip) * (ajp - ajm); 
 				//System.out.println("   d(" + i + "," + j + "): " + dw);
 
 				w.setEntry(i, j, w_value + dw);
@@ -1074,7 +1097,9 @@ public class BAL {
 			System.out.println("Bothward: " + printVector(bothward));
 			System.out.println("Network:\n" + printNetwork()); */ 
 		}
-		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_CHL){
+		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC_CHL || 
+				WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC_MID || 
+				WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC_SYM){ 
 			RealVector[] forward = this.forwardPassWithRecirculation(in); 
 			RealVector bothward = this.bothwardPass(in, target); 
 
@@ -1082,6 +1107,21 @@ public class BAL {
 			subCHLLearn(this.HO, forward[1], forward[2], addBias(bothward, MATRIX_HO), target, calculateLambda(INIT_LAMBDA, MATRIX_HO));
 
 			makeSymmetric(this.OH, this.HO, this.HO.getColumnDimension(), this.HO.getRowDimension() - (isBias(MATRIX_HO)?1:0));
+		}
+		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL_CHL || 
+				WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL_MID || 
+				WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL_SYM){
+
+			//IS_PRINT = true;
+			RealVector[] forward = this.forwardPass(in);
+			RealVector[] backward = this.backwardPass(target);
+			//IS_PRINT = false;
+					
+			//RealVector a_minus_i, RealVector a_minus_j, RealVector a_plus_i, RealVector a_plus_j
+			subCHLLearn(this.IH, forward[0], forward[1], addBias(backward[0], MATRIX_IH), backward[1], calculateLambda(INIT_LAMBDA, MATRIX_IH)); 
+			subCHLLearn(this.HO, forward[1], forward[2], addBias(backward[1], MATRIX_HO), backward[2], calculateLambda(INIT_LAMBDA, MATRIX_HO)); 
+			subCHLLearn(this.OH, backward[2], backward[1], addBias(forward[2], MATRIX_OH), forward[1], calculateLambda(INIT_LAMBDA, MATRIX_OH)); 
+			subCHLLearn(this.HI, backward[1], backward[0], addBias(forward[1], MATRIX_HI), forward[0], calculateLambda(INIT_LAMBDA, MATRIX_HI)); 
 		}
 
 		//log.print(BAL.printVector(forward[1]));
@@ -1176,7 +1216,7 @@ public class BAL {
 			double patsucc_f = 0.0; 
 			double patsucc_b = 0.0;
 			
-			double first_second_sum = 0.0; 
+			//double first_second_sum = 0.0; 
 			for(int i=0; i<in.getRowDimension(); i++){
 				RealVector[] forward = this.forwardPass(in.getRowVector(i));
 				RealVector[] backward = this.backwardPass(target.getRowVector(i));
@@ -1190,11 +1230,12 @@ public class BAL {
 
 				forward_hiddens.add(forward[1]);
 
+				/*
 				double[] output_arr = forward[2].toArray();
 				if(output_arr.length > 1){
 					Arrays.sort(output_arr); 
 					first_second_sum += output_arr[output_arr.length-1] / output_arr[output_arr.length-2];
-				}
+				}*/
 				
 				double err_f = this.error(forward[2], target.getRowVector(i));
 				double err_b = this.error(backward[0], in.getRowVector(i)); 
@@ -1772,9 +1813,9 @@ public class BAL {
 		INIT_NORMAL_DISTRIBUTION_SIGMA = 12.0;   
 */ 
 		INIT_LAMBDA = 0.7; 
-		INIT_MAX_EPOCHS = 5000;
+		INIT_MAX_EPOCHS = 50000;
 		INIT_RUNS = 2500; 
-		INIT_CANDIDATES_COUNT = 1;
+		INIT_CANDIDATES_COUNT = 0;
 		INIT_SHUFFLE_IS = true;
 		INIT_BATCH_IS = false;
 		INIT_SYMMETRIC_IS = false; 	
@@ -1783,6 +1824,13 @@ public class BAL {
 		LAMBDA_ERROR_MOMENTUM_IS = false; 
 		LAMBDA_IH = 0.001;   
 
+		TRY_LAMBDA = new double[]{0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
+		
+		TRY_LAMBDA_IH = new double[]{0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
+												 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 
+												 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
+												 100.0};
+		
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 		RECIRCULATION_ITERATIONS_MAX = 200; //maximum number of iterations to approximate the underlying dynamic system  
 		RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING = true;
