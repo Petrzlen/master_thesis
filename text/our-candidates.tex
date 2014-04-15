@@ -20,13 +20,13 @@ The \emph{candidate selection} model was used to test and prove if some particul
 TODO describe it more \\
 TODO note when auto / hetero associative \\
 
-We denote $h_I$ as the hidden activation vector for input $I$ (and the corresponding target). For the rest of the notation please consult \ref{tab:models-bal-activation}. We measured the following \emph{features}: 
+We denote $X_I$, $H_I$ and $Y_I$ as the front, hidden and back activation \emph{vector}s for input $I$ (and the corresponding target). For the rest of the notation please consult \ref{tab:models-bal-activation}. We measured the following \emph{features}: 
 \begin{itemize} 
-\item h\_dist - $avg_{I \neq J}\left(dist(h_I^{+},h_J^{+})\right)$.
-\item h\_f\_b\_dist - $avg_{I}\left(dist(h_I^{-},h_I^{+})\right)$.
+\item h\_dist - $avg_{I \neq J}\left(dist(H_I^{+},H_J^{+})\right)$.
+\item h\_f\_b\_dist - $avg_{I}\left(dist(H_I^{-},H_I^{+})\right)$.
+\item	v\_f\_b\_dist - as h\_f\_b\_dist but for visible layer: $avg_{I}\left(dist(Y_I^{-},X_I^{+})\right)$. 
 \item matrix\_w - average weight of matrices $W^{IH}$, $W^{HO}$, $W^{OH}$ and $W^{HI}$. 
-\item matrix\_sim - sum of $|a_{ij} - b_{ij}|$ per pairs $(a,b) \in ((W^{IH}, W^{OH});\ (W^{HI}, W^{HO}))$. 
-\item	v\_f\_b\_dist - as h\_f\_b\_dist but for visible layer: $avg_{I}\left(dist(y_I^{-},x_I^{+})\right)$. 
+\item matrix\_sim - sum of $|a_{ij} - b_{ij}|$ per pairs $(a,b) \in ((W^{IH}, W^{OH}),\, (W^{HI}, W^{HO}))$. 
 \item in\_triangle - for hidden size equal two: check if hidden representations of inputs form a convex polygon, i.e.~if the hidden representations are lineary separable \ref{sec:models-perceptron}. 
 \item fluctuation - when treating the opposing weight matrices, i.e.~$w_IH$ to $w_HI$ and $w_HO$ to $w_OH$, as in GeneRec activation computation \ref{eq:models-generec-activation} then \emph{fluctuation} measures:
 \begin{equation}

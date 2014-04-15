@@ -5,6 +5,7 @@
 The \emph{Generalized recirculation algorithm}, or \emph{GeneRec}, was developed by \citet{o1996bio}. It's a supervised algorithm which in comparison with Backpropagation \ref{sec:models-bp} is argued to be a more biologically plausible model as error is computed locally as a difference between activations \citep{o1998six, o2001generalization, da2011advances, schneider2009application}. In summary, GeneRec is a combination of CHL \ref{sec:models-chl} and the Recirculation algorithm \ref{sec:models-recirc}. It overcomes limitations of the Recirculation algorithm to be an encoder by having a three layer network. For the error computation a backward weight matrix from output layer to hidden layer is used and the learning rule is derived from the CHL learning rule~\ref{eq:models-chl-learning-rule}. It could be proven that GeneRec, as Backpropagation, could learn arbitrary input--output mappings \citep{o1996bio}. 
 
 \paragraph{Learning rule.} 
+\label{sec:models-generec-learning-rule} 
 GeneRec uses three weight matrices $W^{IH}$, $W^{HO}$ and $W^{OH}$ for the input--hidden, hidden--output and output--hidden weights. It also has the \quotes{-} and \quotes{+} phases as CHL with same meaning, i.e. in the \emph{minus} phase only the input vector is clamped and in the \emph{plus} phase both input and target vectors are clamped as seen on table~\ref{tab:models-generec}. Generec uses the non--symmetric version of the CHL rule for all three weight matrices: 
 \begin{equation}
   \label{eq:models-generec-learning-rule}
@@ -13,6 +14,7 @@ GeneRec uses three weight matrices $W^{IH}$, $W^{HO}$ and $W^{OH}$ for the input
 where $a^{-}_p$ denotes the presynaptic and $a^{-}_q$ denotes the postsynaptic unit activation in minus phase, $a^{+}_p$ is the presynaptic activation from plus phase and $\lambda$ denotes the learning rate. So for example when updating $W^{HI}$ then $a^{-}_i = h^{-}_i$, $a^{-}_j = o^{-}_j$ and $a^{+}_j = t_k$. 
 
 \paragraph{Activation.} 
+\label{sec:models-generec-activation} 
 The main difference between CHL and GeneRec is that GeneRec has layers and it's based more on Recurrent neural networks than on the Hopfield networks. Therefore, as shown in table~\ref{tab:models-generec}, we can compute the activations sequentially. 
 \begin{table}
   \centering
@@ -60,6 +62,7 @@ where $a_i(t)$ is the activation of $i$--th unit in discrete time $t$. The rules
 \end{figure}
 
 \paragraph{Modifications.}
+\label{sec:models-generec-modifications} 
 It's important to note that \citet{o1996bio} proved that GeneRec converges if the learning rule~\ref{eq:models-generec-learning-rule} is a valid approximation to the error derivate and the weights beeing symmetric, i.e. $W^{HO} = W^{OH^{T}}$. \citet{o1996bio} based on CHL and the midpoint method for fradient computation \citep{press1990numerical} proposed two more learning rules for GeneRec: 
 \begin{equation}
   \label{eq:models-generec-learning-rule-mid}
