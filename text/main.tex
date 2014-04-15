@@ -154,19 +154,16 @@
 % This section should contain a little about everything. Introduction should be an overview of the contents of your thesis. 
 \newpage
     \input{introduction}
-    \label{introduction} 
     
 % ==================== 10. Motivation (or Problem Definition and Proposed Solution) =====
 % In this chapter you have to concisely explain the problem that you want to solve and the goal of your solution. 
 \newpage
     \input{motivation}
-    \label{motivation} 
     
 % ==================== 11. State of the Art (or Related Work or Literature Review) =========
 % In this section you should present the theoretical basis of your work and overview of the existing solutions. When discussing on the exiting solutions you should relate and qualitatively compare them with yours.
 \newpage
     \input{overview}
-    \label{overview} 
 
 % ==================== 13. Design and Implementation ========================
 %You can divide this chapter in two sections: Design and Implementation.
@@ -179,17 +176,14 @@
    
 % ==================== 14. Experimental Results and Analysis ========================
 \newpage
-    \input{sim-}
-    \label{sim-} 
+    \input{sim}
 \newpage
     \input{results}
-    \label{results} 
     
 % ==================== 16. Conclusion ========================
 % This chapter should conclude on your contribution. It should highlight the key results from the research work. In this section you should avoid mentioning new terms and statements not discussed throughout the main text. Also general aspects of the research work shouldn’t be repeated here. Conclusion shouldn’t be the abstract written in past tense. The conclusion should derive the important facts out of your work and results that you obtained.
 \newpage
     \input{conclusion}
-    \label{conclusion} 
     
 % ==================== 17. Future Work ========================
 %What left unfinished from your work? What are you future plans to develop better your work?
@@ -201,12 +195,12 @@
 %Put a list of references.
 \newpage
     \include{bibliography}
-    \label{bibliography} 
     
 % ==================== 19. Assignment ========================
 %At the end of your thesis you can attach resources such as source code (or something like ASCII code table) that would improve the completeness of your thesis.
 \newpage
     \input{appendix-impl}
-    \label{appendix-impl} 
+\newpage
+    \input{appendix-results}
 
 \end{document}

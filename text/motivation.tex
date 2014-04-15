@@ -10,12 +10,13 @@
 % If necessary you may divide this chapter in sections and subsections.
 
 \subsection*{Motivation}
+\label{sec:motivation} 
 % 1) Detailed analysis of the problem and its limitations (e.g. what is the bottleneck and difficulties).
-In this thesis we analyse the Bidirectional Activation--based Learning algorithm (BAL) designed by \citet{farkas2013bal} \ref{models-bal}. The two main advantages of BAL over standard models such as Backpropagation are: 
+In this thesis we analyse the Bidirectional Activation--based Learning algorithm (BAL) designed by \citet{farkas2013bal} \ref{sec:models-bal}. The two main advantages of BAL over standard models such as Backpropagation are: 
 
 \begin{itemize} 
 
-\item \emph{Bidirectional activation propagation.} In neural network models such as Backpropagation \ref{models-bp} only the \emph{forward}--mapping is learned. But in BAL, also the \emph{backward} mapping is learned while learning the forward--mapping. This could be used in various problems such as robotics (TODO citation, reference, icube). Moreover, the bidirectionality of the architecture is necessary to simulate a biological electrical synapse, which can be bidirectional \citep{kandel1995essentials}, \citep{rosa2002biologically} and there is evidence that the cerebral cortex is connected in a bidirectional way and distributed representations prevail in it \citep{o2000computational}, \citep{da2011advances}. 
+\item \emph{Bidirectional activation propagation.} In neural network models such as Backpropagation \ref{sec:models-bp} only the \emph{forward}--mapping is learned. But in BAL, also the \emph{backward} mapping is learned while learning the forward--mapping. This could be used in various problems such as robotics (TODO citation, reference, icube). Moreover, the bidirectionality of the architecture is necessary to simulate a biological electrical synapse, which can be bidirectional \citep{kandel1995essentials}, \citep{rosa2002biologically} and there is evidence that the cerebral cortex is connected in a bidirectional way and distributed representations prevail in it \citep{o2000computational}, \citep{da2011advances}. 
 
 \item \emph{Biological plausibility.} We believe that inspiration by natural neural networks will bring results in the long run. Therefore we follow the six principles of biological plausibility stated by \citet{hinton1988learning}. The main principle is \emph{bidirectional activation propagation} mentioned above. The second principle \emph{distributed representations} states that "A distributed representation uses multiple active neuron--like processing units to encode information (as opposed to a single unit, localist representation), and the same unit can participate in multiple representations. Each unit in a distributed representation can be thought of as representing a single feature, with information being encoded by particular combinations of such features \citep{hinton1988learning}". We understand this principle as "to have as little global information as possible". Biologically plausible models are used to simulate BioAnt by \citet{schneider2009application} and cells by \citet{nawrocki2012monitoring}. 
 
@@ -23,7 +24,7 @@ In this thesis we analyse the Bidirectional Activation--based Learning algorithm
 
 % 3) You should clearly state and explain your goal and objectives. You should provide analytical study (mathematical model) of your solution (What is the upper and lower bound of your performance or improvements). You should also mention about the qualitative benefit of your solution such as easy programming etc..
 \paragraph{Goal.}
-While BAL performs well on high--dimensional tasks the authors were not able to learn low--dimensional tasks with 100\% reliability. Other models such as Backpropagation \citep{rumelhart1986learning} \ref{models-bp} learn these tasks with 100\% reliability. We wanted to find out the reasons for this performance gap and hoped that by solving it we could increase the performance of BAL also for the high--dimensional tasks. 
+While BAL performs well on high--dimensional tasks the authors were not able to learn low--dimensional tasks with 100\% reliability. Other models such as Backpropagation \citep{rumelhart1986learning} \ref{sec:models-bp} learn these tasks with 100\% reliability. We wanted to find out the reasons for this performance gap and hoped that by solving it we could increase the performance of BAL also for the high--dimensional tasks. 
 
 %It corresponds to O'Reillys motivations \citet{o1998six}.
 %\paragraph{Biological realism.} Moreover, computational mechanisms that violate known biological properties should not be relied upon. 
