@@ -126,12 +126,12 @@ TODO citations.
 %==========================================================
 \paragraph{Dynamic weight lambda.} 
 
-The idea is to have learning speed for each weight separately and dependent on error: 
+The idea is to have learning rate for each weight separately and dependent on error: 
 \begin{equation}
 \Delta w_{ij}(t) = \lambda_{ij}(b_j(t-1) - a_j(t-1), \lambda_{ij}^{t-1})(a_i(t)(b_j(t) - a_j(t))),
 \end{equation}
 
-where $b_j(t-1) - a_j(t-1)$ is the error term and $\lambda_{ij}^{t-1}$ is the learning speed from the last epoch. 
+where $b_j(t-1) - a_j(t-1)$ is the error term and $\lambda_{ij}^{t-1}$ is the learning rate from the last epoch. 
 TODO should be combined with batch, yes? 
 
 This model was inspiration for the two lambda model (ref). 

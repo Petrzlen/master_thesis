@@ -1709,8 +1709,8 @@ public class BAL {
 		OUTPUT_FILEPATH = input_prefix + ".out"; 
 		
 		INIT_LAMBDA = 0.7; 
-		INIT_MAX_EPOCHS = 5000;
-		INIT_RUNS = 10000; 
+		INIT_MAX_EPOCHS = 1000;
+		INIT_RUNS = 20000; 
 		INIT_CANDIDATES_COUNT = 0;
 		INIT_SHUFFLE_IS = true;
 		INIT_BATCH_IS = false;
@@ -1750,7 +1750,7 @@ public class BAL {
 												 100.0};
 
 		//for(int h=3; h<=144; h += h/8 + 1){
-		for(int h=3; h<=20 ; h++){
+		for(int h=16; h<=20 ; h++){
 			INIT_HIDDEN_LAYER_SIZE = h; 
 			experiment_Default();
 		} 
