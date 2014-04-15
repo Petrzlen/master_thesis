@@ -1,0 +1,33 @@
+
+\subsection{Evaluation methods} 
+\label{sec:sim-evaluation-methods} 
+
+Following \citet{farkas2013bal} we measured two key properties of a BAL-like network. The more important being \emph{success rate} and second being \emph{convergence time}. 
+
+\paragraph{Success rate.}  
+Before comparing \emph{given} outputs on both visible layers the activations $Y^F$ and $X^B$ are classified by a treshold: 
+\begin{equation} 
+  g_k =
+  \left\{
+	  \begin{array}{ll}
+		  0 & \mbox{if } x_k^B < 0.5 \\
+		  1 & \mbox{otherwise}
+	  \end{array}
+  \right.  
+\end{equation} 
+By having set of given vectors $G^I$ and the target vectors $T^I$ for inputs $I \in \mathbb{S}$ we distinguish two main success measures: 
+\begin{itemize}
+  \item \emph{Bit success (bitSucc)} defined as $bitSucc = avg_{I \in \mathbb{S}} \sum_i |T_i^I - G^I_i|$ and 
+  \item \emph{Pattern success (patSucc)} defined as 
+    \begin{equation}
+      patSucc = avg_{I \in \mathbb{S}} \left\{
+	      \begin{array}{ll}
+		      1 & \mbox{if } T^I = G^I \\
+		      0 & \mbox{otherwise}
+	      \end{array}
+      \right.
+    \end{equation} 
+\end{itemize} 
+In other words \emph{bitSucc} is the ratio of correctly given bits and \emph{patSucc} is the ration of correctly given patterns, i.e. learned samples. 
+
+\paragraph{Convergence time} is the number of epochs after the training is stopped. Training could be stopped for two reasons. The network could either reach the stopping criterion (TODO ref) or the maximum epoch is reached. So the lower convergence time makes the model more convenient for training.  
