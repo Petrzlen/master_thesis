@@ -59,6 +59,7 @@ public class BAL {
 
 	private static boolean IS_PRINT = false; 
 
+	//TODO symetricka verzia so standardnym BALom 
 	private static int WEIGHT_UPDATE_BAL = 1; 
 	private static int WEIGHT_UPDATE_GENEREC_CHL = 2; // works but slow 
 	private static int WEIGHT_UPDATE_BAL_RECIRC = 3; 
