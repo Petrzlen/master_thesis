@@ -14,7 +14,7 @@
 \subsection{GeneRec} 
 \label{sec:appendix-impl-generec} 
 
-Activation is computed as in \ref{eq:models-generec-activation}.
+Activation is computed as in \ref{eq:models-generec-activation}. How we implemented the details which are not talked about in \citet{o1996bio}. They are related to BAL \ref{sec:models-bal}. 
 
 \subsubsection{Bias} 
 %TODO reformulate
@@ -22,6 +22,24 @@ Activation is computed as in \ref{eq:models-generec-activation}.
 %TODO add results with / without bias 
 %TODO parse references 
 The use of such biases in neural networks has been discussed in the context of the fundamental bias/variance tradeoff \citet{geman1992neural}. This tradeoff emphasizes the fact that biases that are appropriate for the task can greatly facilitate learning and generalization by reducing the level of variance, where variance reflects the extent to which parameters are underconstrained by learning, and thus free to vary, causing random errors in generalization. These biases are also known as regularizers \citet{poggio1990networks}. However, inappropriate biases can obviously hurt performance by introducing systematic errors, such that there is no such thing as a single universally beneficial set of biases (Wolpert, 1996a; Wolpert, 1996b). 
+
+
+\paragraph{Generec-Bias} 
+
+Therefore we tried several settings: 
+\begin{itemize} 
+\item No bias - two patterns for 4-2-4, three patterns for 4-3-4, all four patterns for 4-4-4
+\item Bias only on the input layer:  
+4-2-4 best network error = 3.0 (tended to have two very profiled (0.95+, 0, 0, 0) and two very even (0.5, 0.5, 0.5, 0.5)  \\
+4-3-4 about 75\% success rate 
+\item Bias on both input and hidden layers: 
+    4-2-4 0.0 1.0 0.5 0.1 91.74311926605505 100/109, almost no 1.0 errors 
+          epochs ranged from 9 to 4500 \\ 
+    4-3-4 about 100\% succes rate with about 20 epochs (epoch ranged from 5 to 700) 
+\item Bias on all matrices (IH, HO, OH): 
+    seems to add a little chaos with a slighty worse performance (but maybe bad sigma)
+
+\end{itemize} 
 
 \subsubsection{Fluctuation} 
 \label{sec:generec-fluctuation}
