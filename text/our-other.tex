@@ -55,15 +55,15 @@ A more formal explaination why the hidden activations tend to settle fast could 
   \Delta w_{ij} = a_i(b_j - a_j),
 \end{equation} 
 which for the $W^{IH}$ and $W^{OH}$ yields: 
-\begin{equation} 
+\begin{align} 
   \Delta w_{ij}^{IH} = x^F_i(h^B_j - h^F_j) \\ 
   \Delta w_{ij}^{OH} = y^B_i(h^F_j - h^B_j). 
-\end{equation} 
-We see that both terms $(h^B_j - h^F_j)$ and $(h^F_j - h^B_j)$ push $W^{IH}$ and $W^{OH}$ in a way that $h^B_j = h^F_j$. This experiment was the main reason to start experimenting with the Two learning rate model \ref{sec:our-two-lambdas}. 
+\end{align} 
+We see that both terms $(h^B_j - h^F_j)$ and $(h^F_j - h^B_j)$ push $W^{IH}$ and $W^{OH}$ to settle $h^B_j = h^F_j$. This experiment was the main reason to start experimenting with the Two learning rate model \ref{sec:our-two-lambdas}. 
 
 %==========================================================
 \paragraph{Dynamic weight lambda.} 
-\label{our-dynamic-lambda} 
+\label{sec:our-dynamic-lambda} 
 The idea of \emph{dynamic weight lambda} (TODO cite) is to have separate learning rate for each weight: 
 \begin{equation}
 \Delta w_{ij}(t) = \lambda_{ij}(t) a_i\left(b_j - a_j\right), 
