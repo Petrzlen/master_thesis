@@ -168,58 +168,57 @@ public class BAL {
 	//=======================  "TELEMETRY" of the network in time =========================== 
 	public static Map<Integer, String> MEASURE_RUN_ID = new HashMap<Integer, String>(); 
 	public static  String[] MEASURE_HEADINGS = {
-		"epoch", "err", "sigma", "lambda", "momentum", 
-		"h_dist","h_f_b_dist","m_avg_w","m_sim", "first_second", 
-		"o_f_b_dist", "in_triangle", "fluctuation", "lambda_ih",  
-		"bit_succ_f", "bit_succ_b", "pat_succ_f", "pat_succ_b"};
-	public static  int MEASURE_EPOCH = 0;
-	public static  int MEASURE_ERROR = 1; //error function (RMSE), bitSucc forward 
-	public static  int MEASURE_SIGMA = 2; 
-	public static  int MEASURE_LAMBDA = 3; 
-	public static  int MEASURE_MOMENTUM = 4;
+		"epoch", "err", "lambda", "lambda_v", "momentum", "sigma",  
+		"bit_succ_f", "bit_succ_b", "pat_succ_f", "pat_succ_b", 
+		"m_avg_w", "m_sim", "h_f_b_dist", "o_f_b_dist", 
+		"h_dist", "in_triangle", "fluctuation"
+	};
+	public static int MEASURE_EPOCH = 0;
+	public static int MEASURE_ERROR = 1; //error function (RMSE), bitSucc forward 
+	public static int MEASURE_LAMBDA = 2; 
+	public static int MEASURE_LAMBDA_V = 3; 
+	public static int MEASURE_MOMENTUM = 4;
+	public static int MEASURE_SIGMA = 5; 
 
-	//avg of dist(h_i - h_j) i \neq j where h_i is a hidden activation for input i
-	//intuitively: internal representation difference 
-	public static  int MEASURE_HIDDEN_DIST = 5;
+	public static int MEASURE_BITSUCC_FORWARD = 6;  
 
-	//avg distance between forward and backward activations on hidden layer
-	public static  int MEASURE_HIDDEN_FOR_BACK_DIST = 6;
+	public static int MEASURE_BITSUCC_BACKWARD = 7;  
+
+	public static int MEASURE_PATSUCC_FORWARD = 8;  
+
+	public static int MEASURE_PATSUCC_BACKWARD = 9; 
 
 	//avg weight of matrixes 
-	public static  int MEASURE_MATRIX_AVG_W = 7;
+	public static  int MEASURE_MATRIX_AVG_W = 10;
 
 	//sum of |a_{ij} - b_{ij}| per pairs (HO, HI) and (OH, IH) 
-	public static  int MEASURE_MATRIX_SIMILARITY = 8;
+	public static  int MEASURE_MATRIX_SIMILARITY = 11;
 
-	//sum of ratio of (a_1, a_2) where a_i is the i-th biggest output 
-	public static  int MEASURE_FIRST_SECOND_RATIO = 9; //!DEPRECATED
 
-	//public static  int MEASURE_NOISE_SPAN = 9; 
-	//public static  int MEASURE_MULTIPLY_WEIGHTS = 9; 
-
+	//avg distance between forward and backward activations on hidden layer
+	public static  int MEASURE_HIDDEN_FOR_BACK_DIST = 12;
+	
 	//avg distance between forward and backward activations on their output layers (forward layer 2, backward layer 0) 
-	public static  int MEASURE_OUTPUT_FOR_BACK_DIST = 10;
-
+	//  NOTE: could be irrelevant: has meaning only for auto associative tasks 
+	public static  int MEASURE_OUTPUT_FOR_BACK_DIST = 13;
+	
+	//avg of dist(h_i - h_j) i \neq j where h_i is a hidden activation for input i
+	//intuitively: internal representation difference 
+	//  NOTE: could be expensive: O(epoch + inputs.size ^ 2 * hidden.size) 
+	public static  int MEASURE_HIDDEN_DIST = 14;
+	
 	//check if some point is inside a polygon from others 
-	public static  int MEASURE_IN_TRIANGLE = 11;
+	//  NOTE: could be irrelevant: has meaning only for hidden size = 2
+	public static  int MEASURE_IN_TRIANGLE = 15;
+	
+	//how much differ activations when iterative method is used
+	//  NOTE: could be expensive: O(epoch * RECIRCULATION_ITERATIONS_MAX)  
+	public static int MEASURE_FLUCTUATION = 16; 
 
-	//how much differ activations when iterative method is used 
-	public static int MEASURE_FLUCTUATION = 12; 
-
-	public static int MEASURE_LAMBDA_IH = 13; 
-
-	public static int MEASURE_BITSUCC_FORWARD = 14;  
-
-	public static int MEASURE_BITSUCC_BACKWARD = 15;  
-
-	public static int MEASURE_PATSUCC_FORWARD = 16;  
-
-	public static int MEASURE_PATSUCC_BACKWARD = 17; 
-
-	public static int MEASURE_COUNT = 18;  
+	public static int MEASURE_COUNT = 17;  
 
 	//public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_IN_TRIANGLE};
-	public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_LAMBDA_IH, MEASURE_MOMENTUM};
+	public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_LAMBDA_V, MEASURE_MOMENTUM};
 
 	public static  int MEASURE_GROUP_BY = MEASURE_ERROR;  
 
@@ -1158,7 +1157,6 @@ public class BAL {
 
 		if(MEASURE_HIDDEN_FOR_BACK_DIST < MEASURE_COUNT 
 				|| MEASURE_OUTPUT_FOR_BACK_DIST < MEASURE_COUNT 
-				|| MEASURE_FIRST_SECOND_RATIO < MEASURE_COUNT 
 				|| MEASURE_HIDDEN_DIST < MEASURE_COUNT 
 				|| MEASURE_BITSUCC_FORWARD < MEASURE_COUNT
 				|| MEASURE_BITSUCC_BACKWARD < MEASURE_COUNT
@@ -1204,8 +1202,6 @@ public class BAL {
 			}
 			if(MEASURE_HIDDEN_FOR_BACK_DIST < MEASURE_COUNT) result[MEASURE_HIDDEN_FOR_BACK_DIST] = hidden_for_back_dist; 
 			if(MEASURE_OUTPUT_FOR_BACK_DIST < MEASURE_COUNT) result[MEASURE_OUTPUT_FOR_BACK_DIST] = output_for_back_dist; 
-			//!DEPRECATED 
-			if(MEASURE_FIRST_SECOND_RATIO < MEASURE_COUNT) result[MEASURE_FIRST_SECOND_RATIO] = 0.0; 
 
 			if(MEASURE_BITSUCC_FORWARD < MEASURE_COUNT) result[MEASURE_BITSUCC_FORWARD] = bitsucc_f / ((double)(target.getRowDimension()));
 			if(MEASURE_BITSUCC_BACKWARD < MEASURE_COUNT) result[MEASURE_BITSUCC_BACKWARD] = bitsucc_b / ((double)(in.getRowDimension()));
@@ -1223,19 +1219,24 @@ public class BAL {
 			}
 
 			if(MEASURE_IN_TRIANGLE < MEASURE_COUNT){
-				ArrayList<Point> hidden_points = new ArrayList<Point>(); 
-				for(int i=0; i<forward_hiddens.size() ; i++){
-					hidden_points.add(new Point((int)(1000.0 * forward_hiddens.get(i).getEntry(0)), (int)(1000.0 * forward_hiddens.get(i).getEntry(1)))); 
+				if(forward_hiddens.get(0).getDimension() == 2){
+					ArrayList<Point> hidden_points = new ArrayList<Point>(); 
+					for(int i=0; i<forward_hiddens.size() ; i++){
+						hidden_points.add(new Point((int)(1000.0 * forward_hiddens.get(i).getEntry(0)), (int)(1000.0 * forward_hiddens.get(i).getEntry(1)))); 
+					}
+					ArrayList<Point> convex_hull = ConvexHull.execute(hidden_points); 
+					result[MEASURE_IN_TRIANGLE] = (double)(hidden_points.size() - convex_hull.size());
+	
+					/*//DEVELOPER DEBUG 
+					log.println("Hidden points");
+					log.println(hidden_points);
+					log.println("ConvexHull points");
+					log.println(convex_hull);
+					log.println("End"); */
 				}
-				ArrayList<Point> convex_hull = ConvexHull.execute(hidden_points); 
-				result[MEASURE_IN_TRIANGLE] = (double)(hidden_points.size() - convex_hull.size());
-
-				/*//DEVELOPER DEBUG 
-				log.println("Hidden points");
-				log.println(hidden_points);
-				log.println("ConvexHull points");
-				log.println(convex_hull);
-				log.println("End"); */
+				else{
+					result[MEASURE_IN_TRIANGLE] = -1.0; 
+				}
 			}
 
 		}
@@ -1267,8 +1268,8 @@ public class BAL {
 			result[MEASURE_MATRIX_SIMILARITY] = matrix_similarity;
 		}
 
-		if(MEASURE_LAMBDA_IH < MEASURE_COUNT){
-			result[MEASURE_LAMBDA_IH] = BAL.INIT_LAMBDA_V; 
+		if(MEASURE_LAMBDA_V < MEASURE_COUNT){
+			result[MEASURE_LAMBDA_V] = BAL.INIT_LAMBDA_V; 
 		}
 
 		if(isSave){
