@@ -48,36 +48,37 @@ public class BAL {
 	//manage IO and run BAL 
 	public static void main(String[] args) throws IOException {
 		DECIMAL_FORMAT.setMaximumFractionDigits(7);
-		
+
 		//experiment_Default();
 		//experiment_DifferentHiddenSizes("k3");
 		//experiment_RerunGoodBad();
 		experiment_TestImplementation();
+		//experiment_Digits(); 
 	}
-	
+
 	private static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0"); 
 
 	private static boolean IS_PRINT = false; 
 
 	//TODO symetricka verzia so standardnym BALom 
-	private static int WEIGHT_UPDATE_BAL = 1; 
-	private static int WEIGHT_UPDATE_GENEREC_CHL = 2; // works but slow 
-	private static int WEIGHT_UPDATE_BAL_RECIRC = 3; 
-	private static int WEIGHT_UPDATE_GENEREC = 4; // => INIT_SYMMETRIC_IS = true
-	private static int WEIGHT_UPDATE_GENEREC_SYM = 5; // => INIT_SYMMETRIC_IS = true
-	private static int WEIGHT_UPDATE_GENEREC_MID = 6; // => INIT_SYMMETRIC_IS = true 
-	private static int WEIGHT_UPDATE_BAL_SYM = 7; // non of BAL other learning rule works 
-	private static int WEIGHT_UPDATE_BAL_MID = 8; 
-	private static int WEIGHT_UPDATE_BAL_CHL = 9; 
-	private static int WEIGHT_UPDATE_TYPE = WEIGHT_UPDATE_GENEREC_CHL;
-	// TODO not sure if CHL (it's more complicated)
-	// TODO symmetric preserving GeneRec learning rule & midpoint method rule => ALSO TO BAL!!! 
-	private static boolean INIT_RECIRCULATION_IS = (WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC_CHL || WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL_RECIRC || WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC); 
-	private static double RECIRCULATION_EPSILON = 0.01; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
-	private static int RECIRCULATION_ITERATIONS_MAX = 20; //maximum number of iterations to approximate the underlying dynamic system  
-	private static boolean RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING = false; // average of last two activations will be used instead of the last one (intuition: more stable) 
-
-	private static boolean LAMBDA_ERROR_MOMENTUM_IS = false; 
+	private static int WU_BAL = 1; 
+	private static int WU_GENEREC_CHL = 2; // works but slow 
+	private static int WU_BAL_RECIRC = 3; 
+	private static int WU_GENEREC = 4; // => INIT_SYMMETRIC_IS = true
+	private static int WU_GENEREC_SYM = 5; // => INIT_SYMMETRIC_IS = true
+	private static int WU_GENEREC_MID = 6; // => INIT_SYMMETRIC_IS = true 
+	private static int WU_BAL_SYM = 7; // non of BAL other learning rule works 
+	private static int WU_BAL_MID = 8; 
+	private static int WU_BAL_CHL = 9; 
+	private static int WU_TYPE = WU_BAL;
+	
+	private static boolean INIT_RECIRCULATION_IS = (WU_TYPE == WU_BAL_RECIRC || WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_SYM || WU_TYPE == WU_GENEREC_MID);
+	//if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop
+	private static double RECIRCULATION_EPSILON = 0.01; 
+	//maximum number of iterations to approximate the underlying dynamic system
+	private static int RECIRCULATION_ITERATIONS_MAX = 200; 
+	 // average of last two activations will be used instead of the last one (intuition: more stable)
+	private static boolean RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING = true; 
 
 	private static PrintWriter log = null; 
 
@@ -104,35 +105,32 @@ public class BAL {
 	private boolean[] active_hidden; 
 	private static boolean[] all_true_active_hidden; // a mock which says "all hidden units are active" 
 
+	//the network will stop training if no change in result occurred in last CONVERGENCE_NO_CHANGE_FOR
 	public static  int CONVERGENCE_NO_CHANGE_FOR = 500000; 
+	//if true network will stop training if bitSucc^F = 1.0 
 	public static boolean STOP_IF_NO_ERROR = true; 
 
-	public static double INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3; 
-	//public static double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {1.0}; // generec  
-	public static double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {2.3}; 
-	//public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2};
-	//public static  double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {0.5, 1.0, 1.5, 2.0, 2.5, 3.0}; 
-	//public static double TRY_NORMAL_DISTRIBUTION_SIGMA[] = {0.3, 0.5, 0.7, 1.0};
+	public static double INIT_SIGMA = 2.3; // should be 1 / sqrt{input.size + 1}
+	public static double TRY_SIGMA[] = {2.3}; 
 
 	public static double INIT_LAMBDA = 0.7; 
 	//public static  double TRY_LAMBDA[] = {0.7}; 
 	public static  double TRY_LAMBDA[] = {2000.0}; 
-	//public static double TRY_LAMBDA[] = {0.7, 0.8, 0.9, 1.0, 1.1, 1.2}; 
 	//public static  double TRY_LAMBDA[] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0}; 
 	//public static  double TRY_LAMBDA[] = {0.03, 0.1, 0.3, 0.5, 0.7, 1.1, 1.5, 2.0, 3.0}; 
 	//public static  double TRY_LAMBDA[] = {0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
 	//public static  double TRY_LAMBDA[] = {1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
 	//public static  double TRY_LAMBDA[] = {20000.0, 50000.0, 100000.0, 200000.0, 500000.0, 1000000.0, 2000000.0, 5000000.0, 10000000.0};
-	
-	private static double LAMBDA_IH = 0.0001;
-	private static double TRY_LAMBDA_IH[] = {0.0001};
-	//public static  double TRY_LAMBDA_IH[] = {0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 2.0};
-	/*public static  double TRY_LAMBDA_IH[] = {0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
+
+	private static double INIT_LAMBDA_V = 0.0001;
+	private static double TRY_LAMBDA_V[] = {0.0001};
+	//public static  double INIT_LAMBDA_V[] = {0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 2.0};
+	/*public static  double INIT_LAMBDA_V[] = {0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
 											 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 
 											 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
 											 100.0}; */
-	//public static  double TRY_LAMBDA_IH[] = {0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001};
-	
+	//public static  double INIT_LAMBDA_V[] = {0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001};
+
 	//public static  double TRY_NOISE_SPAN[] = {0.0, 0.003, 0.01, 0.03, 0.1, 0.3}; 
 	//public static  double TRY_MULTIPLY_WEIGHTS[] = {1.0, 1.00001, 1.00003, 1.0001, 1.0003, 1.001}; 
 
@@ -141,6 +139,9 @@ public class BAL {
 	public static  double TRY_MOMENTUM[] = {0.0};
 	//public static  double TRY_MOMENTUM[] = {-1, -0.3, -0.1, -0.03, -0.01, -0.003, -0.001, 0.0, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1}; 
 
+	// for purposes of dynamic lambda 
+	private static boolean LAMBDA_ERROR_MOMENTUM_IS = false; 
+	
 	public static  double INIT_NORMAL_DISTRIBUTION_MU = 0;
 	public static  double NORMAL_DISTRIBUTION_SPAN = 15; 
 
@@ -196,7 +197,7 @@ public class BAL {
 
 	//how much differ activations when iterative method is used 
 	public static int MEASURE_FLUCTUATION = 12; 
-	
+
 	public static int MEASURE_LAMBDA_IH = 13; 
 
 	public static int MEASURE_BITSUCC_FORWARD = 14;  
@@ -206,7 +207,7 @@ public class BAL {
 	public static int MEASURE_PATSUCC_FORWARD = 16;  
 
 	public static int MEASURE_PATSUCC_BACKWARD = 17; 
-	
+
 	public static int MEASURE_COUNT = 18;  
 
 	//public static  int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_IN_TRIANGLE};
@@ -273,27 +274,18 @@ public class BAL {
 	public static double run(BAL override_network) throws FileNotFoundException{
 		NETWORK_EPOCH = 0; 
 		max_fluctuation = 0.0; 
-		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC || 
-				WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC_CHL || 
-				WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC_MID || 
-				WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC_SYM) {
-			INIT_SYMMETRIC_IS = true; 
-		}
-
-		BAL.INIT_NORMAL_DISTRIBUTION_SIGMA = BAL.TRY_NORMAL_DISTRIBUTION_SIGMA[random.nextInt(BAL.TRY_NORMAL_DISTRIBUTION_SIGMA.length)]; 
-		BAL.INIT_LAMBDA = BAL.TRY_LAMBDA[random.nextInt(BAL.TRY_LAMBDA.length)];
-		BAL.INIT_MOMENTUM = BAL.TRY_MOMENTUM[random.nextInt(BAL.TRY_MOMENTUM.length)];
-		BAL.LAMBDA_IH = BAL.TRY_LAMBDA_IH[random.nextInt(BAL.TRY_LAMBDA_IH.length)];
-		//BAL.INIT_NOISE_SPAN = BAL.TRY_NOISE_SPAN[random.nextInt(BAL.TRY_NOISE_SPAN.length)];
-		//BAL.INIT_MULTIPLY_WEIGHTS = BAL.TRY_MULTIPLY_WEIGHTS[random.nextInt(BAL.TRY_MULTIPLY_WEIGHTS.length)];
-
-		int h_size = BAL.INIT_HIDDEN_LAYER_SIZE;  
-		int max_epoch = BAL.INIT_MAX_EPOCHS; 
 
 		generateNetworkRunId(); 
 
 		RealMatrix inputs = BAL.loadFromFile(BAL.INPUT_FILEPATH);
 		RealMatrix outputs = BAL.loadFromFile(BAL.OUTPUT_FILEPATH);
+
+		if(WU_TYPE == WU_GENEREC || 
+				WU_TYPE == WU_GENEREC_CHL || 
+				WU_TYPE == WU_GENEREC_MID || 
+				WU_TYPE == WU_GENEREC_SYM) {
+			INIT_SYMMETRIC_IS = true;  
+		}
 
 		if(HIDDEN_REPRESENTATION_IS){
 			hidden_repre_cur = new ArrayList<RealVector[]>();
@@ -302,9 +294,9 @@ public class BAL {
 		//select the "best" candidate network
 		double mav=0.0; 
 		double in_points_best = 1000.0; 
-		BAL network = new BAL(inputs.getColumnDimension(), h_size, outputs.getColumnDimension()); 
+		BAL network = new BAL(inputs.getColumnDimension(), BAL.INIT_HIDDEN_LAYER_SIZE, outputs.getColumnDimension()); 
 		for(int i=0; i<BAL.INIT_CANDIDATES_COUNT; i++){
-			BAL N = new BAL(inputs.getColumnDimension(), h_size, outputs.getColumnDimension()); 
+			BAL N = new BAL(inputs.getColumnDimension(), BAL.INIT_HIDDEN_LAYER_SIZE, outputs.getColumnDimension()); 
 			double[] measure = N.measure(0, inputs, outputs, false); 
 			double hd =  measure[BAL.MEASURE_HIDDEN_DIST];
 			double in_points = measure[BAL.MEASURE_IN_TRIANGLE];
@@ -358,7 +350,7 @@ public class BAL {
 
 		//Main learning loop 
 		int epochs=1;
-		for(epochs=1; epochs<=max_epoch ; epochs++){
+		for(epochs=1; epochs<=BAL.INIT_MAX_EPOCHS ; epochs++){
 			NETWORK_EPOCH = epochs; 
 
 			if(isMeasureAtEpoch(epochs)){
@@ -401,13 +393,13 @@ public class BAL {
 					printForwardPass(network.forwardPass(in), out);
 					printBackwardPass(network.backwardPass(out));
 				}
-				
+
 				network.learn(in, out);
 
 				if(print_state_is){
 					System.out.println(network.printMomentum());
 				}
-				
+
 				RealVector[] forwardPass = network.forwardPass(in); 
 
 				if(is_save_hidden_representation){
@@ -420,7 +412,7 @@ public class BAL {
 				is_diffent_output = is_diffent_output || (last_outputs[order_i].getDistance(forwardPass[2]) > DOUBLE_EPSILON);  
 				last_outputs[order_i] = forwardPass[2]; */
 			}
-			
+
 			/*
 			if(epochs > INIT_MAX_EPOCHS - 20 ){
 				System.out.println(epochs + ": " + network.evaluate(inputs, outputs));
@@ -454,7 +446,7 @@ public class BAL {
 
 			if(isStop){
 				if(MEASURE_IS){
-					for(int e = epochs + 1; e <= max_epoch ; e++){
+					for(int e = epochs + 1; e <= BAL.INIT_MAX_EPOCHS ; e++){
 						if(isMeasureAtEpoch(e)){
 							network.measure(e, inputs, outputs, true); 
 						}
@@ -462,7 +454,7 @@ public class BAL {
 				}
 				break; 
 			}
-			
+
 			/*
 			if(epochs > INIT_MAX_EPOCHS - 10){
 				printNetworkWithPass(network, inputs, outputs, "Network close to end run");
@@ -502,13 +494,13 @@ public class BAL {
 		return network_result; 
 	}
 	private static double calculateLambda(double init_lambda, int weight_matrix) {
-		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL){
-			return  ((weight_matrix == MATRIX_IH || weight_matrix == MATRIX_OH) ? LAMBDA_IH : init_lambda);
+		if(WU_TYPE == WU_BAL){
+			return  ((weight_matrix == MATRIX_IH || weight_matrix == MATRIX_OH) ? INIT_LAMBDA_V : init_lambda);
 		}
 		else{
 			return init_lambda; 
 		}
-		
+
 		//return init_lambda * Math.max(1.0, (100 / (epochs + 50)));
 
 		//return init_lambda * Math.max(0.5, 2 * Math.abs(last_err)); // last error has no reason 
@@ -567,7 +559,7 @@ public class BAL {
 		double [][] matrix_data = new double[rows][cols]; 
 		for(int i=0; i<rows; i++){
 			for(int j=0; j<cols; j++){
-				matrix_data[i][j] = pickFromNormalDistribution(BAL.INIT_NORMAL_DISTRIBUTION_MU, BAL.INIT_NORMAL_DISTRIBUTION_SIGMA); 
+				matrix_data[i][j] = pickFromNormalDistribution(BAL.INIT_NORMAL_DISTRIBUTION_MU, BAL.INIT_SIGMA); 
 			}
 		}
 
@@ -691,7 +683,7 @@ public class BAL {
 
 		this.BAL_construct_other(); 
 	}
- 
+
 	//f(net) on a whole layer  
 	private void applyNonlinearity(RealVector vector){
 		for(int i=0; i<vector.getDimension() ; i++){
@@ -702,7 +694,7 @@ public class BAL {
 	}
 
 	private boolean isBias(int which_matrix){
-		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC){
+		if(WU_TYPE == WU_GENEREC){
 			if(which_matrix == MATRIX_IH || which_matrix == MATRIX_HO){ //|| which_matrix == MATRIX_OH){
 				return true;
 			}
@@ -964,7 +956,7 @@ public class BAL {
 			}
 		}
 	}
-	
+
 	private static void subCHLLearn(RealMatrix w, RealVector a_minus_i, RealVector a_minus_j, RealVector a_plus_i, RealVector a_plus_j, double lambda){
 		/*
 		System.out.println("subCHLLearn: ");
@@ -976,13 +968,13 @@ public class BAL {
 		 */
 
 		int RULE = 0; 
-		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL_SYM || WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC_SYM){
+		if(WU_TYPE == WU_BAL_SYM || WU_TYPE == WU_GENEREC_SYM){
 			RULE = 1; 
 		} 
-		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL_MID || WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC_MID){
+		if(WU_TYPE == WU_BAL_MID || WU_TYPE == WU_GENEREC_MID){
 			RULE = 2; 
 		}
-		
+
 		for(int i = 0 ; i < w.getRowDimension() ; i++){
 			for(int j = 0 ; j < w.getColumnDimension() ; j++){
 				//System.out.println("  " + i + "," + j);
@@ -993,7 +985,7 @@ public class BAL {
 				double aip = a_plus_i.getEntry(i); 
 				double ajm = a_minus_j.getEntry(j); 
 				double ajp = a_plus_j.getEntry(j);
-				
+
 				if(RULE == 0) dw = lambda * ((aip * ajp) - (aim * ajm));
 				if(RULE == 1) dw = (ajp*aim + ajm*aip) - 2*ajm*aim; 
 				if(RULE == 2) dw = lambda * (1/2) * (aim + aip) * (ajp - ajm); 
@@ -1040,7 +1032,7 @@ public class BAL {
 		//System.out.println("Error matrix: " + printMatrix(MatrixUtils.createRealMatrix(ERR_HO)));
 
 		//learn
-		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL){
+		if(WU_TYPE == WU_BAL){
 			//IS_PRINT = true; 
 			RealVector[] forward = this.forwardPass(in);
 			RealVector[] backward = this.backwardPass(target);
@@ -1051,7 +1043,7 @@ public class BAL {
 			subLearn(this.OH, backward[2], forward[1], backward[1], calculateLambda(INIT_LAMBDA, MATRIX_OH), this.MOM_OH, this.BATCH_OH, this.ERR_OH, d_all, d_hidden); 
 			subLearn(this.HI, backward[1], forward[0], backward[0], calculateLambda(INIT_LAMBDA, MATRIX_HI), this.MOM_HI, this.BATCH_HI, this.ERR_HI, d_hidden, d_all);
 		}
-		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL_RECIRC){
+		if(WU_TYPE == WU_BAL_RECIRC){
 			/**/ 
 			//IS_PRINT = true; 
 			RealVector[] forward = this.forwardPassWithRecirculation(in);
@@ -1074,7 +1066,7 @@ public class BAL {
 				makeSymmetric(this.HO, this.OH, this.OH.getColumnDimension(), this.OH.getRowDimension() - (isBias(MATRIX_OH)?1:0));
 			}
 		}
-		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC) {
+		if(WU_TYPE == WU_GENEREC) {
 			//symmetric version 
 			//IS_PRINT = true; 
 			RealVector[] forward = this.forwardPassWithRecirculation(in); 
@@ -1098,9 +1090,9 @@ public class BAL {
 			System.out.println("Bothward: " + printVector(bothward));
 			System.out.println("Network:\n" + printNetwork()); */ 
 		}
-		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC_CHL || 
-				WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC_MID || 
-				WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_GENEREC_SYM){ 
+		if(WU_TYPE == WU_GENEREC_CHL || 
+				WU_TYPE == WU_GENEREC_MID || 
+				WU_TYPE == WU_GENEREC_SYM){ 
 			RealVector[] forward = this.forwardPassWithRecirculation(in); 
 			RealVector bothward = this.bothwardPass(in, target); 
 
@@ -1109,15 +1101,15 @@ public class BAL {
 
 			makeSymmetric(this.OH, this.HO, this.HO.getColumnDimension(), this.HO.getRowDimension() - (isBias(MATRIX_HO)?1:0));
 		}
-		if(WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL_CHL || 
-				WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL_MID || 
-				WEIGHT_UPDATE_TYPE == WEIGHT_UPDATE_BAL_SYM){
+		if(WU_TYPE == WU_BAL_CHL || 
+				WU_TYPE == WU_BAL_MID || 
+				WU_TYPE == WU_BAL_SYM){
 
 			//IS_PRINT = true;
 			RealVector[] forward = this.forwardPass(in);
 			RealVector[] backward = this.backwardPass(target);
 			//IS_PRINT = false;
-					
+
 			//RealVector a_minus_i, RealVector a_minus_j, RealVector a_plus_i, RealVector a_plus_j
 			subCHLLearn(this.IH, forward[0], forward[1], addBias(backward[0], MATRIX_IH), backward[1], calculateLambda(INIT_LAMBDA, MATRIX_IH)); 
 			subCHLLearn(this.HO, forward[1], forward[2], addBias(backward[1], MATRIX_HO), backward[2], calculateLambda(INIT_LAMBDA, MATRIX_HO)); 
@@ -1193,7 +1185,7 @@ public class BAL {
 		double[] result = new double[MEASURE_COUNT]; 
 
 		if(MEASURE_EPOCH < MEASURE_COUNT) result[MEASURE_EPOCH] = ((double)epoch); 
-		if(MEASURE_SIGMA < MEASURE_COUNT) result[MEASURE_SIGMA] = BAL.INIT_NORMAL_DISTRIBUTION_SIGMA; 
+		if(MEASURE_SIGMA < MEASURE_COUNT) result[MEASURE_SIGMA] = BAL.INIT_SIGMA; 
 		if(MEASURE_LAMBDA < MEASURE_COUNT) result[MEASURE_LAMBDA] = BAL.INIT_LAMBDA; 
 		if(MEASURE_MOMENTUM < MEASURE_COUNT) result[MEASURE_MOMENTUM] = BAL.INIT_MOMENTUM; 
 
@@ -1216,7 +1208,7 @@ public class BAL {
 			double bitsucc_b = 0.0; 
 			double patsucc_f = 0.0; 
 			double patsucc_b = 0.0;
-			
+
 			//double first_second_sum = 0.0; 
 			for(int i=0; i<in.getRowDimension(); i++){
 				RealVector[] forward = this.forwardPass(in.getRowVector(i));
@@ -1237,7 +1229,7 @@ public class BAL {
 					Arrays.sort(output_arr); 
 					first_second_sum += output_arr[output_arr.length-1] / output_arr[output_arr.length-2];
 				}*/
-				
+
 				double err_f = this.error(forward[2], target.getRowVector(i));
 				double err_b = this.error(backward[0], in.getRowVector(i)); 
 				bitsucc_f += (target.getRowVector(i).getDimension() - err_f) / ((double)(target.getRowVector(i).getDimension())); 
@@ -1254,7 +1246,7 @@ public class BAL {
 			if(MEASURE_BITSUCC_BACKWARD < MEASURE_COUNT) result[MEASURE_BITSUCC_BACKWARD] = bitsucc_b / ((double)(in.getRowDimension()));
 			if(MEASURE_PATSUCC_FORWARD < MEASURE_COUNT) result[MEASURE_PATSUCC_FORWARD] = patsucc_f / ((double)(target.getRowDimension()));
 			if(MEASURE_PATSUCC_BACKWARD < MEASURE_COUNT) result[MEASURE_PATSUCC_BACKWARD] = patsucc_b / ((double)(in.getRowDimension()));
-			
+
 			if(MEASURE_HIDDEN_DIST < MEASURE_COUNT){
 				for(int i=0; i<forward_hiddens.size() ; i++){
 					for(int j=i+1; j<forward_hiddens.size() ; j++){
@@ -1309,9 +1301,9 @@ public class BAL {
 			}   
 			result[MEASURE_MATRIX_SIMILARITY] = matrix_similarity;
 		}
-		
+
 		if(MEASURE_LAMBDA_IH < MEASURE_COUNT){
-			result[MEASURE_LAMBDA_IH] = BAL.LAMBDA_IH; 
+			result[MEASURE_LAMBDA_IH] = BAL.INIT_LAMBDA_V; 
 		}
 
 		if(isSave){
@@ -1478,7 +1470,7 @@ public class BAL {
 		System.out.print("Given:   " + BAL.printVector(forward[2]));
 		System.out.println("Expected:" + BAL.printVector(target));
 	}
-	
+
 	public static void printBackwardPass(RealVector[] backward){
 		log.println("Backward pass:");
 		System.out.println("Backward pass:");
@@ -1488,7 +1480,7 @@ public class BAL {
 			System.out.print(BAL.printVector(backward[j]));
 		}
 	}
-	
+
 	public String printNetwork(){
 		StringBuilder sb = new StringBuilder(); 
 		sb.append((this.IH.getRowDimension()-1) + " " + this.IH.getColumnDimension() + " " + this.HO.getColumnDimension() + "\n");
@@ -1502,7 +1494,7 @@ public class BAL {
 		sb.append(BAL.printMatrix(this.HI));
 		return sb.toString(); 
 	}
-	
+
 	public String printMomentum(){
 		StringBuilder sb = new StringBuilder(); 
 		sb.append((this.IH.getRowDimension()-1) + " " + this.IH.getColumnDimension() + " " + this.HO.getColumnDimension() + "\n");
@@ -1516,15 +1508,15 @@ public class BAL {
 		sb.append(BAL.printTwoDimArray(this.MOM_HI));
 		return sb.toString(); 
 	}
-	
-	
+
+
 	public static void printNetworkWithPass(BAL network, RealMatrix inputs, RealMatrix outputs, String title){
 		log.println("---------- " + title + " --------------");
 		log.println(network.printNetwork());
 
 		System.out.println("----------" + title + "--------------");
 		System.out.println(network.printNetwork());
-		
+
 		for(int i=0 ; i<inputs.getRowDimension(); i++){
 			RealVector[] forward = network.forwardPass(inputs.getRowVector(i));
 			printForwardPass(forward, outputs.getRowVector(i));
@@ -1668,19 +1660,43 @@ public class BAL {
 	}
 
 	public static void experimentRun(BAL network) throws FileNotFoundException {
-		for(int i=0 ; i<BAL.INIT_RUNS ; i++){
-			long start_time = System.currentTimeMillis(); 
+		int ri = 0; 
 
-			log.println("  ======== " + i + "/" + BAL.INIT_RUNS + " ==============");
-			System.out.println("  ======== " + i + "/" + BAL.INIT_RUNS + " ==============");
+		while(ri<BAL.INIT_RUNS) {
+			for(int si=0; si<BAL.TRY_SIGMA.length; si++) {
+				for(int mi=0; mi<BAL.TRY_MOMENTUM.length ; mi++){
+					for(int li=0; li<BAL.TRY_LAMBDA.length ; li++){
+						for(int tlri=0; tlri<BAL.TRY_LAMBDA_V.length ; tlri++){
+							ri++; 
+							if(ri > BAL.INIT_RUNS){
+								break;
+							}
 
-			@SuppressWarnings("unused")
-			Double error = BAL.run(network); 
+							BAL.INIT_SIGMA = BAL.TRY_SIGMA[si]; 
+							BAL.INIT_LAMBDA = BAL.TRY_LAMBDA[li];
+							BAL.INIT_MOMENTUM = BAL.TRY_MOMENTUM[mi];
+							BAL.INIT_LAMBDA_V = BAL.TRY_LAMBDA_V[tlri];
 
-			long run_time = (System.currentTimeMillis() - start_time); 
-			log.println("RunTime=" + run_time);
-			System.out.println("RunTime=" + run_time);
+							long start_time = System.currentTimeMillis(); 
+
+							log.println("  ======== " + ri + "/" + BAL.INIT_RUNS + " ==============");
+							System.out.println("  ======== " + ri + "/" + BAL.INIT_RUNS + " ==============");
+
+							@SuppressWarnings("unused")
+							Double error = BAL.run(network);
+
+							long run_time = (System.currentTimeMillis() - start_time); 
+							log.println("RunTime=" + run_time);
+							System.out.println("RunTime=" + run_time);
+						}
+					}
+				}
+			}
 		}
+
+
+		//BAL.INIT_NOISE_SPAN = BAL.TRY_NOISE_SPAN[random.nextInt(BAL.TRY_NOISE_SPAN.length)];
+		//BAL.INIT_MULTIPLY_WEIGHTS = BAL.TRY_MULTIPLY_WEIGHTS[random.nextInt(BAL.TRY_MULTIPLY_WEIGHTS.length)];
 	}
 
 	public static void experimentFinalize(String global_run_id) throws FileNotFoundException, UnsupportedEncodingException {
@@ -1695,6 +1711,7 @@ public class BAL {
 		experimentRun(null);
 		experimentFinalize(global_run_id);
 
+		// When recirculation with iterative activation is allowed it prints individual iteration counts  
 		if(!recirc_iter_counts.isEmpty()){
 			int sum=0; 
 			for(int i=0; i<recirc_iter_counts.size(); i++) {
@@ -1749,7 +1766,7 @@ public class BAL {
 
 		INPUT_FILEPATH = input_prefix + ".in"; 
 		OUTPUT_FILEPATH = input_prefix + ".out"; 
-		
+
 		INIT_LAMBDA = 0.7; 
 		INIT_MAX_EPOCHS = 1000;
 		INIT_RUNS = 20000; 
@@ -1760,7 +1777,7 @@ public class BAL {
 		INIT_TRAIN_ONLY_ON_ERROR = false; 
 
 		LAMBDA_ERROR_MOMENTUM_IS = false; 
-		LAMBDA_IH = 0.001;   
+		INIT_LAMBDA_V = 0.001;   
 
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 		RECIRCULATION_ITERATIONS_MAX = 200; //maximum number of iterations to approximate the underlying dynamic system  
@@ -1785,11 +1802,11 @@ public class BAL {
 		PRINT_NETWORK_TO_FILE_IS = false;
 
 		TRY_LAMBDA = new double[]{0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
-		
-		TRY_LAMBDA_IH = new double[]{0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
-												 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 
-												 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
-												 100.0};
+
+		TRY_LAMBDA_V = new double[]{0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
+				0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 
+				0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
+				100.0};
 
 		//for(int h=3; h<=144; h += h/8 + 1){
 		for(int h=16; h<=20 ; h++){
@@ -1806,16 +1823,11 @@ public class BAL {
 		INPUT_FILEPATH = "auto4.in"; 
 		OUTPUT_FILEPATH = "auto4.in"; 
 		INIT_HIDDEN_LAYER_SIZE = 2;
-		INIT_NORMAL_DISTRIBUTION_SIGMA = 2.3;  
-/* 
-		INPUT_FILEPATH = "k12.in"; 
-		OUTPUT_FILEPATH = "k12.in"; 
-		INIT_HIDDEN_LAYER_SIZE = 50;
-		INIT_NORMAL_DISTRIBUTION_SIGMA = 12.0;   
-*/ 
+		INIT_SIGMA = 2.3;  
+		
 		INIT_LAMBDA = 0.7; 
-		INIT_MAX_EPOCHS = 50000;
-		INIT_RUNS = 2500; 
+		INIT_MAX_EPOCHS = 10000;
+		INIT_RUNS = 1000; 
 		INIT_CANDIDATES_COUNT = 0;
 		INIT_SHUFFLE_IS = true;
 		INIT_BATCH_IS = false;
@@ -1823,15 +1835,73 @@ public class BAL {
 		INIT_TRAIN_ONLY_ON_ERROR = false; 
 
 		LAMBDA_ERROR_MOMENTUM_IS = false; 
-		LAMBDA_IH = 0.001;   
+		INIT_LAMBDA_V = 0.001;   
+
+		TRY_LAMBDA = new double[]{0.1, 0.7, 3.0}; 
+		//TRY_LAMBDA = new double[]{0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
+
+		TRY_LAMBDA_V = new double[]{0.1, 0.7, 3.0}; 
+		/*TRY_LAMBDA_V = new double[]{0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
+				0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 
+				0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
+				100.0};*/ 
+		
+		TRY_SIGMA = new double[]{1.0, 2.3, 10.0};
+		INIT_MOMENTUM_IS = true; 
+		TRY_MOMENTUM = new double[]{0.0, 0.01, 0.1};
+
+		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
+		RECIRCULATION_ITERATIONS_MAX = 200; //maximum number of iterations to approximate the underlying dynamic system  
+		RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING = true;
+
+		DROPOUT_IS = false; 
+		CONVERGENCE_NO_CHANGE_FOR = INIT_MAX_EPOCHS; 
+
+		INIT_MOMENTUM_IS = true;
+		INIT_MOMENTUM = 0.0;  
+
+		INIT_NORMAL_DISTRIBUTION_MU = 0;
+		NORMAL_DISTRIBUTION_SPAN = 15; 
+
+		HIDDEN_REPRESENTATION_IS = false;
+		HIDDEN_REPRESENTATION_DIRECTORY = "data/test/"; 
+		HIDDEN_REPRESENTATION_EACH = 1; 
+		HIDDEN_REPRESENTATION_AFTER = 200;
+		HIDDEN_REPRESENTATION_ONLY_EACH = 200;
+
+		PRINT_NETWORK_IS = false;  
+		PRINT_NETWORK_TO_FILE_IS = false;
+
+		experiment_Default();
+	}
+
+	public static void experiment_Digits() throws IOException{
+		MEASURE_IS = true; 
+		MEASURE_SAVE_AFTER_EACH_RUN = true; 
+		MEASURE_RECORD_EACH = 1;
+
+		INPUT_FILEPATH = "small.in"; 
+		OUTPUT_FILEPATH = "small.out"; 
+		INIT_HIDDEN_LAYER_SIZE = 300;
+		INIT_SIGMA = 1 / (Math.sqrt(784 + 1));
+
+		INIT_MAX_EPOCHS = 10;
+		INIT_RUNS = 1; 
+		INIT_CANDIDATES_COUNT = 0;
+		INIT_SHUFFLE_IS = true;
+		INIT_BATCH_IS = false;
+		INIT_SYMMETRIC_IS = false; 	
+		INIT_TRAIN_ONLY_ON_ERROR = false; 
+
+		LAMBDA_ERROR_MOMENTUM_IS = false;
 
 		TRY_LAMBDA = new double[]{0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
-		
-		TRY_LAMBDA_IH = new double[]{0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
-												 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 
-												 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
-												 100.0};
-		
+
+		TRY_LAMBDA_V = new double[]{0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
+				0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 
+				0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
+				100.0};
+
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 		RECIRCULATION_ITERATIONS_MAX = 200; //maximum number of iterations to approximate the underlying dynamic system  
 		RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING = true;
