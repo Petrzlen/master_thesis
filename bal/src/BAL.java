@@ -27,6 +27,7 @@
  */
 
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,6 +46,8 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
+
+import javax.imageio.ImageIO;
 
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.MatrixUtils;
@@ -325,7 +328,7 @@ public class BAL {
 	}
 	
 	// if override_network != null then the provided netwoek will be used (usually loaded from file) 
-	public static double run(BAL override_network, RealMatrix inputs, RealMatrix outputs) throws FileNotFoundException{
+	public static double run(BAL override_network, RealMatrix inputs, RealMatrix outputs) throws IOException{
 		NETWORK_EPOCH = 0; 
 		max_fluctuation = 0.0; 
 
@@ -535,6 +538,10 @@ public class BAL {
 			network.saveMeasures(NETWORK_RUN_ID, measure_writer);
 		}
 
+		if(INPUT_FILEPATH.equals("small.in") || INPUT_FILEPATH.equals("digits.in")){
+			printBackwardImages(network, 28, 28); 
+		}
+		
 		// Print out basics 
 		double network_result = (last_measure != null) ? last_measure[MEASURE_ERROR] : network.evaluateForward(inputs, outputs);
 		
@@ -1673,6 +1680,24 @@ public class BAL {
 			}
 		}
 	}
+	
+	public static void printBackwardImages(BAL network, int width, int height) throws IOException{ 
+		RealMatrix patterns = MatrixUtils.createRealIdentityMatrix(10); 
+		
+		for(int pi = 0; pi < patterns.getRowDimension(); pi++){
+			RealVector[] backward = network.backwardPass(patterns.getRowVector(pi));
+			BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+			
+			for(int w=0, d=0; w < width; w++){
+				for(int h=0; h < height ; h++, d++){
+					int gray = (int)(backward[0].getEntry(d) * 255.0);
+					img.setRGB(w, h, (gray << 16) + (gray << 8) + gray);
+				}
+			}
+			
+			ImageIO.write(img, "bmp", new File("data/img/" + NETWORK_RUN_ID + "_" + pi + ".bmp"));
+		}
+	}
 
 	public static void generateNetworkRunId(){
 		NETWORK_RUN_ID = INPUT_FILEPATH.substring(0, INPUT_FILEPATH.indexOf('.')) + "_" + (System.currentTimeMillis()) + "_" + INIT_HIDDEN_LAYER_SIZE;
@@ -1695,7 +1720,7 @@ public class BAL {
 		return global_run_id; 
 	}
 
-	public static void experimentRun(BAL network) throws FileNotFoundException {
+	public static void experimentRun(BAL network) throws IOException {
 		RealMatrix inputs = BAL.loadFromFile(BAL.INPUT_FILEPATH);
 		RealMatrix outputs = BAL.loadFromFile(BAL.OUTPUT_FILEPATH);
 		int ri = 0; 
@@ -1723,7 +1748,7 @@ public class BAL {
 
 							@SuppressWarnings("unused")
 							Double error = BAL.run(network, inputs, outputs);
-
+							
 							printBoth("RunTime=" + (System.currentTimeMillis() - start_time) + "\n");
 							printBoth("MeasureTime=" + MEASURE_EXECUTION_TIME + "\n"); 
 						}
@@ -1936,7 +1961,7 @@ public class BAL {
 		POSTPROCESS_TYPE = POSTPROCESS_MAXIMUM; 
 
 		INIT_MAX_EPOCHS = 100;
-		INIT_RUNS = 1; 
+		INIT_RUNS = 180; 
 		INIT_CANDIDATES_COUNT = 0;
 		INIT_SHUFFLE_IS = true;
 		INIT_BATCH_IS = false;
@@ -1944,14 +1969,19 @@ public class BAL {
 
 		LAMBDA_ERROR_MOMENTUM_IS = false;
 
-		TRY_LAMBDA = new double[]{0.7};
-		//TRY_LAMBDA = new double[]{0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
+		//TRY_LAMBDA = new double[]{0.7};
+		TRY_LAMBDA = new double[]{0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0};
+		/*TRY_LAMBDA = new double[]{0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 
+				0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, //TODO duplicate others 
+				50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};*/ 
 
-		TRY_LAMBDA_V = new double[]{0.1};
-		/*TRY_LAMBDA_V = new double[]{0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
-				0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 
+		//TRY_LAMBDA_V = new double[]{0.1};
+		TRY_LAMBDA_V = new double[]{0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0};
+		/*
+		TRY_LAMBDA_V = new double[]{0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
+				0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, //TODO duplicate others 
 				0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
-				100.0};*/
+				100.0};*/ 
 
 		INIT_MOMENTUM_IS = true;
 		INIT_MOMENTUM = 0.0;  
@@ -1964,7 +1994,7 @@ public class BAL {
 		DROPOUT_IS = false; 
 		CONVERGENCE_NO_CHANGE_FOR = -1; 
 		STOP_IF_NO_ERROR = false; // in digits that's impossible -> this way we will spare one pass through whole 
-		STOP_IF_NO_IMPROVE_FOR = 3; 
+		STOP_IF_NO_IMPROVE_FOR = 1; 
 		
 		INIT_NORMAL_DISTRIBUTION_MU = 0;
 		NORMAL_DISTRIBUTION_SPAN = 15; 
