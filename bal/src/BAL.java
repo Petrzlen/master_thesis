@@ -120,9 +120,15 @@ public class BAL {
 	private static boolean[] all_true_active_hidden; // a mock which says "all hidden units are active" 
 
 	//the network will stop training if no change in result occurred in last CONVERGENCE_NO_CHANGE_FOR
-	public static int CONVERGENCE_NO_CHANGE_FOR = 500000; 
+	//  -1 means not applicable 
+	public static int CONVERGENCE_NO_CHANGE_FOR = -1; 
 	//if true network will stop training if bitSucc^F = 1.0 
 	public static boolean STOP_IF_NO_ERROR = true; 
+	//(on each measure) remembers best epoch in terms of error and compares to current, if not better then stops  
+	//  -1 means not applicable 
+	public static int STOP_IF_NO_IMPROVE_FOR = -1;
+	public static double STOP_IF_NO_IMPROVE_BEST_ERR = 1987654321;
+	public static double STOP_IF_NO_IMPROVE_BEST_EPC = 0; 
 
 	public static double INIT_SIGMA = 2.3; // should be 1 / sqrt{input.size + 1}
 	public static double TRY_SIGMA[] = {2.3}; 
@@ -369,14 +375,6 @@ public class BAL {
 			
 			NETWORK_EPOCH = current_epoch; 
 
-			if(isMeasureAtEpoch(current_epoch)){
-				long st_measure = System.currentTimeMillis(); 
-				if(PRINT_EPOCH_SUMMARY) printBoth("  measureStart\n");
-				//log.println(network.evaluate(inputs, outputs));
-				network.measure(current_epoch, inputs, outputs, true);
-				if(PRINT_EPOCH_SUMMARY) printBoth("  measureEnd time=" + (System.currentTimeMillis() - st_measure) + "\n");
-			}
-
 			// which hidden representations should be saved 
 			RealVector[] hidden_representation = null; 
 			boolean is_save_hidden_representation = HIDDEN_REPRESENTATION_IS && ((current_epoch < HIDDEN_REPRESENTATION_AFTER) 
@@ -403,7 +401,7 @@ public class BAL {
 			// learn on each given / target mapping
 			// O(runs * input.size)
 			for(int order_cc = 0; order_cc < order.size() ; order_cc++){
-				if(PRINT_EPOCH_SUMMARY && (order_cc + 1) % 100 == 0) printBoth("  input " + (order_cc + 1) + "/" + order.size() + "\n");
+				if(PRINT_EPOCH_SUMMARY && (order_cc + 1) % 1000 == 0) printBoth("  input " + (order_cc + 1) + "/" + order.size() + "\n");
 					
 				int order_i = order.get(order_cc);
 				RealVector in = inputs.getRowVector(order_i);
@@ -451,10 +449,26 @@ public class BAL {
 				hidden_repre_cur.add(hidden_representation); 
 			}
 
+			if(isMeasureAtEpoch(current_epoch)){
+				//long st_measure = System.currentTimeMillis(); 
+				//if(PRINT_EPOCH_SUMMARY) printBoth("  measureStart\n");
+				//log.println(network.evaluate(inputs, outputs));
+				double[] stats = network.measure(current_epoch, inputs, outputs, true);
+				if(PRINT_EPOCH_SUMMARY) {
+					//printBoth("  measureEnd time=" + (System.currentTimeMillis() - st_measure) + "\n");
+					printBoth("current_error=" + stats[MEASURE_ERROR]);
+				}
+				
+				if(STOP_IF_NO_IMPROVE_FOR >= 0 && STOP_IF_NO_IMPROVE_BEST_ERR > stats[MEASURE_ERROR]){
+					STOP_IF_NO_IMPROVE_BEST_ERR = stats[MEASURE_ERROR];
+					STOP_IF_NO_IMPROVE_BEST_EPC = current_epoch; 
+				}
+			}
+			
 			boolean isStop = false; 
 			// no output change for CONVERGENCE_NO_CHANGE_FOR
 			no_change_epochs = (is_different_output) ? 0 : no_change_epochs + 1; 
-			if(no_change_epochs >= CONVERGENCE_NO_CHANGE_FOR){
+			if(CONVERGENCE_NO_CHANGE_FOR >= 0 && no_change_epochs >= CONVERGENCE_NO_CHANGE_FOR){
 				printBoth("Training stopped at epoch=" + current_epoch + " as no output change occured in last " + CONVERGENCE_NO_CHANGE_FOR + "epochs\n");
 				isStop = true; 
 			}
@@ -465,12 +479,20 @@ public class BAL {
 				printBoth("Training stopped at epoch=" + current_epoch + " as all outputs given correctly\n");
 				isStop = true; 
 			}
+			
+			if(STOP_IF_NO_IMPROVE_FOR >= 0 && (current_epoch - STOP_IF_NO_IMPROVE_BEST_EPC) >= STOP_IF_NO_IMPROVE_FOR){
+				printBoth("Training stopped at epoch=" + current_epoch + " as no improvement occured for " + STOP_IF_NO_IMPROVE_FOR + " epochs\n  Best=" + STOP_IF_NO_IMPROVE_BEST_ERR + " in epoch=" + STOP_IF_NO_IMPROVE_BEST_EPC + "\n");
+				isStop = true; 
+			}
 
 			if(isStop){
 				if(MEASURE_IS){
+					double[] measure_padding = network.measure(current_epoch, inputs, outputs, false);
 					for(int e = current_epoch + 1; e <= BAL.INIT_MAX_EPOCHS ; e++){
-						if(isMeasureAtEpoch(e)){
-							network.measure(e, inputs, outputs, true); 
+						if(isMeasureAtEpoch(e)){ 
+							double[] m = measure_padding.clone(); 
+							m[MEASURE_EPOCH] = e; 
+							network.addMeasure(m);
 						}
 					}
 				}
@@ -482,7 +504,7 @@ public class BAL {
 				printNetworkWithPass(network, inputs, outputs, "Network close to end run");
 			}*/
 			
-			if(PRINT_EPOCH_SUMMARY) printBoth("==Epoch End time=" + (System.currentTimeMillis() - st_epoch)); 
+			if(PRINT_EPOCH_SUMMARY) printBoth("==Epoch End time=" + (System.currentTimeMillis() - st_epoch) + "\n"); 
 		}
 
 		if(PRINT_NETWORK_IS){
@@ -1169,6 +1191,12 @@ public class BAL {
 		return Math.toDegrees(inRads);
 	}
 
+	public void addMeasure(double[] stats){
+		for(int i=0; i<MEASURE_COUNT; i++){
+			this.measures[i].add(stats[i]); 
+		}
+	}
+	
 	//collect monitoring=measure data, epoch is used as identifier
 	//  !this data is also stored into measures array 
 	public double[] measure(int epoch, RealMatrix in, RealMatrix target, boolean isSave){
@@ -1244,7 +1272,7 @@ public class BAL {
 			if(MEASURE_PATSUCC_BACKWARD < MEASURE_COUNT) result[MEASURE_PATSUCC_BACKWARD] = patsucc_b / ((double)(in.getRowDimension()));
 
 			if(MEASURE_HIDDEN_DIST < MEASURE_COUNT){
-				long st = System.currentTimeMillis(); 
+				//long st = System.currentTimeMillis(); 
 				
 				for(int i=0; i<forward_hiddens.size() ; i++){
 					for(int j=i+1; j<forward_hiddens.size() ; j++){
@@ -1253,7 +1281,7 @@ public class BAL {
 				}
 
 				result[MEASURE_HIDDEN_DIST] = hidden_dist;
-				if(PRINT_EPOCH_SUMMARY) printBoth("    hidden_dist_time=" + (System.currentTimeMillis() - st) + "\n"); 
+				//if(PRINT_EPOCH_SUMMARY) printBoth("    hidden_dist_time=" + (System.currentTimeMillis() - st) + "\n"); 
 			}
 
 			if(MEASURE_IN_TRIANGLE < MEASURE_COUNT){
@@ -1280,7 +1308,7 @@ public class BAL {
 		}
 
 		if(MEASURE_FLUCTUATION < MEASURE_COUNT){
-			long st = System.currentTimeMillis(); 
+			//long st = System.currentTimeMillis(); 
 			max_fluctuation = 0.0; 
 			for(int i=0; i<in.getRowDimension(); i++){
 				this.forwardPassWithRecirculation(in.getRowVector(i));
@@ -1288,7 +1316,7 @@ public class BAL {
 			}
 			result[MEASURE_FLUCTUATION] = max_fluctuation; 
 			max_fluctuation = 0.0; 
-			if(PRINT_EPOCH_SUMMARY) printBoth("    fluctuation_time=" + (System.currentTimeMillis() - st) + "\n"); 
+			//if(PRINT_EPOCH_SUMMARY) printBoth("    fluctuation_time=" + (System.currentTimeMillis() - st) + "\n"); 
 		}
 
 		if(MEASURE_MATRIX_AVG_W < MEASURE_COUNT){
@@ -1311,11 +1339,9 @@ public class BAL {
 		if(MEASURE_LAMBDA_V < MEASURE_COUNT){
 			result[MEASURE_LAMBDA_V] = BAL.INIT_LAMBDA_V; 
 		}
-
+		
 		if(isSave){
-			for(int i=0; i<MEASURE_COUNT; i++){
-				this.measures[i].add(result[i]); 
-			}
+			addMeasure(result); 
 		}
 		
 		MEASURE_EXECUTION_TIME += System.currentTimeMillis() - start_time; 
@@ -1798,7 +1824,9 @@ public class BAL {
 		RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING = true;
 
 		DROPOUT_IS = false; 
-		CONVERGENCE_NO_CHANGE_FOR = INIT_MAX_EPOCHS; 
+		CONVERGENCE_NO_CHANGE_FOR = -1; 
+		STOP_IF_NO_ERROR = false;
+		STOP_IF_NO_IMPROVE_FOR = -1; 
 
 		INIT_MOMENTUM_IS = true;
 		INIT_MOMENTUM = 0.0;  
@@ -1871,7 +1899,9 @@ public class BAL {
 		RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING = true;
 
 		DROPOUT_IS = false; 
-		CONVERGENCE_NO_CHANGE_FOR = INIT_MAX_EPOCHS; 
+		CONVERGENCE_NO_CHANGE_FOR = -1; 
+		STOP_IF_NO_ERROR = false;
+		STOP_IF_NO_IMPROVE_FOR = -1; 
 
 		INIT_MOMENTUM_IS = true;
 		INIT_MOMENTUM = 0.0;  
@@ -1932,9 +1962,10 @@ public class BAL {
 		RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING = true;
 
 		DROPOUT_IS = false; 
-		CONVERGENCE_NO_CHANGE_FOR = INIT_MAX_EPOCHS * 2; 
+		CONVERGENCE_NO_CHANGE_FOR = -1; 
 		STOP_IF_NO_ERROR = false; // in digits that's impossible -> this way we will spare one pass through whole 
-
+		STOP_IF_NO_IMPROVE_FOR = 3; 
+		
 		INIT_NORMAL_DISTRIBUTION_MU = 0;
 		NORMAL_DISTRIBUTION_SPAN = 15; 
 
