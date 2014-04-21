@@ -57,13 +57,13 @@ import org.apache.commons.math3.linear.RealVector;
 public class BAL {
 	//manage IO and run BAL 
 	public static void main(String[] args) throws IOException {
-		DECIMAL_FORMAT.setMaximumFractionDigits(7);
+		DECIMAL_FORMAT.setMaximumFractionDigits(9);
 
 		//experiment_Default();
 		//experiment_DifferentHiddenSizes("k3");
 		//experiment_RerunGoodBad();
-		//experiment_TestImplementation();
-		experiment_Digits(); 
+		experiment_TestImplementation();
+		//experiment_Digits(); 
 	}
 
 	private static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0"); 
@@ -80,7 +80,7 @@ public class BAL {
 	private static int WU_BAL_SYM = 7; // non of BAL other learning rule works 
 	private static int WU_BAL_MID = 8; 
 	private static int WU_BAL_CHL = 9; 
-	private static final int WU_TYPE = WU_GENEREC;
+	private static final int WU_TYPE = WU_BAL_ORIG;
 
 	public static final boolean INIT_SYMMETRIC_IS = (WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_CHL || 
 			WU_TYPE == WU_GENEREC_MID || WU_TYPE == WU_GENEREC_SYM);
@@ -1747,7 +1747,9 @@ public class BAL {
 	public static void experimentFinalize(String global_run_id) throws FileNotFoundException, UnsupportedEncodingException {
 		printMeasure(global_run_id, "pre", pre_measure);
 		printMeasure(global_run_id, "post", post_measure);
-		printMeasure(global_run_id, "test", test_measure);
+		
+		if(TEST_INPUT_FILEPATH != null) printMeasure(global_run_id, "test", test_measure);
+		
 		printHiddenRepresentations(); 
 		log.close(); 
 		measure_writer.close(); 
@@ -1885,7 +1887,7 @@ public class BAL {
 
 		LAMBDA_ERROR_MOMENTUM_IS = false; 
 
-		TRY_LAMBDA = new double[]{0.1, 0.7, 3.0}; 
+		//TRY_LAMBDA = new double[]{0.1, 0.7, 3.0}; 
 		/*TRY_LAMBDA = new double[]{
 				0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 
 				0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 
@@ -1915,8 +1917,8 @@ public class BAL {
 		TRY_MOMENTUM = new double[]{0.0}; 
 		//TRY_MOMENTUM = new double[]{0.0, 0.01, 0.1};
 
-		INIT_MAX_EPOCHS = 10000;
-		INIT_RUNS = 100 * TRY_LAMBDA.length * TRY_LAMBDA_V.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
+		INIT_MAX_EPOCHS = 50000;
+		INIT_RUNS = 200 * TRY_LAMBDA.length * TRY_LAMBDA_V.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
 
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 		RECIRCULATION_ITERATIONS_MAX = 200; //maximum number of iterations to approximate the underlying dynamic system  
@@ -1984,8 +1986,7 @@ public class BAL {
 				50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0
 		}; */
 		TRY_LAMBDA = new double[]{
-				0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0, 30.0, 100.0, 300.0, 
-				1000.0, 3000.0, 10000.0
+				0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 1000000.0
 		};
 		
 		//TRY_LAMBDA_V = new double[]{0.00001};
@@ -1995,7 +1996,7 @@ public class BAL {
 				0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05
 		}; */
 		TRY_LAMBDA_V = new double[]{
-				0.0000001, 0.0000003, 0.000001, 0.000003, 0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003
+				0.000000001, 0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01
 		};
 
 		INIT_MAX_EPOCHS = 20;
