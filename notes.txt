@@ -3018,3 +3018,25 @@ Result=442.0
 RunTime=664112
   ======== 24/100 ==============
 
+
+%======================== 21st of April ===============
+Digits: 784-300-10
+current_error=16776.0
+Training stopped at epoch=5 as no improvement occured for 3 epochs
+  Best=15830.0 in epoch=2.0
+Epochs=5
+Result=16776.0
+RunTime=5702603
+MeasureTime=3579722
+Testing on 4000 samples
+Measure_pre: GroupBy
+ps_f	sigma	lam	lam_v	mom success sample_ratio
+0.1079211	0.0356915	1	0.00001	0.01	100 1/1
+
+Measure_post: GroupBy
+ps_f	sigma	lam	lam_v	mom success sample_ratio
+0.7792632	0.0356915	1	0.00001	0.01	100 1/1
+
+Measure_test: GroupBy
+ps_f	sigma	lam	lam_v	mom success sample_ratio
+0.778	0.0356915	1	0.00001	0.01	100 1/1

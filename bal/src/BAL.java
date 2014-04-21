@@ -407,7 +407,7 @@ public class BAL {
 			// learn on each given / target mapping
 			// O(runs * input.size)
 			for(int order_cc = 0; order_cc < order.size() ; order_cc++){
-				if(PRINT_EPOCH_SUMMARY && (order_cc + 1) % 1000 == 0) printBoth("  input " + (order_cc + 1) + "/" + order.size() + "\n");
+				if(PRINT_EPOCH_SUMMARY && (order_cc + 1) % 1000 == 0) printBoth("  input " + (order_cc + 1) + "/" + order.size() + " time=" + (System.currentTimeMillis() - st_epoch) + "\n");
 					
 				int order_i = order.get(order_cc);
 				RealVector in = inputs.getRowVector(order_i);
@@ -462,7 +462,7 @@ public class BAL {
 				double[] stats = network.measure(current_epoch, inputs, outputs, true);
 				if(PRINT_EPOCH_SUMMARY) {
 					//printBoth("  measureEnd time=" + (System.currentTimeMillis() - st_measure) + "\n");
-					printBoth("current_error=" + stats[MEASURE_ERROR]);
+					printBoth("current_error=" + stats[MEASURE_ERROR] + "\n");
 				}
 				
 				if(STOP_IF_NO_IMPROVE_FOR >= 0 && STOP_IF_NO_IMPROVE_BEST_ERR > stats[MEASURE_ERROR]){
@@ -1210,6 +1210,7 @@ public class BAL {
 	//collect monitoring=measure data, epoch is used as identifier
 	//  !this data is also stored into measures array 
 	public double[] measure(int epoch, RealMatrix in, RealMatrix target, boolean isSave){
+		if(PRINT_EPOCH_SUMMARY) printBoth("  measure start [" + in.getRowDimension() + "," + in.getColumnDimension() + "]\n"); 
 		
 		long start_time = System.currentTimeMillis(); 
 		
@@ -1243,6 +1244,8 @@ public class BAL {
 
 			//double first_second_sum = 0.0; 
 			for(int i=0; i<in.getRowDimension(); i++){
+				if(PRINT_EPOCH_SUMMARY && (i+1)%1000 == 0) printBoth("    " + (i+1) + " time=" + (System.currentTimeMillis() - start_time) + "\n");
+				
 				RealVector[] forward = this.forwardPass(in.getRowVector(i));
 				RealVector[] backward = this.backwardPass(target.getRowVector(i));
 
@@ -1282,7 +1285,7 @@ public class BAL {
 			if(MEASURE_PATSUCC_BACKWARD < MEASURE_COUNT) result[MEASURE_PATSUCC_BACKWARD] = patsucc_b / ((double)(in.getRowDimension()));
 
 			if(MEASURE_HIDDEN_DIST < MEASURE_COUNT){
-				//long st = System.currentTimeMillis(); 
+				long st = System.currentTimeMillis(); 
 				
 				for(int i=0; i<forward_hiddens.size() ; i++){
 					for(int j=i+1; j<forward_hiddens.size() ; j++){
@@ -1291,7 +1294,7 @@ public class BAL {
 				}
 
 				result[MEASURE_HIDDEN_DIST] = hidden_dist;
-				//if(PRINT_EPOCH_SUMMARY) printBoth("    hidden_dist_time=" + (System.currentTimeMillis() - st) + "\n"); 
+				if(PRINT_EPOCH_SUMMARY) printBoth("    hidden_dist_time=" + (System.currentTimeMillis() - st) + "\n"); 
 			}
 
 			if(MEASURE_IN_TRIANGLE < MEASURE_COUNT){
@@ -1318,7 +1321,7 @@ public class BAL {
 		}
 
 		if(MEASURE_FLUCTUATION < MEASURE_COUNT){
-			//long st = System.currentTimeMillis(); 
+			long st = System.currentTimeMillis(); 
 			max_fluctuation = 0.0; 
 			for(int i=0; i<in.getRowDimension(); i++){
 				this.forwardPassWithRecirculation(in.getRowVector(i));
@@ -1326,7 +1329,7 @@ public class BAL {
 			}
 			result[MEASURE_FLUCTUATION] = max_fluctuation; 
 			max_fluctuation = 0.0; 
-			//if(PRINT_EPOCH_SUMMARY) printBoth("    fluctuation_time=" + (System.currentTimeMillis() - st) + "\n"); 
+			if(PRINT_EPOCH_SUMMARY) printBoth("    fluctuation_time=" + (System.currentTimeMillis() - st) + "\n"); 
 		}
 
 		if(MEASURE_MATRIX_AVG_W < MEASURE_COUNT){
@@ -1355,6 +1358,7 @@ public class BAL {
 		}
 		
 		MEASURE_EXECUTION_TIME += System.currentTimeMillis() - start_time; 
+		if(PRINT_EPOCH_SUMMARY) printBoth("  measure time=" + (System.currentTimeMillis() - start_time)); 
 		
 		return result; 
 	}

@@ -2,39 +2,41 @@
 %Vyhýbajte sa používaniu žargónu.
 %Používajte starú múdrosť: 1 obrázok je viac než 1000 slov.
 
-\subsection{Comparison} 
+\section{Comparison of Models} 
 \label{sec:results-comparison}
 
-TODO: GNUPlot std bars \\  
 TODO: Introduce shortcuts and add references to descriptions. \\
 
-\subsubsection{4-2-4 Encoder}
+\subsection{4-2-4 Encoder}
+\ref{sec:datasets-auto4} 
 
 For all our models \ref{sec:our-models} tested on the 4-2-4 encoder task~\ref{sec:datasets-auto4} the two learning rate model~\ref{sec:our-two-lambdas} had the best success rate. 
 
 For TLR, BAL, GeneRec, BP, CHL, other learning rules
-TODO: success / epochs  \\
 TODO: table: best parameter setting networks (success, epoch, stddev) / model \\
 
-\paragraph{Hidden activations.} 
+\subsubsection{Hidden activations.}
+\ref{sec:our-hidden-activation}  
 
-TODO hidden activation timelines with commentaries (for TLR, BAL, GeneRec) 
-2x success, 2x error (wrong settle, divergence) 
+%===== TODO hidden activation timelines with commentaries (for TLR, BAL, GeneRec) 
+% 2x success, 2x error (wrong settle, divergence) 
 
-\subsubsection{Complex Binary Vector Associations}
+\subsection{Complex Binary Vector Associations}
 \ref{sec:datasets-k3} 
 
-For TLR, BAL, GeneRec, other learning rules
-TODO: bitSucc, patSucc / epochs  \\
-TODO: success / hidden layer size  \\
-TODO: table: best parameter setting networks with hidden.size= constant (success, epoch, stddev) / model \\
+%===== TODO table: best parameter setting networks with hidden.size= constant (success, epoch, stddev) / model \\
 
-\subsubsection{Hand--written digits.}
+\subsubsection{Different hidden sizes} 
+
+\subsection{Hand--written digits.}
+\ref{sec:datasets-digits} 
+
 TODO simulation + plots \ref{sec:datasets-digits} 
 
 For TLR, BAL, GeneRec + known performers 
 TODO: table: best parameter setting networks with hidden.size= constant (success, epoch, stddev) / model \\
 
-\paragraph{Backward representations.} 
+\subsubsection{Backward representations.} 
+\ref{sec:our-backward-repre} 
 
 TODO 3x 10x backward digit representations 
