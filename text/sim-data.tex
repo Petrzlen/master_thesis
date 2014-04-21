@@ -22,9 +22,17 @@ The \emph{complex binary vector associations} task was used in \citet{farkas2013
   \label{fig:datasets-k3}
 \end{figure}
 
-%echo "42000 784" > digits.in
-%tail -n +2 train.csv | sed 's/,/ /g' | awk 'BEGIN{FS=" "}{for(i=2;i<=NF;i++) {printf "%f ", $i / 256.0} printf "\n"}' >> digits.in 
-%tail -n +2 train.csv | sed 's/,/ /g' | awk 'BEGIN{FS=" "}{for(i=0;i<=9;i++) printf("%d ", $1 == i ? 1 : 0); printf "\n"}' >> digits.out
+%tail -n +2 train.csv | sed 's/,/ /g' | awk 'BEGIN{FS=" "}{for(i=2;i<=NF;i++) {printf "%f ", $i / 256.0} printf "\n"}' >> buf.in
+%echo "38000 784" > digits.in
+%echo "4000 784" > digits.test.in
+%tail -n +2 train.csv | sed 's/,/ /g' | awk 'BEGIN{FS=" "}{for(i=0;i<=9;i++) printf("%d ", $1 == i ? 1 : 0); printf "\n"}' > buf.out
+%echo "38000 10" > digits.out
+%echo "4000 10" > digits.test.out
+%head -38000 buf.in >> digits.in 
+%tail -4000 buf.in >> digits.test.in 
+%head -38000 buf.out >> digits.out
+%tail -4000 buf.out >> digits.test.out
+%rm buf.* 
 \subsubsection{Hand--written Digits} 
 \label{sec:datasets-digits} 
 

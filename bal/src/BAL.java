@@ -108,6 +108,8 @@ public class BAL {
 	
 	public static String INPUT_FILEPATH = "auto4.in"; 
 	public static String OUTPUT_FILEPATH = "auto4.in"; 
+	public static String TEST_INPUT_FILEPATH = null; 
+	public static String TEST_OUTPUT_FILEPATH = null; 
 	public static int INIT_HIDDEN_LAYER_SIZE = 2 ; 
 
 	public static int INIT_MAX_EPOCHS = 500000;
@@ -249,6 +251,7 @@ public class BAL {
 
 	public static ArrayList<double[]> pre_measure = null;
 	public static ArrayList<double[]> post_measure = null; 
+	public static ArrayList<double[]> test_measure = null; 
 	public static PrintWriter measure_writer; 
 
 	// TIMELINE of hidden representations 
@@ -328,7 +331,7 @@ public class BAL {
 	}
 	
 	// if override_network != null then the provided netwoek will be used (usually loaded from file) 
-	public static double run(BAL override_network, RealMatrix inputs, RealMatrix outputs) throws IOException{
+	public static BAL run(BAL override_network, RealMatrix inputs, RealMatrix outputs) throws IOException{
 		NETWORK_EPOCH = 0; 
 		max_fluctuation = 0.0; 
 
@@ -548,7 +551,7 @@ public class BAL {
 		printBoth("Epochs=" + current_epoch + "\n");
 		printBoth("Result=" + network_result + "\n");
 
-		return network_result; 
+		return network; 
 	}
 	private static double calculateLambda(double init_lambda, int weight_matrix) {
 		if(WU_TYPE == WU_BAL){
@@ -1419,7 +1422,7 @@ public class BAL {
 		}
 
 		for(int j=0; j<measures.get(0).length ; j++){
-			log.println("avg("+BAL.MEASURE_HEADINGS[j]+")=" + DECIMAL_FORMAT.format(sum[j] / ((double)measures.size())));
+			log.print("avg("+BAL.MEASURE_HEADINGS[j]+")=" + DECIMAL_FORMAT.format(sum[j] / ((double)measures.size())) + "\n");
 		}
 	}
 
@@ -1575,11 +1578,6 @@ public class BAL {
 	public boolean saveMeasures(String run_id, PrintWriter writer){
 		if(!MEASURE_IS) return true; 
 
-		double[] m = new double[MEASURE_COUNT];
-		for(int j=0; j<MEASURE_COUNT; j++){
-			m[j] = 1;
-		}
-
 		writer.write("RUN_ID");
 		for(int i=0; i<MEASURE_HEADINGS.length ; i++){
 			writer.write("\t");
@@ -1591,7 +1589,7 @@ public class BAL {
 			writer.write(run_id);
 			for(int j=0; j<this.measures.length; j++){
 				writer.write("\t"); 
-				writer.print(this.measures[j].get(i) / m[j]); 
+				writer.print(this.measures[j].get(i)); 
 			}
 			writer.println(); 
 		}
@@ -1600,62 +1598,36 @@ public class BAL {
 	}	
 
 	//TODO Refactor with saveMeasures()
-	public static void printPreAndPostMeasures(String global_run_id){
+	public static void printMeasure(String global_run_id, String sufix, ArrayList<double[]> m) throws FileNotFoundException, UnsupportedEncodingException{
 		if(!MEASURE_IS) return; 
 
-		PrintWriter pre_writer;
-		PrintWriter post_writer;
-		try {
-			pre_writer = new PrintWriter("data/" + global_run_id + "_pre.csv", "UTF-8");
-			post_writer = new PrintWriter("data/" + global_run_id + "_post.csv", "UTF-8");
-		} catch (Exception e) {
-			return; 
-		} 
+		PrintWriter writer = new PrintWriter("data/" + global_run_id + "_" + sufix + ".csv", "UTF-8");
 
 		for(int i=0; i<MEASURE_HEADINGS.length ; i++){
-			if(i != 0){
-				pre_writer.write('\t');
-				post_writer.write('\t');
-			}
-			pre_writer.write(MEASURE_HEADINGS[i]); 
-			post_writer.write(MEASURE_HEADINGS[i]); 
+			if(i != 0){ writer.write('\t'); }
+			
+			writer.write(MEASURE_HEADINGS[i]); 
 		}
-		pre_writer.println();
-		post_writer.println();
+		writer.println();
 
-		for(int i=0; i<pre_measure.size() ; i++){
+		for(int i=0; i<m.size() ; i++){
 			for(int j=0; j<MEASURE_COUNT ; j++){
-				if(j != 0){
-					pre_writer.write('\t');
-					post_writer.write('\t');
-				}
-				pre_writer.print(DECIMAL_FORMAT.format(pre_measure.get(i)[j])); 
-				post_writer.print(DECIMAL_FORMAT.format(post_measure.get(i)[j])); 
+				if(j != 0){ writer.write('\t'); }
+				
+				writer.print(DECIMAL_FORMAT.format(m.get(i)[j])); 
 			}
-			pre_writer.println();
-			post_writer.println();
+			writer.println();
 		}
 
-		pre_writer.close();
-		post_writer.close();
+		writer.close();
 
-		log.println("PreMeasure : GroupBy");
-		System.out.println("PreMeasure : GroupBy");
-		BAL.measureGroupBY(pre_measure); 
-		log.println("PostMeasure : GroupBy");
-		System.out.println("PostMeasure : GroupBy");
-		BAL.measureGroupBY(post_measure);
-
-		log.println("PreMeasure : Averages");
-		BAL.measureAverages(pre_measure); 
-		log.println("PostMeasure : Averages");
-		BAL.measureAverages(post_measure); 
-
-		//int s = 0;
-		//for(int i=0 ; i < epochs_needed_to_no_error.size() ; i++) s += epochs_needed_to_no_error.get(i); 
-		//System.out.println("Avg epochs: " + (s / epochs_needed_to_no_error.size()));
+		log.print("Measure_" + sufix + " : Averages");
+		BAL.measureAverages(m);
+		
+		printBoth("Measure_" + sufix + ": GroupBy\n");
+		BAL.measureGroupBY(m); 
 	}
-
+	
 	// based on results it saves the network to "good" / "bad" folders 
 	public static void printHiddenRepresentations() throws FileNotFoundException, UnsupportedEncodingException{
 		if(!HIDDEN_REPRESENTATION_IS){
@@ -1712,6 +1684,7 @@ public class BAL {
 		measure_writer = new PrintWriter("data/" + global_run_id + "_measure.csv");
 		pre_measure = new ArrayList<double[]>();
 		post_measure = new ArrayList<double[]>();
+		test_measure = new ArrayList<double[]>();
 
 		if(HIDDEN_REPRESENTATION_IS){
 			hidden_repre_all = new ArrayList<ArrayList<RealVector[]>>(); 
@@ -1723,6 +1696,9 @@ public class BAL {
 	public static void experimentRun(BAL network) throws IOException {
 		RealMatrix inputs = BAL.loadFromFile(BAL.INPUT_FILEPATH);
 		RealMatrix outputs = BAL.loadFromFile(BAL.OUTPUT_FILEPATH);
+		RealMatrix test_inputs = (TEST_INPUT_FILEPATH == null) ? null : loadFromFile(TEST_INPUT_FILEPATH);
+		RealMatrix test_outputs = (TEST_OUTPUT_FILEPATH == null) ? null : loadFromFile(TEST_OUTPUT_FILEPATH);
+		
 		int ri = 0; 
 
 		while(ri<BAL.INIT_RUNS) {
@@ -1746,11 +1722,16 @@ public class BAL {
 							log.println("  ======== " + ri + "/" + BAL.INIT_RUNS + " ==============");
 							System.out.println("  ======== " + ri + "/" + BAL.INIT_RUNS + " ==============");
 
-							@SuppressWarnings("unused")
-							Double error = BAL.run(network, inputs, outputs);
-							
+							BAL N = BAL.run(network, inputs, outputs);
+
 							printBoth("RunTime=" + (System.currentTimeMillis() - start_time) + "\n");
 							printBoth("MeasureTime=" + MEASURE_EXECUTION_TIME + "\n"); 
+							
+							if(test_inputs != null){
+								if(PRINT_EPOCH_SUMMARY) printBoth("Testing on " + test_inputs.getRowDimension() + " samples\n");
+								double[] m = N.measure(0, test_inputs, test_outputs, false); 
+								test_measure.add(m);
+							}
 						}
 					}
 				}
@@ -1763,7 +1744,9 @@ public class BAL {
 	}
 
 	public static void experimentFinalize(String global_run_id) throws FileNotFoundException, UnsupportedEncodingException {
-		printPreAndPostMeasures(global_run_id);
+		printMeasure(global_run_id, "pre", pre_measure);
+		printMeasure(global_run_id, "post", post_measure);
+		printMeasure(global_run_id, "test", test_measure);
 		printHiddenRepresentations(); 
 		log.close(); 
 		measure_writer.close(); 
@@ -1951,17 +1934,22 @@ public class BAL {
 		MEASURE_IS = true; 
 		MEASURE_SAVE_AFTER_EACH_RUN = true; 
 		MEASURE_RECORD_EACH = 1;
+		MEASURE_GROUP_BY_COLS = new int[]{MEASURE_PATSUCC_FORWARD, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_LAMBDA_V, MEASURE_MOMENTUM};
 
-		INPUT_FILEPATH = "small.in"; 
-		OUTPUT_FILEPATH = "small.out"; 
+		//INPUT_FILEPATH = "small.in"; 
+		//OUTPUT_FILEPATH = "small.out";
+		INPUT_FILEPATH = "digits.in"; 
+		OUTPUT_FILEPATH = "digits.out"; 
+		TEST_INPUT_FILEPATH = "digits.test.in"; 
+		TEST_OUTPUT_FILEPATH = "digits.test.out";
+		
 		INIT_HIDDEN_LAYER_SIZE = 300;
-		INIT_SIGMA = 1 / (Math.sqrt(784 + 1));
 		POSTPROCESS_INPUT = false; 
 		POSTPROCESS_OUTPUT = true; 
 		POSTPROCESS_TYPE = POSTPROCESS_MAXIMUM; 
 
-		INIT_MAX_EPOCHS = 100;
-		INIT_RUNS = 180; 
+		INIT_MAX_EPOCHS = 20;
+		INIT_RUNS = 1; 
 		INIT_CANDIDATES_COUNT = 0;
 		INIT_SHUFFLE_IS = true;
 		INIT_BATCH_IS = false;
@@ -1969,14 +1957,16 @@ public class BAL {
 
 		LAMBDA_ERROR_MOMENTUM_IS = false;
 
-		//TRY_LAMBDA = new double[]{0.7};
-		TRY_LAMBDA = new double[]{0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0};
+		TRY_SIGMA = new double[]{1 / (Math.sqrt(784 + 1))};
+		
+		TRY_LAMBDA = new double[]{1.0};
+		//TRY_LAMBDA = new double[]{0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0};
 		/*TRY_LAMBDA = new double[]{0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 
 				0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, //TODO duplicate others 
 				50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};*/ 
 
-		//TRY_LAMBDA_V = new double[]{0.1};
-		TRY_LAMBDA_V = new double[]{0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0};
+		TRY_LAMBDA_V = new double[]{0.00001};
+		//TRY_LAMBDA_V = new double[]{0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0};
 		/*
 		TRY_LAMBDA_V = new double[]{0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
 				0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, //TODO duplicate others 
@@ -1994,7 +1984,7 @@ public class BAL {
 		DROPOUT_IS = false; 
 		CONVERGENCE_NO_CHANGE_FOR = -1; 
 		STOP_IF_NO_ERROR = false; // in digits that's impossible -> this way we will spare one pass through whole 
-		STOP_IF_NO_IMPROVE_FOR = 1; 
+		STOP_IF_NO_IMPROVE_FOR = 3; 
 		
 		INIT_NORMAL_DISTRIBUTION_MU = 0;
 		NORMAL_DISTRIBUTION_SPAN = 15; 
@@ -2006,7 +1996,7 @@ public class BAL {
 		HIDDEN_REPRESENTATION_ONLY_EACH = 200;
 
 		PRINT_NETWORK_IS = false;  
-		PRINT_NETWORK_TO_FILE_IS = true;
+		PRINT_NETWORK_TO_FILE_IS = false;
 		PRINT_EPOCH_SUMMARY = true; 
 
 		MEASURE_COUNT = MEASURE_FLUCTUATION;
