@@ -71,7 +71,7 @@ public class BAL {
 	private static boolean IS_PRINT = false; 
 
 	//TODO symetricka verzia so standardnym BALom 
-	private static int WU_BAL = 1; 
+	private static int WU_BAL_ORIG = 1; 
 	private static int WU_GENEREC_CHL = 2; // works but slow 
 	private static int WU_BAL_RECIRC = 3; 
 	private static int WU_GENEREC = 4; // => INIT_SYMMETRIC_IS = true
@@ -80,9 +80,10 @@ public class BAL {
 	private static int WU_BAL_SYM = 7; // non of BAL other learning rule works 
 	private static int WU_BAL_MID = 8; 
 	private static int WU_BAL_CHL = 9; 
-	private static final int WU_TYPE = WU_BAL;
+	private static final int WU_TYPE = WU_GENEREC;
 
-	public static final boolean INIT_SYMMETRIC_IS = (WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_CHL || WU_TYPE == WU_GENEREC_MID || WU_TYPE == WU_GENEREC_SYM);
+	public static final boolean INIT_SYMMETRIC_IS = (WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_CHL || 
+			WU_TYPE == WU_GENEREC_MID || WU_TYPE == WU_GENEREC_SYM);
 	
 	// ========= RECIRCULATION -- iterative activation ==============
 	private static boolean INIT_RECIRCULATION_IS = (WU_TYPE == WU_BAL_RECIRC || WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_SYM || WU_TYPE == WU_GENEREC_MID);
@@ -140,21 +141,16 @@ public class BAL {
 
 	public static double INIT_LAMBDA = 0.7; 
 	//public static double TRY_LAMBDA[] = {0.7}; 
-	public static double TRY_LAMBDA[] = {2000.0}; 
-	//public static double TRY_LAMBDA[] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0}; 
-	//public static double TRY_LAMBDA[] = {0.03, 0.1, 0.3, 0.5, 0.7, 1.1, 1.5, 2.0, 3.0}; 
-	//public static double TRY_LAMBDA[] = {0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
-	//public static double TRY_LAMBDA[] = {1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
-	//public static double TRY_LAMBDA[] = {20000.0, 50000.0, 100000.0, 200000.0, 500000.0, 1000000.0, 2000000.0, 5000000.0, 10000000.0};
+	public static double TRY_LAMBDA[] = {0.7}; 
 
 	private static double INIT_LAMBDA_V = 0.0001;
 	private static double TRY_LAMBDA_V[] = {0.0001};
 	//public static double INIT_LAMBDA_V[] = {0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 2.0};
 	/*public static double INIT_LAMBDA_V[] = {0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
-											 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 
+											 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 
 											 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
 											 100.0}; */
-	//public static double INIT_LAMBDA_V[] = {0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001};
+	//public static double INIT_LAMBDA_V[] = {0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005};
 
 	//public static double TRY_NOISE_SPAN[] = {0.0, 0.003, 0.01, 0.03, 0.1, 0.3}; 
 	//public static double TRY_MULTIPLY_WEIGHTS[] = {1.0, 1.00001, 1.00003, 1.0001, 1.0003, 1.001}; 
@@ -462,7 +458,8 @@ public class BAL {
 				double[] stats = network.measure(current_epoch, inputs, outputs, true);
 				if(PRINT_EPOCH_SUMMARY) {
 					//printBoth("  measureEnd time=" + (System.currentTimeMillis() - st_measure) + "\n");
-					printBoth("current_error=" + stats[MEASURE_ERROR] + "\n");
+					printBoth("current bitsucc=" + stats[MEASURE_BITSUCC_FORWARD] + "\n");
+					printBoth("current patsucc=" + stats[MEASURE_PATSUCC_FORWARD] + "\n");
 				}
 				
 				if(STOP_IF_NO_IMPROVE_FOR >= 0 && STOP_IF_NO_IMPROVE_BEST_ERR > stats[MEASURE_ERROR]){
@@ -554,7 +551,7 @@ public class BAL {
 		return network; 
 	}
 	private static double calculateLambda(double init_lambda, int weight_matrix) {
-		if(WU_TYPE == WU_BAL){
+		if(WU_TYPE == WU_BAL_ORIG){
 			return  ((weight_matrix == MATRIX_IH || weight_matrix == MATRIX_OH) ? INIT_LAMBDA_V : init_lambda);
 		}
 		else{
@@ -1054,7 +1051,7 @@ public class BAL {
 		//System.out.println("Error matrix: " + printMatrix(MatrixUtils.createRealMatrix(ERR_HO)));
 
 		//learn
-		if(WU_TYPE == WU_BAL){
+		if(WU_TYPE == WU_BAL_ORIG){
 			//IS_PRINT = true; 
 			RealVector[] forward = this.forwardPass(in);
 			RealVector[] backward = this.backwardPass(target);
@@ -1358,7 +1355,7 @@ public class BAL {
 		}
 		
 		MEASURE_EXECUTION_TIME += System.currentTimeMillis() - start_time; 
-		if(PRINT_EPOCH_SUMMARY) printBoth("  measure time=" + (System.currentTimeMillis() - start_time)); 
+		if(PRINT_EPOCH_SUMMARY) printBoth("  measure time=" + (System.currentTimeMillis() - start_time) + "\n"); 
 		
 		return result; 
 	}
@@ -1676,7 +1673,7 @@ public class BAL {
 	}
 
 	public static void generateNetworkRunId(){
-		NETWORK_RUN_ID = INPUT_FILEPATH.substring(0, INPUT_FILEPATH.indexOf('.')) + "_" + (System.currentTimeMillis()) + "_" + INIT_HIDDEN_LAYER_SIZE;
+		NETWORK_RUN_ID = INPUT_FILEPATH.substring(0, INPUT_FILEPATH.indexOf('.')) + "_" + WU_TYPE + "_" + INIT_HIDDEN_LAYER_SIZE + "_" + (System.currentTimeMillis());
 	}
 
 	public static String experimentInit() throws IOException{
@@ -1855,10 +1852,10 @@ public class BAL {
 		PRINT_NETWORK_IS = false;  
 		PRINT_NETWORK_TO_FILE_IS = false;
 
-		TRY_LAMBDA = new double[]{0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
+		TRY_LAMBDA = new double[]{0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
 
 		TRY_LAMBDA_V = new double[]{0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
-				0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 
+				0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 
 				0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
 				100.0};
 
@@ -1877,34 +1874,49 @@ public class BAL {
 		INPUT_FILEPATH = "auto4.in"; 
 		OUTPUT_FILEPATH = "auto4.in"; 
 		INIT_HIDDEN_LAYER_SIZE = 2;
-		INIT_SIGMA = 2.3;  
 		POSTPROCESS_INPUT = true; 
 		POSTPROCESS_OUTPUT = true; 
 		POSTPROCESS_TYPE = POSTPROCESS_SIMPLE; 
 		
-		INIT_LAMBDA = 0.7; 
-		INIT_MAX_EPOCHS = 10000;
-		INIT_RUNS = 1000; 
 		INIT_CANDIDATES_COUNT = 0;
 		INIT_SHUFFLE_IS = true;
 		INIT_BATCH_IS = false;
 		INIT_TRAIN_ONLY_ON_ERROR = false; 
 
 		LAMBDA_ERROR_MOMENTUM_IS = false; 
-		INIT_LAMBDA_V = 0.001;   
 
 		TRY_LAMBDA = new double[]{0.1, 0.7, 3.0}; 
-		//TRY_LAMBDA = new double[]{0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
-
-		TRY_LAMBDA_V = new double[]{0.1, 0.7, 3.0}; 
-		/*TRY_LAMBDA_V = new double[]{0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
-				0.0002, 0.0005, 0.001, 0.002, 0.005, 0.001, 0.002, 0.005, 0.01, 0.02, 
-				0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
-				100.0};*/ 
+		/*TRY_LAMBDA = new double[]{
+				0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 
+				0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 
+				50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0, 20000.0, 50000.0, 
+				100000.0, 200000.0, 500000.0, 1000000.0, 2000000.0, 5000000.0, 10000000.0};*/  
+		TRY_LAMBDA = new double[]{
+				0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 
+				1.0, 3.0, 10.0, 30.0, 100.0, 300.0, 1000.0, 3000.0, 10000.0, 30000.0, 
+				100000.0, 300000.0, 1000000.0, 3000000.0, 10000000.0, 30000000.0, 100000000.0, 300000000.0, 1000000000.0
+		};
 		
-		TRY_SIGMA = new double[]{1.0, 2.3, 10.0};
-		INIT_MOMENTUM_IS = true; 
-		TRY_MOMENTUM = new double[]{0.0, 0.01, 0.1};
+		//TRY_LAMBDA_V = new double[]{0.1, 0.7, 3.0}; 
+		/*TRY_LAMBDA_V = new double[]{
+				0.00000001, 0.00000002, 0.00000005, 0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 
+				0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 
+				0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
+				100.0};*/  
+		TRY_LAMBDA_V = new double[]{
+				0.0000000001, 0.0000000003, 0.000000001, 0.000000003, 0.00000001, 0.00000003, 0.0000001, 0.0000003, 0.000001, 0.000003,
+				0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 
+				1.0, 3.0, 10.0, 30.0, 100.0
+		};
+		
+		TRY_SIGMA = new double[]{2.3};
+		//TRY_SIGMA = new double[]{1.0, 2.3, 10.0};
+		INIT_MOMENTUM_IS = false;
+		TRY_MOMENTUM = new double[]{0.0}; 
+		//TRY_MOMENTUM = new double[]{0.0, 0.01, 0.1};
+
+		INIT_MAX_EPOCHS = 10000;
+		INIT_RUNS = 100 * TRY_LAMBDA.length * TRY_LAMBDA_V.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
 
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 		RECIRCULATION_ITERATIONS_MAX = 200; //maximum number of iterations to approximate the underlying dynamic system  
@@ -1912,7 +1924,7 @@ public class BAL {
 
 		DROPOUT_IS = false; 
 		CONVERGENCE_NO_CHANGE_FOR = -1; 
-		STOP_IF_NO_ERROR = false;
+		STOP_IF_NO_ERROR = true;
 		STOP_IF_NO_IMPROVE_FOR = -1; 
 
 		INIT_MOMENTUM_IS = true;
@@ -1935,7 +1947,8 @@ public class BAL {
 	}
 
 	public static void experiment_Digits() throws IOException{
-		MEASURE_IS = true; 
+		MEASURE_IS = true;
+		MEASURE_COUNT = MEASURE_HIDDEN_DIST; 
 		MEASURE_SAVE_AFTER_EACH_RUN = true; 
 		MEASURE_RECORD_EACH = 1;
 		MEASURE_GROUP_BY_COLS = new int[]{MEASURE_PATSUCC_FORWARD, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_LAMBDA_V, MEASURE_MOMENTUM};
@@ -1952,8 +1965,6 @@ public class BAL {
 		POSTPROCESS_OUTPUT = true; 
 		POSTPROCESS_TYPE = POSTPROCESS_MAXIMUM; 
 
-		INIT_MAX_EPOCHS = 20;
-		INIT_RUNS = 1; 
 		INIT_CANDIDATES_COUNT = 0;
 		INIT_SHUFFLE_IS = true;
 		INIT_BATCH_IS = false;
@@ -1962,24 +1973,34 @@ public class BAL {
 		LAMBDA_ERROR_MOMENTUM_IS = false;
 
 		TRY_SIGMA = new double[]{1 / (Math.sqrt(784 + 1))};
-		
-		TRY_LAMBDA = new double[]{1.0};
-		//TRY_LAMBDA = new double[]{0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0};
-		/*TRY_LAMBDA = new double[]{0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 
-				0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, //TODO duplicate others 
-				50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};*/ 
-
-		TRY_LAMBDA_V = new double[]{0.00001};
-		//TRY_LAMBDA_V = new double[]{0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0};
-		/*
-		TRY_LAMBDA_V = new double[]{0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
-				0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, //TODO duplicate others 
-				0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
-				100.0};*/ 
 
 		INIT_MOMENTUM_IS = true;
-		INIT_MOMENTUM = 0.0;  
 		TRY_MOMENTUM = new double[]{0.01}; 
+		
+		//TRY_LAMBDA = new double[]{1.0};
+		//TRY_LAMBDA = new double[]{0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0};
+		/* TRY_LAMBDA = new double[]{
+				0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 
+				50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0
+		}; */
+		TRY_LAMBDA = new double[]{
+				0.01, 0.03, 0.1, 0.3, 1.0, 3.0, 10.0, 30.0, 100.0, 300.0, 
+				1000.0, 3000.0, 10000.0
+		};
+		
+		//TRY_LAMBDA_V = new double[]{0.00001};
+		//TRY_LAMBDA_V = new double[]{0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0};
+		/* TRY_LAMBDA_V = new double[]{
+				0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
+				0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05
+		}; */
+		TRY_LAMBDA_V = new double[]{
+				0.0000001, 0.0000003, 0.000001, 0.000003, 0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003
+		};
+
+		INIT_MAX_EPOCHS = 20;
+		INIT_RUNS = 1 * TRY_LAMBDA.length * TRY_LAMBDA_V.length * TRY_SIGMA.length * TRY_MOMENTUM.length; 
+		STOP_IF_NO_IMPROVE_FOR = 3; 
 		
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 		RECIRCULATION_ITERATIONS_MAX = 200; //maximum number of iterations to approximate the underlying dynamic system  
@@ -1988,7 +2009,6 @@ public class BAL {
 		DROPOUT_IS = false; 
 		CONVERGENCE_NO_CHANGE_FOR = -1; 
 		STOP_IF_NO_ERROR = false; // in digits that's impossible -> this way we will spare one pass through whole 
-		STOP_IF_NO_IMPROVE_FOR = 3; 
 		
 		INIT_NORMAL_DISTRIBUTION_MU = 0;
 		NORMAL_DISTRIBUTION_SPAN = 15; 
@@ -2003,7 +2023,6 @@ public class BAL {
 		PRINT_NETWORK_TO_FILE_IS = false;
 		PRINT_EPOCH_SUMMARY = true; 
 
-		MEASURE_COUNT = MEASURE_FLUCTUATION;
 		experiment_Default();
 	}
 }

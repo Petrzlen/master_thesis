@@ -1,1 +1,8 @@
 /bin
+train.csv
+digits.in
+digits.out
+digits.test.in
+digits.test.out
+small.in
+small.out
