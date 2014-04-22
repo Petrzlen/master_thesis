@@ -18,11 +18,16 @@ then
   echo "Calculating convergence_epochs" 
   less $post | awk '{print $1}' | tail -n +2 > convergence_epochs.dat 
 
-  echo "DROP TABLE data;\nCREATE TABLE data (\n  run_id TEXT," > create_table.sql
+  rm measure.sqlite 
+  #echo "DROP TABLE data;" > create_table.sql
+  echo "CREATE TABLE data (" > create_table.sql
+  echo "  run_id TEXT," >> create_table.sql
   head -1 $measure | sed 's/\t/,\n/g' | tail -n +2 | sed 's/\(^[^,]*\)/  \1 DOUBLE/g' >> create_table.sql 
   echo ");" >> create_table.sql 
 
   less $measure | grep '\.' | sed 's/\t/","/g' | sed 's/\(.*\)/INSERT INTO data VALUES ("\1");/g' > insert_table.sql
+  #fix no measure at end 
+  less $post | grep '\.' | sed 's/\t/","/g' | sed 's/\(.*\)/INSERT INTO data VALUES ("NA","\1");/g' > insert_table.sql
 
   echo "ALTER TABLE data ADD success INT; UPDATE data SET success = (CASE WHEN err = 0.0 THEN 1 ELSE 0 END); CREATE INDEX index_err ON data (err); CREATE INDEX index_success ON data (success); CREATE INDEX index_epoch ON data (epoch);" > update_table.sql
 
@@ -51,7 +56,8 @@ cat cols.txt | while read i
 do
   #TODO optimize (stddev sucks)
   echo "epoch to '$i'" 
-  sqlite3 measure.sqlite <<< "SELECT cast(D1.epoch as int) AS 'epoch', MIN(D1.$i) AS 'all_min_$i', MAX(D1.$i) AS 'all_max_$i', AVG(D1.$i) AS 'all_avg_$i', AVG((D1.$i - (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch)) * (D1.$i - (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch))) AS 'all_stdevp_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch AND D2.success=0) AS 'bad_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch AND D2.success=1) AS 'good_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch) AS 'a' FROM data D1 GROUP BY D1.epoch;" | sed 's/|/\t/g' > epoch_$i.dat 
+  #sqlite3 measure.sqlite <<< "SELECT cast(D1.epoch as int) AS 'epoch', MIN(D1.$i) AS 'all_min_$i', MAX(D1.$i) AS 'all_max_$i', AVG(D1.$i) AS 'all_avg_$i', AVG((D1.$i - (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch)) * (D1.$i - (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch))) AS 'all_stdevp_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch AND D2.success=0) AS 'bad_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch AND D2.success=1) AS 'good_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch) AS 'a' FROM data D1 GROUP BY D1.epoch;" | sed 's/|/\t/g' > epoch_$i.dat 
+  sqlite3 measure.sqlite <<< "SELECT cast(D1.epoch as int) AS 'epoch', MIN(D1.$i) AS 'all_min_$i', MAX(D1.$i) AS 'all_max_$i', AVG(D1.$i) AS 'all_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch AND D2.success=0) AS 'bad_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch AND D2.success=1) AS 'good_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch) AS 'a' FROM data D1 GROUP BY D1.epoch;" | sed 's/|/\t/g' > epoch_$i.dat 
 done
 
 #========== POST MEASURES (success) ============
@@ -65,10 +71,17 @@ fi=0
 ls . | grep 'post.csv' | while read f
 do
   echo "$f : lambdah_lambdav_success.dat" 
-  sqlite3 measure.sqlite <<< "SELECT lambda, lambda_ih, AVG(success) AS 'success' FROM data WHERE epoch = (SELECT MAX(epoch) FROM data) GROUP BY lambda,lambda_ih;" | sed 's/|/\t/g' > lambdah_lambdav_success_$fi.dat 
+  #sqlite3 measure.sqlite <<< "SELECT lambda, lambda_ih, AVG(success) AS 'success' FROM data WHERE epoch = (SELECT MAX(epoch) FROM data) GROUP BY lambda,lambda_ih;" | sed 's/|/\t/g' > lambdah_lambdav_success_$fi.dat 
+  sqlite3 measure.sqlite <<< "SELECT lam, lam_v, AVG(success) AS 'success' FROM data WHERE epoch = (SELECT MAX(epoch) FROM data) GROUP BY lam,lam_v;" | sed 's/|/\t/g' > lambdah_lambdav_success_$fi.dat 
 
   echo "$f : lambdah_lambdav_epoch.dat" 
-  php ../../epochs.php files[]=$f > lambdah_lambdav_epoch_$fi.dat
+  #php ../../epochs.php files[]=$f > lambdah_lambdav_epoch_$fi.dat
+  php ../../epochs.php files[]=$f l1_id=2 l2_id=3 > lambdah_lambdav_epoch_$fi.dat
+  
+  awk '{if(NR>1) {print(log($1)/log(10), log($2)/log(10), $3);} else print $0;}' lambdah_lambdav_success_$fi.dat > lambdah_lambdav_success_log_$fi.dat 
+  
+  awk '{if(NR>1) {print(log($1)/log(10), log($2)/log(10), log($3+1)/log(10));} else print $0;}' lambdah_lambdav_epoch_$fi.dat > lambdah_lambdav_epoch_log_$fi.dat 
+  
   fi=$fi+1
 done 
 

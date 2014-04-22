@@ -80,7 +80,7 @@ public class BAL {
 	private static int WU_BAL_SYM = 7; // non of BAL other learning rule works 
 	private static int WU_BAL_MID = 8; 
 	private static int WU_BAL_CHL = 9; 
-	private static final int WU_TYPE = WU_BAL_ORIG;
+	private static final int WU_TYPE = WU_BAL_RECIRC;
 
 	public static final boolean INIT_SYMMETRIC_IS = (WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_CHL || 
 			WU_TYPE == WU_GENEREC_MID || WU_TYPE == WU_GENEREC_SYM);
@@ -371,6 +371,7 @@ public class BAL {
 
 		//Main learning loop 
 		int current_epoch=1;
+		boolean isStop = false; 
 		for(current_epoch=1; current_epoch<=BAL.INIT_MAX_EPOCHS ; current_epoch++){
 			long st_epoch = System.currentTimeMillis(); 
 			if(PRINT_EPOCH_SUMMARY) printBoth("==Running epoch " + current_epoch + "\n"); 
@@ -451,6 +452,7 @@ public class BAL {
 				hidden_repre_cur.add(hidden_representation); 
 			}
 
+			//first measure saved by PRE_MEASURE
 			if(isMeasureAtEpoch(current_epoch)){
 				//long st_measure = System.currentTimeMillis(); 
 				//if(PRINT_EPOCH_SUMMARY) printBoth("  measureStart\n");
@@ -468,7 +470,7 @@ public class BAL {
 				}
 			}
 			
-			boolean isStop = false; 
+			isStop = false; 
 			// no output change for CONVERGENCE_NO_CHANGE_FOR
 			no_change_epochs = (is_different_output) ? 0 : no_change_epochs + 1; 
 			if(CONVERGENCE_NO_CHANGE_FOR >= 0 && no_change_epochs >= CONVERGENCE_NO_CHANGE_FOR){
@@ -526,7 +528,8 @@ public class BAL {
 
 		double[] last_measure = null; 
 		if(MEASURE_IS) {
-			last_measure = network.measure(current_epoch, inputs, outputs, false); 
+			// if max epochs reached, then it also need to be saved (if iStop, then it was saved)  
+			last_measure = network.measure(current_epoch, inputs, outputs, !isStop); 
 			post_measure.add(last_measure);
 		}
 
@@ -1580,7 +1583,7 @@ public class BAL {
 		if(!MEASURE_IS) return true; 
 
 		writer.write("RUN_ID");
-		for(int i=0; i<MEASURE_HEADINGS.length ; i++){
+		for(int i=0; i<MEASURE_COUNT ; i++){
 			writer.write("\t");
 			writer.write(MEASURE_HEADINGS[i]); 
 		}
@@ -1604,7 +1607,7 @@ public class BAL {
 
 		PrintWriter writer = new PrintWriter("data/" + global_run_id + "_" + sufix + ".csv", "UTF-8");
 
-		for(int i=0; i<MEASURE_HEADINGS.length ; i++){
+		for(int i=0; i<MEASURE_COUNT ; i++){
 			if(i != 0){ writer.write('\t'); }
 			
 			writer.write(MEASURE_HEADINGS[i]); 
@@ -1657,6 +1660,7 @@ public class BAL {
 	public static void printBackwardImages(BAL network, int width, int height) throws IOException{ 
 		RealMatrix patterns = MatrixUtils.createRealIdentityMatrix(10); 
 		
+		//TODO wrong rotation 
 		for(int pi = 0; pi < patterns.getRowDimension(); pi++){
 			RealVector[] backward = network.backwardPass(patterns.getRowVector(pi));
 			BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -1862,7 +1866,7 @@ public class BAL {
 				100.0};
 
 		//for(int h=3; h<=144; h += h/8 + 1){
-		for(int h=16; h<=20 ; h++){
+		for(int h=4; h<=20 ; h++){
 			INIT_HIDDEN_LAYER_SIZE = h; 
 			experiment_Default();
 		} 
@@ -1917,11 +1921,11 @@ public class BAL {
 		TRY_MOMENTUM = new double[]{0.0}; 
 		//TRY_MOMENTUM = new double[]{0.0, 0.01, 0.1};
 
-		INIT_MAX_EPOCHS = 50000;
-		INIT_RUNS = 200 * TRY_LAMBDA.length * TRY_LAMBDA_V.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
+		INIT_MAX_EPOCHS = 10000;
+		INIT_RUNS = 100 * TRY_LAMBDA.length * TRY_LAMBDA_V.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
 
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
-		RECIRCULATION_ITERATIONS_MAX = 200; //maximum number of iterations to approximate the underlying dynamic system  
+		RECIRCULATION_ITERATIONS_MAX = 50; //maximum number of iterations to approximate the underlying dynamic system  
 		RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING = true;
 
 		DROPOUT_IS = false; 

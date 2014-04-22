@@ -12,6 +12,7 @@ unset table
 
 set contour base
 set cntrparam level incremental 0, 5, 100
+#set cntrparam level incremental 2.5, 0.25, 5.5
 unset surface
 set table 'cont-line.dat'
 splot inpath
@@ -25,5 +26,5 @@ set terminal pdf
 set output outpath
 
 set palette rgbformulae 33,13,10
-l '<./contour.sh cont.dat 0 5 0'
+l '<./contour.sh cont-line.dat 0 5 0'
 p 'cont-iso.dat' with image, 'cont-line.dat' w l lt -1 lw 1.5

@@ -14,6 +14,8 @@ $ier = isset($_GET['err_id']) ? $_GET['err_id'] : 1;
 $il1 = isset($_GET['l1_id']) ? $_GET['l1_id'] : 3; 
 $il2 = isset($_GET['l2_id']) ? $_GET['l2_id'] : 13; 
 
+//print_r($_GET); 
+
 foreach($files as $f => $file){
   $data = file_get_contents($file); 
   $lines = explode("\n", $data); 
@@ -38,7 +40,10 @@ foreach($files as $f => $file){
     }
 
     $arr = explode(" ", $line);  
-    if(!isset($arr[$ier])) continue; 
+    if(!isset($arr[$ier])) {
+      $arr = explode("\t", $line);
+    }
+    if(!isset($arr[$ier])) continue;
     //print_r($arr); 
     
     if($arr[$ier] == 0.0){ //&& $arr[$iep] < $max_epoch){
