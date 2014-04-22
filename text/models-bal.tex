@@ -5,7 +5,7 @@
 
 Design of Bidirectional Activation-based Learning algorithm (BAL) by \citet{farkas2013bal} is motivated by the biological plausibility of GeneRec. BAL inherits the learning rule of GeneRec \ref{eq:models-generec-learning-rule} and also the two phases. But unlike GeneRec, BAL aims to learn bidirectional mapping between inputs and outputs and for this purpose it uses four weights $W^{IH}$, $W^{HO}$, $W^{OH}$ and $W^{HI}$. The design of BAL is symmetric as shown in table~\ref{tab:models-bal-activation} and thus we avoid calling inputs, outpus, minus phase or plus phase. We rather choose \emph{forward} and \emph{backward} which could be interchanged. Note that the forward activations are denoted as $a^{\rm F}$ and backward activations as $a^{\rm B}$. 
 
-\begin{table}
+\begin{table}[H]
   \centering
   \begin{tabular}{|cccl|}
     \hline

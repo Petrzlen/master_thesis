@@ -15,7 +15,7 @@ The \emph{4-2-4 econder} task is the simplest dataset we have been working with.
 
 The \emph{complex binary vector associations (CBVA)} task was used in \citet{farkas2013bal} and its motivated by the sensory--motor mappings between distributed patterns \citep{farkas2013bal}. The task is to associate sixteen 16--dimensional vectors all with 3 active units. There are always 4 distinct overlapping input patterns associated with exactly one output pattern. As the association is not unique in the \emph{backward} way it's impossible to achieve perfect $\mbox{bitSucc}^B$ or $\mbox{patSucc}^B$. Therefore we would expect from the network to gives a \emph{blend} of the four input patterns corresponding the one output. 
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{img/cbva_back_repre.png} 
   \caption{BAL performance on complex binary vector associations: active units are filled with color, black = target–estimate match, gray = target only, gray with a cross = false-positive estimate \citep{farkas2013bal}.}
@@ -38,9 +38,9 @@ The \emph{complex binary vector associations (CBVA)} task was used in \citet{far
 
 The well--known MNIST dataset of \emph{Hand--written Digits} analysed by \citet{lecun1998gradient} and others (TODO cite) consists of 42,000 $28 \times 28$ grayscale images mapped to ten classes each representing one digit. We have chosen this dataset for three reasons. First, it's big and complex enough to test the practicallity of our models. Second, performance of many models (TODO ref: \url{http://yann.lecun.com/exdb/mnist/}) is known on this dataset and therefore we can easily compare performance of our models to these models. And third, we can easily visualize (TODO ref) the backward \emph{blend} representations and intuitively see if our models perform well. 
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{img/digits.png} 
+  \includegraphics[width=0.6\textwidth]{img/digits.png} 
   \caption{Samples from the \emph{digits} dataset.}
   \label{fig:datasets-digits}
 \end{figure}

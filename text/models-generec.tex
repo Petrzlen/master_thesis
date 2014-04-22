@@ -16,7 +16,7 @@ where $a^{-}_p$ denotes the presynaptic and $a^{-}_q$ denotes the postsynaptic u
 \paragraph{Activation.} 
 \label{sec:models-generec-activation} 
 The main difference between CHL and GeneRec is that GeneRec has layers and it's based more on Recurrent neural networks than on the Hopfield networks. Therefore, as shown in table~\ref{tab:models-generec}, we can compute the activations sequentially. 
-\begin{table}
+\begin{table}[H]
   \centering
   \begin{tabular}{|cccc|}
     \hline
@@ -53,7 +53,7 @@ In case of the \emph{plus} phase only the hidden activations are necessary to co
 \end{align} 
 where $a_i(t)$ is the activation of $i$--th unit in discrete time $t$. The rules~\ref{eq:models-generec-activation} while are iterated while $|a_i(t+1) a_i(t)| > \epsilon$ for some unit $i$. This method is further discussed in \ref{sec:generec-fluctuation} and \citep{orru2008sabio}.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.4\textwidth]{img/generec_minus_phase.png}
   \includegraphics[width=0.4\textwidth]{img/generec_plus_phase.png}

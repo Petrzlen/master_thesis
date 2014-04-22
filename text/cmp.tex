@@ -2,15 +2,15 @@
 %Vyhýbajte sa používaniu žargónu.
 %Používajte starú múdrosť: 1 obrázok je viac než 1000 slov.
 
-\section{Comparison of Models} 
+\subsection{Comparison of Models} 
 \label{sec:results-comparison}
 
 TODO: Introduce shortcuts and add references to descriptions. \\
 
-\subsection{4-2-4 Encoder}
+\subsubsection{4-2-4 Encoder}
 \ref{sec:datasets-auto4} 
 
-For all our models \ref{sec:our-models} tested on the 4-2-4 encoder task~\ref{sec:datasets-auto4} the two learning rate model~\ref{sec:our-two-lambdas} had the best success rate. 
+For all our models \ref{sec:our-models} tested on the 4-2-4 encoder task~\ref{sec:datasets-auto4} TLR~\ref{sec:our-tlr} had the best success rate. 
 
 For TLR, BAL, GeneRec, BP, CHL, other learning rules
 
@@ -43,7 +43,7 @@ For TLR, BAL, GeneRec, BP, CHL, other learning rules
   \label{tab:results-cmp-auto4}
 \end{table}
 
-\subsubsection{Hidden activations.}
+\paragraph{Hidden activations.}
 \ref{sec:our-hidden-activation}  
 
 %===== TODO hidden activation timelines with commentaries (for TLR, BAL, GeneRec) 
@@ -66,14 +66,14 @@ For TLR, BAL, GeneRec, BP, CHL, other learning rules
 \end{figure}
 
 
-\subsection{Complex Binary Vector Associations}
+\subsubsection{Complex Binary Vector Associations}
 \ref{sec:datasets-k3} 
 
 %===== TODO table: best parameter setting networks with hidden.size= constant (success, epoch, stddev) / model \\
 
-\subsubsection{Different hidden sizes} 
+\paragraph{Different hidden sizes.} 
 
-\subsection{Hand--written digits.}
+\subsubsection{Hand--written digits}
 \ref{sec:datasets-digits} 
 
 TODO simulation + plots \ref{sec:datasets-digits} 
@@ -81,12 +81,12 @@ TODO simulation + plots \ref{sec:datasets-digits}
 For TLR, BAL, GeneRec + known performers 
 TODO: table: best parameter setting networks with hidden.size= constant (success, epoch, stddev) / model \\
 
-\subsubsection{Backward representations.} 
+\paragraph{Backward representations.} 
 \ref{sec:our-backward-repre} 
 
 TODO 3x 10x backward digit representations 
 
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics{../presentation/img/dig_0.png} 
   \includegraphics{../presentation/img/dig_1.png} 

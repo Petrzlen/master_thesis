@@ -7,42 +7,12 @@ TODO introduction (brief, experiment settings)
 
 \citep{rumelhart1986learning, yu1997efficient} is an extension for any learning rule of form $\Delta w_{ij}(t) = L(i,j,t)$ by adding a \emph{momentum} term: 
 \begin{equation} 
-  \Delta w_{ij}(t) = L(i,j,t) + \mu \Delta w_{ij}(t-1).
+  \Delta w_{ij}(t) = L(i,j,t) + \mu \Delta w_{ij}(t-1). \mbox{TODO L}
 \end{equation} 
 It is argued that momentum could overcome settling in local minima by using the second derivate (TODO cite). 
 
 %==========================================================
-\paragraph{Different learning rules.}
-\label{sec:our-learning-rules}
-
-Both for BAL \ref{sec:models-bal} and GeneRec \ref{sec:models-generec} is possible to try different learning rules mentioned in \ref{sec:models-generec-modifications}. We will denote such models as \emph{BAL-sym} and \emph{GR-sym} for symmetry perserving rule~\ref{eq:models-generec-learning-rule-sym}; \emph{BAL-mid} and \emph{GR-mid} for midpoint rule~\ref{eq:models-generec-learning-rule-mid} and \emph{BAL-chl} and \emph{GR-chl} for CHL rule~\ref{eq:models-generec-learning-rule-chl}. 
-
-TODO not working with BAL -> analyse (GeneRec kind of ok) 
-
-%==========================================================
 \paragraph{Batch mode} learning method changes how the weight update rule is applied. Instead of updateing weights after each training sample, weight changes are accumulated for the whole epoch, i.e.~summing all weight changes for each sample, and weights are updated in \emph{batch} (TODO citation). One can observe that shuffling of samples has no effect at all. Therefore after the weights are initialized the learning algorithm becomes deterministic.
-
-%==========================================================
-\paragraph{Rerun} was designed to test if shuffling of samples has effect to network performance. First, $N$ networks are created with random weights~\ref{sec:our-sigma} with same parameters then are saved and trained. Second, the networks are loaded and each network is re--trained $k$-times. At the end difference between performance of the $k$ networks and the original network is measured. In this way it could be decided if the network performance depended on the shuffling of the training samples or on other network parameters. 
-
-TODO rerun experiment (it has suspicious results) 
-
-\begin{lstlisting}
-All bad: 
-err sigma lambda momentum success sample_ratio
-0.0 2.3 0.7 0.0 19.296918767507005 6889/35700
-1.0 2.3 0.7 0.0 68.05602240896359 24296/35700
-2.0 2.3 0.7 0.0 12.644257703081232 4514/35700
-3.0 2.3 0.7 0.0 0.0028011204481792717 1/35700
-
-All good: 
-err sigma lambda momentum success sample_ratio
-0.0 2.3 0.7 0.0 99.98911353032659 64293/64300
-1.0 2.3 0.7 0.0 0.01088646967340591 7/64300
-//TODO overit ci dobre rozdelilo good / bad
-\end{lstlisting}
-
-We see that the networks which were successfull in the first run remained successfull in the re--runs. On the other side of the unsuccessfull networks changed their performance after re--run. 
 
 %==========================================================
 \paragraph{Hidden activations.}
@@ -53,28 +23,36 @@ We observed that hidden activations tend to settle fast \ref{sec:our-candidates}
 A more formal explaination why the hidden activations tend to settle fast could be given by the GeneRec learning rule \ref{eq:models-generec-learning-rule}: 
 \begin{equation} 
   \Delta w_{ij} = a_i(b_j - a_j),
-\end{equation} 
+\end{equation} \nonumber 
 which for the $W^{IH}$ and $W^{OH}$ yields: 
 \begin{align} 
-  \Delta w_{ij}^{IH} = x^F_i(h^B_j - h^F_j) \\ 
-  \Delta w_{ij}^{OH} = y^B_i(h^F_j - h^B_j). 
+  \Delta w_{ij}^{IH} = x^F_i(h^B_j - h^F_j) \nonumber \\ 
+  \Delta w_{ij}^{OH} = y^B_i(h^F_j - h^B_j). \nonumber  
 \end{align} 
-We see that both terms $(h^B_j - h^F_j)$ and $(h^F_j - h^B_j)$ push $W^{IH}$ and $W^{OH}$ to settle $h^B_j = h^F_j$. This experiment was the main reason to start experimenting with the Two learning rate model \ref{sec:our-two-lambdas}. 
+We see that both terms $(h^B_j - h^F_j)$ and $(h^F_j - h^B_j)$ push $W^{IH}$ and $W^{OH}$ to settle $h^B_j = h^F_j$. This experiment was the main reason to start experimenting with TLR \ref{sec:our-tlr}. 
 
 %==========================================================
-\paragraph{Dynamic weight lambda.} 
+\paragraph{Different learning rules.}
+\label{sec:our-learning-rules}
+
+Both for BAL \ref{sec:models-bal} and GeneRec \ref{sec:models-generec} is possible to try different learning rules mentioned in \ref{sec:models-generec-modifications}. We will denote such models as \emph{BAL-sym} and \emph{GR-sym} for symmetry perserving rule~\ref{eq:models-generec-learning-rule-sym}; \emph{BAL-mid} and \emph{GR-mid} for midpoint rule~\ref{eq:models-generec-learning-rule-mid} and \emph{BAL-chl} and \emph{GR-chl} for CHL rule~\ref{eq:models-generec-learning-rule-chl}. 
+
+TODO not working with BAL -> analyse (GeneRec kind of ok) 
+
+%==========================================================
+\paragraph{Dynamic learning rate.} 
 \label{sec:our-dynamic-lambda} 
-The idea of \emph{dynamic weight lambda} (TODO cite) is to have separate learning rate for each weight: 
+The idea of \emph{dynamic learning rate} (TODO cite) is to have separate learning rate for each weight: 
 \begin{equation}
 \Delta w_{ij}(t) = \lambda_{ij}(t) a_i\left(b_j - a_j\right), 
 \end{equation}
 %where $b_j(t-1) - a_j(t-1)$ is the error term and $\lambda_{ij}^{t-1}$ is the learning rate from the last epoch. 
 There are several approaches how to set $\lambda_{ij}(t)$. Dynamic lambda per weight \emph{delta--bar--delta--rule} \citep{jacobs1988increased} (TODO parse and link). \\
-Adaptive lambda \citep{riedmiller1993direct} \\
-Dynamic lambda \citep{yu1997efficient} \\ 
-TODO more simulations.  \\
+Adaptive learning rate \citep{riedmiller1993direct} \\
+Dynamic learning rate \citep{yu1997efficient} \\ 
+%TODO more simulations.  \\
 TODO citations.  \\
-This model was inspiration for the two lambda model \ref{sec:our-two-lambdas}. 
+This model was inspiration for TLR \ref{sec:our-tlr}. 
 
 %==========================================================
 \paragraph{Backward representations.}
@@ -88,15 +66,40 @@ TODO
 Inspired by the necessary condition for convergence of GeneRec \citep{o1996bio} we set symmetric weights $W^{IH} = (W^{HI})^T$ and $W^{HO} = (W^{OH})^T$. 
 TODO rerun simulations 
 
-%==========================================================
-%\paragraph{Multilayer GeneRec}
-
-%When we begun analysing the GeneRec algortihm (ref) we also implemented a version with two hidden layers for which we extended the learning rule. It achieved 42\% on handwritten digit recognition. 
-%TODO expand. 
 
 %==========================================================
-%\paragraph{Dropout}
-%Based on the work the work \citet{hinton2012improving} we implemented the Dropout method of learning. Its main idea is to in each epoch to choose randomly half of the hidden layer neurons which will be ignored. The motivation is to prevent co--adaption of the hidden layer neurons \citep{hinton2012improving}. 
+\paragraph{Rerun} was designed to test if shuffling of samples has effect to network performance. First, $N$ networks are created with random weights~\ref{sec:our-sigma} with same parameters then are saved and trained. Second, the networks are loaded and each network is re--trained $k$-times. At the end difference between performance of the $k$ networks and the original network is measured. In this way it could be decided if the network performance depended on the shuffling of the training samples or on other network parameters. 
+
+TODO rerun experiment (it has suspicious results) 
+
+%\begin{lstlisting}
+%All bad: 
+%err sigma lambda momentum success sample_ratio
+%0.0 2.3 0.7 0.0 19.296918767507005 6889/35700
+%1.0 2.3 0.7 0.0 68.05602240896359 24296/35700
+%2.0 2.3 0.7 0.0 12.644257703081232 4514/35700
+%3.0 2.3 0.7 0.0 0.0028011204481792717 1/35700
+
+%All good: 
+%err sigma lambda momentum success sample_ratio
+%0.0 2.3 0.7 0.0 99.98911353032659 64293/64300
+%1.0 2.3 0.7 0.0 0.01088646967340591 7/64300
+%//TODO overit ci dobre rozdelilo good / bad
+%\end{lstlisting}
+
+We see that the networks which were successfull in the first run remained successfull in the re--runs. On the other side of the unsuccessfull networks changed their performance after re--run. 
+
+
+%==========================================================
+\paragraph{Multilayer GeneRec.}
+
+When we begun analysing the GeneRec algortihm (ref) we also implemented a version with two hidden layers for which we extended the learning rule. It achieved 42\% on handwritten digit recognition. 
+TODO expand - enough that worked not after some basic simulations. 
+
+%==========================================================
+\paragraph{Dropout.}
+Based on the work the work \citet{hinton2012improving} we implemented the Dropout method of learning. Its main idea is to in each epoch to choose randomly half of the hidden layer neurons which will be ignored. The motivation is to prevent co--adaption of the hidden layer neurons \citep{hinton2012improving}. 
+TODO expand - enough that worked not after some basic simulations. 
 
 %We combined this idea with the BAL model on the 4-2-4 encoder task. This model was not able to learn anything. (5\%,10\%,20\%,50\% chances)
 
@@ -104,9 +107,10 @@ TODO rerun simulations
 %TODO citations.  
 
 %==========================================================
-%\paragraph{Noise} 
+\paragraph{Noise.} 
 
-%Motivated by the \emph{chaotic} behaviour of nature we tried adding noise to weight changes. We hoped that the possible noise could prevent settling of hidden activations to fast (ref). 
+Motivated by the \emph{chaotic} behaviour of nature we tried adding noise to weight changes. We hoped that the possible noise could prevent settling of hidden activations to fast (ref). 
+TODO expand - enough that worked not after some basic simulations. 
 
 %Annealing schedules: In search of the continuous Boltzmann machine. This may be achieved in interactive networks by injecting some form of noise to the net input of each unit. The standard deviation of the noise distribution plays a similar effect to the temperature parameter in descrete Boltzmann machines \citet{movellan1990contrastive}. 
 

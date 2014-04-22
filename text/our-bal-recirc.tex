@@ -6,7 +6,7 @@ About 33\% success (lambda 0.3).
 %\paragraph{Introduction} %====================
 The aim of \emph{Recirculation BAL} is to combine the ideas of BAL \ref{sec:models-bal} and iterative activation from GeneRec \ref{sec:models-generec-activation}. In other words instead of computing the forward pass using only $W^{IH}$ and $W^{HO}$ we add a recirculation step between matrices $W^{HO}$ and $W^{OH}$ and similary for the backward pass and $W^{HI}$ and $W^{IH}$. We tried two approaches of such combination. First one is \emph{Bidirectional Iterative Activation (BIA)} which is a straightforward implementation of the idea. Its activations are show in table~\ref{tab:our-bia-activation}.  
 
-\begin{table}
+\begin{table}[H] 
   \centering
   \begin{tabular}{|cccl|}
     \hline
@@ -27,6 +27,19 @@ The aim of \emph{Recirculation BAL} is to combine the ideas of BAL \ref{sec:mode
 
 %TODO could be shorter 
 The second one is \emph{Bidirectional GeneRec (BiGeneRec)} which has three phases. The first $F^{-}$--phase is same as the minus phase of GeneRec and the third $C^{+}$--phase is same as the plus phase of GeneRec. The second $B^{-}$--phase is same as the $F^{-}$ phase but from back to front. In other words we can treat $F^{-}$ and $B^{-}$ phases as \emph{forward} and \emph{backward} minus phase of GeneRec and the $C^{+}$ phase as the plus phase of GeneRec. As in the $F^{-}$ phase only the forward weights $W^{IH}$ and $W^{HO}$ are updated and in the $B^{-}$ phase only the backward weights $W^{OH}$ and $W^{HI}$ are updated we can treat the weight update as two independent GeneRec update steps. 
+
+\begin{table}[H] 
+  \centering
+  \begin{tabular}{|cccl|}
+    \hline
+    Layer & Phase & Net Input & Activation\\
+    \hline
+    Hidden (h)   &  $C^{+}$  & $\eta^{+}_j = \sum_{i}w_{ij}^{IH}x^{\rm F}_i$ + $\sum_k w_{kj}^{OH}y^{\rm B}_k$ & $h^{+}_{j} = \sigma(\eta^{+}_j)$ \\
+    \hline
+  \end{tabular}
+  \caption{Difference between BiGeneRec and BIA \ref{tab:our-bia-activation} is the additional $C^{+}$ phase corresponding to the plus phase of GeneRec \ref{sec:models-generec}.} 
+  \label{tab:our-bigenerec-activation}
+\end{table} 
 
 For both BIA and BiGeneRec we experimented with both asymmetric and symmetric versions. For the asymmetric version a lot of problems with \emph{fluctuation} \ref{eq:our-fluctuation} arised. This issue is analysed in the appendix \ref{sec:generec-fluctuation}. 
 

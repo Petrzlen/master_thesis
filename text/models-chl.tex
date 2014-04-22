@@ -1,7 +1,7 @@
 %TODO equilibrium values 
-\def\myover#1#2{\mathrel{\overset{\makebox[0pt]{#2}}{#1}}}
-\newcommand{\mytilde}{\raise.17ex\hbox{$\scriptstyle\mathtt{\sim}$}}
-\def\myequi#1{\myover{#1}{\mytilde}}
+%\def\myover#1#2{\mathrel{\overset{\makebox[0pt]{#2}}{#1}}}
+%\newcommand{\mytilde}{\raise.17ex\hbox{$\scriptstyle\mathtt{\sim}$}}
+%\def\myequi#1{\myover{#1}{\mytilde}}
 
 \subsubsection{Contrastive Hebbian Learning}
 \label{sec:models-chl} 
@@ -16,15 +16,15 @@ As mentioned previously CHL is based on Hopfield networks. Therefore it has an e
 where $-\frac{1}{2}\sum_i\sum_ja_iw_{ij}a_j$ is the Hopfield energy function~\ref{eq:theory-hopfield-energy}. The \emph{contrastive} error function $J$ is defined as: 
 \begin{equation}
   \label{eq:models-chl-energy}
-  J = \myequi{F^{+}} - \myequi{F^{-}}
+  J = \breve{F^{+}} - \breve{F^{-}}
 \end{equation} 
-where $\myequi{F^{+}}$ and $\myequi{F^{-}}$ respectively are the values of the energy functions at equilibrium states for the plus and the minus phases. 
+where $\breve{F^{+}}$ and $\breve{F^{-}}$ respectively are the values of the energy functions at equilibrium states for the plus and the minus phases. 
 
 Based on the contrastive energy function~\ref{eq:models-chl-energy} a learning rule is derived by \citet{movellan1990contrastive}: 
 \begin{equation}
   \label{eq:models-chl-learning-rule}
-  \Delta w_{ij} = \myequi{a_i^{+}}\myequi{a_j^{+}} - \myequi{a_i^{-}}\myequi{a_j^{-}}
+  \Delta w_{ij} = \breve{a_i}^{+}\breve{a_j}^{+} - \breve{a_i}^{-}\breve{a_j}^{-}
 \end{equation}
-where $\myequi{a_i}$ and $\myequi{a_j}$ denote the equilibrium state activations of the $i$--th and $j$--th unit. It could be shown that the learning rule~\ref{eq:models-chl-learning-rule} decreases the energy function \ref{eq:models-chl-energy} \citep{movellan1990contrastive}. Moreover it could be shown that the CHL learning rule is equivalent to Backpropagation learning rule in terms of computability while it is biologically more plausible \citep{o1996bio, xie2003equivalence}. 
+where $\breve{a_i}$ and $\breve{a_j}$ denote the equilibrium state activations of the $i$--th and $j$--th unit. It could be shown that the learning rule~\ref{eq:models-chl-learning-rule} decreases the energy function \ref{eq:models-chl-energy} \citep{movellan1990contrastive}. Moreover it could be shown that the CHL learning rule is equivalent to Backpropagation learning rule in terms of computability while it is biologically more plausible \citep{o1996bio, xie2003equivalence}. 
 
    
