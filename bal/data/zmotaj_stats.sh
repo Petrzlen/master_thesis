@@ -44,61 +44,37 @@ fi
 #declare -a arr=("err" "success" "h_dist" "h_f_b_dist" "m_avg_w" "m_sim" "first_second" "o_f_b_dist" "in_triangle" "fluctuation")
 
 ## now loop through the above array
-for i in "err" "success" "h_dist" "h_f_b_dist" "m_avg_w" "m_sim" "first_second" "o_f_b_dist" "in_triangle" "fluctuation" "lambda_ih" 
+head -1 $measure | sed 's/\t/\n/g' | tail -n +2 > cols.txt
+echo "success" >> cols.txt
+#for i in "err" "success" "h_dist" "h_f_b_dist" "m_avg_w" "m_sim" "first_second" "o_f_b_dist" "in_triangle" "fluctuation" "lambda_ih" 
+cat cols.txt | while read i
 do
-  #TODO optimize 
-  echo "epoch to $i" 
-  sqlite3 measure.sqlite <<< "SELECT cast(D1.epoch as int) AS 'epoch', MIN(D1.$i) AS 'all_min_$i', AVG(D1.$i) AS 'all_avg_$i', MAX(D1.$i) AS 'all_max_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch AND D2.success=0) AS 'bad_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch AND D2.success=1) AS 'good_avg_$i' FROM data D1 GROUP BY D1.epoch;" | sed 's/|/\t/g' > epoch_to_$i.dat 
-# ========== GROUP BY success 
-#  sqlite3 measure.sqlite <<< "SELECT cast(epoch as int) AS 'E', AVG(SELECT $1 FROM data WHERE FROM data GROUP BY epoch;" | sed 's/|/\t/g' > good_to_bad_$1.dat 
+  #TODO optimize (stddev sucks)
+  echo "epoch to '$i'" 
+  sqlite3 measure.sqlite <<< "SELECT cast(D1.epoch as int) AS 'epoch', MIN(D1.$i) AS 'all_min_$i', MAX(D1.$i) AS 'all_max_$i', AVG(D1.$i) AS 'all_avg_$i', AVG((D1.$i - (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch)) * (D1.$i - (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch))) AS 'all_stdevp_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch AND D2.success=0) AS 'bad_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch AND D2.success=1) AS 'good_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch) AS 'a' FROM data D1 GROUP BY D1.epoch;" | sed 's/|/\t/g' > epoch_$i.dat 
 done
 
 #========== POST MEASURES (success) ============
-echo "post_success_lambda" 
-sqlite3 measure.sqlite <<< "SELECT lambda, AVG(success) AS 'success' FROM data WHERE epoch = (SELECT MAX(epoch) FROM data) GROUP BY lambda;" | sed 's/|/\t/g' > post_success_lambda.dat 
+cat cols.txt | while read i
+do
+  echo "'$i' to success" 
+  sqlite3 measure.sqlite <<< "SELECT $i, AVG(success) AS 'success' FROM data WHERE epoch = (SELECT MAX(epoch) FROM data) GROUP BY $i;" | sed 's/|/\t/g' > $i"_success.dat"
+done
 
-echo "post_success_lambda_ih" 
-sqlite3 measure.sqlite <<< "SELECT lambda_ih, AVG(success) AS 'success' FROM data WHERE epoch = (SELECT MAX(epoch) FROM data) GROUP BY lambda_ih;" | sed 's/|/\t/g' > post_success_lambda_ih.dat 
+fi=0
+ls . | grep 'post.csv' | while read f
+do
+  echo "$f : lambdah_lambdav_success.dat" 
+  sqlite3 measure.sqlite <<< "SELECT lambda, lambda_ih, AVG(success) AS 'success' FROM data WHERE epoch = (SELECT MAX(epoch) FROM data) GROUP BY lambda,lambda_ih;" | sed 's/|/\t/g' > lambdah_lambdav_success_$fi.dat 
 
-echo "post_success_sigma" 
-sqlite3 measure.sqlite <<< "SELECT sigma, AVG(success) AS 'success' FROM data WHERE epoch = (SELECT MAX(epoch) FROM data) GROUP BY sigma;" | sed 's/|/\t/g' > post_success_sigma.dat 
-
-#TODO several group by 
-echo "post_success_lambda_sigma" 
-sqlite3 measure.sqlite <<< "SELECT lambda, sigma, AVG(success) AS 'success' FROM data WHERE epoch = (SELECT MAX(epoch) FROM data) GROUP BY lambda,sigma;" | sed 's/|/\t/g' > post_success_lambda_sigma.dat 
-
-# measure.column distributions (e.g. ten uniformly distributed interval buckets) 
-  # at end of the run 
-  
-# hidden dist depending on the error 
-# SELECT err, AVG(h_dist) FROM data WHERE epoch = (SELECT MAX(epoch) FROM data) GROUP BY err;
-
-# ======== MUTLI DIMENSIONAL DATA ======== (TODO) 
-# GNUPLOT: splot "./bal/data/hdist_stats_0.csv" using 1:2:3 with lines lt rgb "blue"
-# sample file: 
-##sigma  lambda  success
-#1       0.001   0.4
-#1       0.003   8.75
-#1       0.01    30.8
-#1       0.03    47.03389830508475
-#1       0.1     54.112554112554115
-#1       0.3     56.97211155378486
-#1       1       57.3394495412844
-#1.3     0.001   0.8264462809917356
-#1.3     0.003   14.354066985645932
-#1.3     0.01    32.5
-
-# ========== PRE MEASURE vs POST MEASURE ===========
-
-# do some correlations and covariances of measures 
-
-#TODO group by (epoch, success) (i.e. good vs. bad) and (epoch, err) -> make columns for each value of the second
+  echo "$f : lambdah_lambdav_epoch.dat" 
+  php ../../epochs.php files[]=$f > lambdah_lambdav_epoch_$fi.dat
+  fi=$fi+1
+done 
 
 # ============ PLOT the data ================ 
 echo "plotting data" 
 gnuplot ../../panko_plot.p 
-
-#TODO compare several models 
 
 cd ../../
 
