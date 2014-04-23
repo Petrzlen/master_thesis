@@ -22,9 +22,10 @@ reset
 unset key
 set xtic auto  
 set ytic auto  
+#set key font "Times-Roman, 15" 
 set terminal pdf
 set output outpath
 
 set palette rgbformulae 33,13,10
-l '<./contour.sh cont-line.dat 0 5 0'
+l '<./contour.sh cont-line.dat 10 25'
 p 'cont-iso.dat' with image, 'cont-line.dat' w l lt -1 lw 1.5

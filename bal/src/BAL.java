@@ -80,7 +80,7 @@ public class BAL {
 	private static int WU_BAL_SYM = 7; // non of BAL other learning rule works 
 	private static int WU_BAL_MID = 8; 
 	private static int WU_BAL_CHL = 9; 
-	private static final int WU_TYPE = WU_BAL_RECIRC;
+	private static final int WU_TYPE = WU_BAL_ORIG;
 
 	public static final boolean INIT_SYMMETRIC_IS = (WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_CHL || 
 			WU_TYPE == WU_GENEREC_MID || WU_TYPE == WU_GENEREC_SYM);
@@ -1812,7 +1812,6 @@ public class BAL {
 		experimentFinalize(global_run_id);
 	}
 
-	// TODO test 
 	public static void experiment_DifferentHiddenSizes(String input_prefix) throws IOException{
 		MEASURE_IS = true; 
 		MEASURE_SAVE_AFTER_EACH_RUN = true; 
@@ -1823,8 +1822,7 @@ public class BAL {
 		POSTPROCESS_INPUT = true; 
 		POSTPROCESS_OUTPUT = true; 
 
-		INIT_LAMBDA = 0.7; 
-		INIT_MAX_EPOCHS = 1000;
+		INIT_MAX_EPOCHS = 5000;
 		INIT_RUNS = 20000; 
 		INIT_CANDIDATES_COUNT = 0;
 		INIT_SHUFFLE_IS = true;
@@ -1832,22 +1830,17 @@ public class BAL {
 		INIT_TRAIN_ONLY_ON_ERROR = false; 
 
 		LAMBDA_ERROR_MOMENTUM_IS = false; 
-		INIT_LAMBDA_V = 0.001;   
 
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
-		RECIRCULATION_ITERATIONS_MAX = 200; //maximum number of iterations to approximate the underlying dynamic system  
+		RECIRCULATION_ITERATIONS_MAX = 50; //maximum number of iterations to approximate the underlying dynamic system  
 		RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING = true;
 
 		DROPOUT_IS = false; 
 		CONVERGENCE_NO_CHANGE_FOR = -1; 
-		STOP_IF_NO_ERROR = false;
+		STOP_IF_NO_ERROR = true;
 		STOP_IF_NO_IMPROVE_FOR = -1; 
 
-		INIT_MOMENTUM_IS = true;
-		INIT_MOMENTUM = 0.0;  
-
-		INIT_NORMAL_DISTRIBUTION_MU = 0;
-		NORMAL_DISTRIBUTION_SPAN = 15; 
+		INIT_MOMENTUM_IS = false;
 
 		HIDDEN_REPRESENTATION_IS = false;
 		HIDDEN_REPRESENTATION_DIRECTORY = "data/" + input_prefix; 
@@ -1918,10 +1911,10 @@ public class BAL {
 		TRY_SIGMA = new double[]{2.3};
 		//TRY_SIGMA = new double[]{1.0, 2.3, 10.0};
 		INIT_MOMENTUM_IS = false;
-		TRY_MOMENTUM = new double[]{0.0}; 
+		TRY_MOMENTUM = new double[]{0.001, 0.003, 0.01, 0.03, 0.1, 0.3}; 
 		//TRY_MOMENTUM = new double[]{0.0, 0.01, 0.1};
 
-		INIT_MAX_EPOCHS = 10000;
+		INIT_MAX_EPOCHS = 30000;
 		INIT_RUNS = 100 * TRY_LAMBDA.length * TRY_LAMBDA_V.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
 
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
