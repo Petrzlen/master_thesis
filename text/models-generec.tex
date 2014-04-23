@@ -38,13 +38,13 @@ The main difference between CHL and GeneRec is that GeneRec has layers and it's 
 In case of the \emph{plus} phase only the hidden activations are necessary to compute what could be achieved by computing $\phi(\eta_i)$. In case of the \emph{minus} phase where only inputs are clamped it's necessary to find an \emph{equilibrium} activation state for which the equations~\ref{tab:models-generec} hold. As dicussed in recurrent networks~\ref{sec:theory-recurrent} there are several approaches. In our implementation~\ref{sec:appendix-impl-generec} we choose the \emph{iterative method} with following rules for computing activations $a_i$: 
 \begin{align}
   \label{eq:models-generec-activation}
-  a_i(0) = \left\{
+  a_i(0) &= \left\{
 	\begin{array}{ll}
 		s_i & \mbox{if } i \in \mbox{input} \nonumber \\
 		0 & \mbox{otherwise} \nonumber 
 	\end{array}
 \right. \\
-  a_i(t+1) = \left\{
+  a_i(t+1) &= \left\{
 	\begin{array}{ll}
 		s_i & \mbox{if } i \in \mbox{input} \nonumber \\
 		\phi(\sum_j w_{ji}a_j(t)) & \mbox{otherwise} \nonumber 
@@ -55,9 +55,11 @@ where $a_i(t)$ is the activation of $i$--th unit in discrete time $t$. The rules
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.4\textwidth]{img/models-generec-minus-phase.pdf}
-  \includegraphics[width=0.4\textwidth]{img/models-generec-plus-phase.pdf}
-  \caption{Depicting the minus and plus phases of GeneRec defined in table~\ref{tab:models-generec}. Picture inspiration from \citet{orru2008sabio}.} 
+  %\includegraphics[width=0.4\textwidth,left]{img/models-generec-minus-phase.pdf}
+  %\includegraphics[width=0.4\textwidth,right]{img/models-generec-plus-phase.pdf}
+  \includegraphics[width=0.8\textwidth]{img/models-generec-phase.pdf}
+  
+  \caption{Depicting the minus (left) and plus (right) phases of GeneRec defined in table~\ref{tab:models-generec}. Picture inspiration from \citet{orru2008sabio}.} 
   \label{fig:models-generec-phase}
 \end{figure}
 

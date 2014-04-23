@@ -17,9 +17,12 @@ The idea of \emph{dynamic learning rate} (TODO cite) is to have separate learnin
 \Delta w_{ij}(t) = \lambda_{ij}(t) a_i\left(b_j - a_j\right), 
 \end{equation}
 %where $b_j(t-1) - a_j(t-1)$ is the error term and $\lambda_{ij}^{t-1}$ is the learning rate from the last epoch. 
-There are several approaches how to set $\lambda_{ij}(t)$. Dynamic lambda per weight \emph{delta--bar--delta--rule} \citep{jacobs1988increased} (TODO parse and link). \\
-Adaptive learning rate \citep{riedmiller1993direct} \\
-Dynamic learning rate \citep{yu1997efficient} \\ 
+There are several approaches how to set $\lambda_{ij}(t)$. Dynamic lambda per weight \emph{delta--bar--delta--rule} baseline article \citep{jacobs1988increased} (TODO parse and link). \\
+Adaptive learning rate, Only sign of weight update \citep{riedmiller1993direct} \\
+Dynamic learning rate \citep{yu1997efficient}, \citep{yu2002backpropagation} \\ 
+Adaptive learning rate BP \citep{behera2006adaptive}, \citep{magoulas1999improving} \\
+Momemntum adaptation \citep{miniani1990acceleration} -> future work 
+Determining learning rate \citep{weir1991method} 
 %TODO more simulations.  \\
 TODO citations.  \\
 This model was inspiration for TLR \ref{sec:our-tlr}. 

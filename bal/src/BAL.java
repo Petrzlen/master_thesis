@@ -1664,9 +1664,9 @@ public class BAL {
 		for(int pi = 0; pi < patterns.getRowDimension(); pi++){
 			RealVector[] backward = network.backwardPass(patterns.getRowVector(pi));
 			BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-			
-			for(int w=0, d=0; w < width; w++){
-				for(int h=0; h < height ; h++, d++){
+
+			for(int h=0, d=0; h < height ; h++){
+				for(int w=0; w < width; w++, d++){
 					int gray = (int)(backward[0].getEntry(d) * 255.0);
 					img.setRGB(w, h, (gray << 16) + (gray << 8) + gray);
 				}
