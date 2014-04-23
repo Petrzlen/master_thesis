@@ -7,7 +7,7 @@ The theory behind artificial neural networks started with the model of \emph{Per
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{img/perceptron.pdf}    
-  \caption{Perceptron transforming \emph{inputs} $[x_0,\, x_1,\, \ldots,\, x_N]$ to output $y_k$.} 
+  \caption{Perceptron transforming \emph{inputs} $[x_0,\, x_1,\, \ldots,\, x_N]$ to \emph{output} $y_k$.} 
   \label{fig:perceptron}
 \end{figure}
 
@@ -61,7 +61,7 @@ for e from 1 to EPOCHS:
     for i from 0 to N: 
       update w_{ij}
 \end{lstlisting}
-  \caption{Perceptron learning. Developed from equations~\ref{eq:perceptron-error} and \ref{eq:perceptron-learning} we get an \emph{weight update rule}~\ref{eq:perceptron-learning-rule} which is applied in loop for element in $T$.} 
+  \caption{Perceptron learning. Applying the \emph{weight update rule}~\ref{eq:perceptron-learning-rule} in loop for each sample in $T$. One loop is called \emph{epoch}.} 
   \label{fig:perceptron-learning}
 \end{figure}
 

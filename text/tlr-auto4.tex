@@ -10,8 +10,8 @@
 \begin{figure}[H]
   \centering
   %TODO 10^glabels, same range, non-log epochs  
-  \includegraphics[width=0.48\textwidth]{img/auto4_tlr_success.pdf}   
-  \includegraphics[width=0.48\textwidth]{img/auto4_tlr_epoch.pdf}     
+  \includegraphics[width=0.48\textwidth]{img/tlr-auto4-success.pdf}   
+  \includegraphics[width=0.48\textwidth]{img/tlr-auto4-epoch.pdf}     
   \caption{TLR success and convergence on the \emph{4-2-4 Encoder} task with $\sigma = 2.3$ and $\mu = 0.0$.}
   \label{fig:results-tlr-auto4-performance}
 \end{figure}
@@ -20,7 +20,7 @@
 % TODO bitSucc, patSucc, F,B + std_dev 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.4\textwidth]{img/placeholder.png}    
+  \includegraphics[width=0.4\textwidth]{img/placeholder.png}  %TODO    
   \caption{TLR success evolution for the \emph{4-2-4 Encoder} task.}
   \label{fig:results-tlr-auto4-epoch} 
 \end{figure}
@@ -73,16 +73,18 @@ TODO note that one epoch computation is not same for different models, for insta
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.45\textwidth]{../presentation/img/nice.png}   
-  \includegraphics[width=0.45\textwidth]{../presentation/img/left_top.png}    
-  \caption{BAL hidden activations on the \emph{4-2-4 encoder} for successfull networks.}
+  \includegraphics[width=0.45\textwidth]{../presentation/img/nice.png}  %TODO
+  \includegraphics[width=0.45\textwidth]{../presentation/img/left_top.png}   %TODO 
+  \caption{BAL hidden activations on the \emph{4-2-4 encoder} for successful networks.}
   \label{fig:results-hidden-activations-bal-good}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.45\textwidth]{../presentation/img/tazisko.png}   
-  \includegraphics[width=0.45\textwidth]{../presentation/img/non-convergent.png}    
-  \caption{BAL hidden activations on the \emph{4-2-4 encoder} for {\bf not} successfull networks. On the left image the network settled with constant hidden activations for which the resulting tw--dimensional task is not linearly separable. On the right image the network failed to convergence swtich several hidden activation states.}
+  \includegraphics[width=0.45\textwidth]{../presentation/img/tazisko.png}   %TODO 
+  \includegraphics[width=0.45\textwidth]{../presentation/img/non-convergent.png}   %TODO  
+  \caption{BAL hidden activations on the \emph{4-2-4 encoder} for {\bf un}successful networks.}
   \label{fig:results-hidden-activations-bal-bad}
 \end{figure}
+
+On figure~\ref{fig:results-hidden-activations-bal-bad} we see unsuccessful networks. On the left image the network settled with constant hidden activations for which the resulting two--dimensional task is not linearly separable. On the right image the network failed to convergence swtich several hidden activation states.
