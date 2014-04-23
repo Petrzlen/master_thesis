@@ -2,26 +2,14 @@
 \subsubsection{Two learning rates} 
 \label{sec:our-tlr}
 
-TODO search more extensively for citations of similar articles. \\
-TODO switch visible and hidden, use TLR wherever possible 
-
-
 We proposed the \emph{Two learning rate (TLR)} model as a solution for the \emph{hidden activation settling} \ref{sec:our-hidden-activation} based on the Dynamic lambda model \ref{sec:our-dynamic-lambda}. As the name suggests this model uses two learning rates. First learning rate~$\lambda_v$, i.e.~\emph{lambda visible}, for weights~$W^{HI}$ and~$W^{HO}$ and second learning rate $\lambda_h$, i.e.~\emph{lambda hidden}, for weights~$W^{IH}$ and~$W^{OH}$. Both~$\lambda_v$ and~$\lambda_h$ are constant for the whole learning phase and therefore this model is consistent with our biological plausibility assumptions. Note that the names are derived from where they contribute in the post--synaptic activation. 
 
-Our simulations show that setting $\lambda_v \cdot \lambda_h \approx 1$ and $\lambda_v \ll \lambda_h$ could lead to significantly better performance in comparison to the standard BAL model \ref{sec:tlr-auto4-cmp}. Our intuition explains it as follows: because $\lambda_v \ll 1$ thus $W^{IH}$ and $W^{OH}$ are updated only little and also activations $h^{\rm F}$ and $h^{\rm B}$ change only a little and $|h^{\rm F}- h^{\rm B}|$ converges to zero slower. Thus error terms $(y_j^{\rm B} - y_j^{\rm F})$ and $(x_j^{\rm F} - x_j^{\rm B})$ from the BAL learning rule \ref{eq:models-bal-learning-rule-forward} for $W^{HI}$ and $W^{HO}$ impact the weight change longer with {\bf non}--\emph{constant hidden activations} \ref{sec:our-hidden-activation}. 
+Our simulations show that setting $\lambda_v \cdot \lambda_h \approx 1$ and $\lambda_v \ll \lambda_h$ could lead to significantly better performance in comparison to the standard BAL model \ref{sec:tlr-auto4-cmp}. Our intuition explains it as follows: because $\lambda_v \ll 1$ thus $W^{IH}$ and $W^{OH}$ are updated only little and also activations $h^{\rm F}$ and $h^{\rm B}$ change only a little and $|h^{\rm F}- h^{\rm B}|$ converges to zero slower. Thus error terms $(y_j^{\rm B} - y_j^{\rm F})$ and $(x_j^{\rm F} - x_j^{\rm B})$ from the BAL learning rule \ref{eq:models-bal-learning-rule-forward} for $W^{HI}$ and $W^{HO}$ impact the weight change longer with {\bf non}--\emph{constant hidden activations} \ref{sec:our-hidden-activation}. The importance of hidden activations was proved by our candidate selection experiment \ref{sec:our-candidates-features}. 
 
-Moreover we can explain TLR in terms of bio-plausibility. The perception of visible input to internal hidden representation is changed only little over time while the reconstruction to target pattern from these internal representation is trained hard. 
+Moreover we can explain TLR in terms of bio-plausibility. Results of TLR say that perception of visible input to internal hidden representation is changed only little over time while the reconstruction to target pattern from these internal representation is changed by much bigger magnitude. For example, when human eye sees an image it's perceived similarly each time but the output,~i.e. meaning could change greatly based on other outputs. 
 
-h\_f\_b\_b\_dist \ref{sec:our-candidates-features}
+\paragraph{Related work.} 
+Most of previous work regarding different learning rates is based on \emph{Dynamic learning rate (DLR)} introduced by \citet{jacobs1988increased}. Aim of DLR is to compute \emph{best} learning rate in terms of successful convergence and avoidance of local minima \citep{behera2006adaptive}. There are several approaches how to achieve this. Most of them have individual learning rates for each weight in the network. Some approaches precompute learning rates \citep{weir1991method} while others \emph{adapt learning rates dynamically} through the training process \citep{yu1997efficient, magoulas1999improving, yu2002backpropagation}. We discuss DLR more exhaustively in \ref{sec:our-dynamic-lambda}. 
 
-\citet{cater1987successfully} experimented with large lerning rates 
-
-Looks similar: \citet{lecun2012efficient}. Beyond choosing a single global learning rate, it is clear that picking a different learning rate $\lambda_i$ for each \emph{weight} (!not matrix) can improve convergence. 
-Weights in lower layers should typically be larger than in the higher layers (not backed up) 
-
-Usually other analyse optimal learning rate presetting or adaptation. 
-Dynamic learning rate \ref{sec:our-dynamic-lambda}. 
-Learning rate preset \citep{darken1992learning}.
-
-%TODO http://scholar.google.sk/scholar?q=learning+rate&btnG=&hl=en&as_sdt=2005&sciodt=0%2C5&cites=16742222220737149082&scipsc=1
+The most relevant information for TLR seemed to be the \emph{tip} given by \citet{lecun2012efficient} that \blockquote{Beyond choosing a single global learning rate, it is clear that picking a different learning rate $\lambda_{ij}$ for each \emph{weight} $w_{ij}$ can improve convergence. Weights in lower layers should typically be larger than in the higher layers.} Unfortunatelly, we were not able to find other simulations which backup this tip. Moreover, \citet{lecun2012efficient} talks about individual \emph{weights} and not \emph{matrices} which TLR impacts. Therefore we conclude that to our best knowledge the TLR model is unique in terms of number of learning rates. 
 
