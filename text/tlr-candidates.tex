@@ -29,14 +29,27 @@ TODO Hidden distance (over 70\%); in triangle (68.3 \%). \\
 
 \paragraph{Linear regression model.} 
 
-Following our best feature selection process \ref{sec:sim-exp-candidates} we trained a linear regression model over the network measures with label being $1-\mbox{bitSucc}^F = \mbox{bitErr}^F$. 
-
+Following our best feature selection process \ref{sec:sim-exp-candidates} we trained a linear regression model over the network measures with label being $1-\mbox{bitSucc}^F = \mbox{bitErr}^F$. TODO explain more 
 \begin{align} 
-- 0.328 \times \mbox{h\_dist}
-+ 0.140 \times \mbox{h\_f\_b\_dist}
-- 0.100 \times \mbox{m\_avg\_w} \nonumber \\
-+ 0.019 \times \mbox{m\_sim}
-+ 0.000 \times \mbox{first\_second}
-- 0.127 \times \mbox{sigma}
+\label{eq:results-candidates-linear-regression} 
+\mbox{bitErr}^F &= 
+- 0.328 \times \mbox{dist}_{H}
++ 0.140 \times \mbox{dist}_{H}^{FB}
+- 0.100 \times \mbox{dist}_{O}^{FB} \nonumber \\
+&+ 0.019 \times matrix\_sim
+- 0.127 \times \sigma
 + 3.610
 \end{align} 
+
+\paragraph{Comparing feature evolution of TLR to BAL.} 
+
+TODO add plots of feature / epoch for the best TLR and BAL. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.45\textwidth]{img/placeholder.png}  %TODO   
+  \includegraphics[width=0.45\textwidth]{img/placeholder.png}  %TODO    
+  \caption{Evolution of the distance between forward and backward hidden activations $\mbox{dist}_{H}^{FB}$ \ref{sec:our-dist-h-fb}. Further discussion in \ref{sec:our-hidden-activation}. }
+  \label{fig:results-candidates-dist-h-fb}
+\end{figure}
+
