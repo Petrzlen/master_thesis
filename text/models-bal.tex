@@ -34,7 +34,7 @@ and for completeness we also provide the backward learning rule which is same as
   \label{eq:models-bal-learning-rule-backward}
   \Delta w_{ij}^{\rm B} = \lambda \ a_i^{\rm B}(a_j^{\rm F} - a_j^{\rm B}). 
 \end{equation}
-Both forward~\ref{eq:models-bal-learning-rule-forward} and backward~\ref{eq:models-bal-learning-rule-backward} learning rules are same as the basic GeneRec learning rule~\ref{eq:models-generec-learning-rule}. We experimented with different learning learning rules \ref{sec:our-learning-rules}. 
+Note that we can treat the differences $(a_j^{\rm B} - a_j^{\rm F})$ and $(a_j^{\rm F} - a_j^{\rm B})$ as \emph{error terms} which push the forward and backward activation to settle. Both forward~\ref{eq:models-bal-learning-rule-forward} and backward~\ref{eq:models-bal-learning-rule-backward} learning rules are same as the basic GeneRec learning rule~\ref{eq:models-generec-learning-rule}. We experimented with different learning rules \ref{sec:our-learning-rules}. 
 
  
 
