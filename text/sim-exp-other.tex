@@ -31,6 +31,19 @@ This model was inspiration for TLR \ref{sec:our-tlr}.
 \paragraph{Batch mode.} Instead of updating weights after each training sample, weight changes are accumulated for the whole epoch, i.e.~summing all weight changes for each sample, and weights are updated in \emph{batch} (TODO citation). One can observe that shuffling of samples has no effect at all. Therefore after the weights are initialized the learning algorithm becomes deterministic.
 
 %==========================================================
+\paragraph{Backward representations.}
+\label{sec:our-backward-repre}
+
+The method of \emph{backward representations} for \emph{hetero--associative} tasks, i.e.~tasks which have multiple inputs for the same output, is to \emph{depict} the backward activation of all possible outputs. In case of BAL \ref{sec:models-bal} the backward representations are all possible values of $x^{\rm B}$. For example the backward representation of digit "8" in TLR \ref{sec:our-tlr} is show on figure~\ref{fig:our-backward-repre}. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.2\textwidth]{img/tlr-digit-8.png} %TODO 
+  \caption{Backward representation of digit "8" in TLR.}
+  \label{fig:our-backward-repre}
+\end{figure}
+
+%==========================================================
 \paragraph{Rerun.} This experiment was designed to test if shuffling of samples and weight initialization has effect to network performance. First, $N$ networks are created with random weights~\ref{sec:our-sigma} with same parameters then are saved and trained. Second, the networks are loaded and each network is re--trained $k$-times. At the end difference between performance of the $k$ networks and the original network is measured. In this way it could be decided if the network performance depended on the shuffling of the training samples or on other network parameters. 
 
 TODO rerun experiment (it has suspicious results) 

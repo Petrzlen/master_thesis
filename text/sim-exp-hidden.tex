@@ -11,8 +11,8 @@ A more formal explaination why the hidden activations tend to settle fast could 
 \end{equation} \nonumber 
 which for the $W^{IH}$ and $W^{OH}$ yields: 
 \begin{align} 
-  \Delta w_{ij}^{IH} = x^F_i(h^B_j - h^F_j) \nonumber \\ 
-  \Delta w_{ij}^{OH} = y^B_i(h^F_j - h^B_j). \nonumber  
+  \Delta w_{ij}^{IH} &= x^F_i(h^B_j - h^F_j) \nonumber \\ 
+  \Delta w_{ij}^{OH} &= y^B_i(h^F_j - h^B_j). \nonumber  
 \end{align} 
 We see that both terms $(h^B_j - h^F_j)$ and $(h^F_j - h^B_j)$ push $W^{IH}$ and $W^{OH}$ to settle $h^B_j = h^F_j$. This experiment was one of the reasons we started experimenting with dynamic learning rate \ref{sec:our-dynamic-lambda} what lead to the TLR model \ref{sec:our-tlr}. 
 
