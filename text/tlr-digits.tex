@@ -1,8 +1,14 @@
 
 \subsection{Hand--written Digits} 
-\label{sec:tlr-digits} 
 
 \ref{sec:datasets-digits} 
+
+%===============================================================
+%===============================================================
+%===============================================================
+\subsubsection{Two learning rate} 
+\label{sec:tlr-digits} 
+
 %Purpose: 
 %======== (3D) L1 x L2 x patSuccF =========
 %======== (3D) L1 x L2 x epochs =========
@@ -22,6 +28,41 @@
   \label{fig:results-tlr-digits-epoch} 
 \end{figure}
 
+%===============================================================
+%===============================================================
+%===============================================================
+\subsubsection{Comparison} 
+\label{sec:results-cmp-digits} 
+TODO simulation + plots \ref{sec:datasets-digits} 
+
+For TLR, BAL, GeneRec + known performers 
+TODO: table: best parameter setting networks with hidden.size= constant (success, epoch, stddev) / model \\
+
+\paragraph{Backward representations.} 
+\ref{sec:our-backward-repre} 
+
+TODO 3x 10x backward digit representations 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics{../presentation/img/dig_0.png} 
+  \includegraphics{../presentation/img/dig_1.png} 
+  \includegraphics{../presentation/img/dig_2.png} 
+  \includegraphics{../presentation/img/dig_3.png} 
+  \includegraphics{../presentation/img/dig_4.png} 
+  \includegraphics{../presentation/img/dig_5.png} 
+  \includegraphics{../presentation/img/dig_6.png} 
+  \includegraphics{../presentation/img/dig_7.png} 
+  \includegraphics{../presentation/img/dig_8.png} 
+  \includegraphics{../presentation/img/dig_9.png} 
+  \caption{Backward representations on \emph{digits} for GeneRec.}
+  \label{fig:results-backward-repre-generec}
+\end{figure}
+
+
+%===============================================================
+%===============================================================
+%===============================================================
 \subsubsection{Backward representations} 
 \ref{sec:our-backward-repre} 
 %======== (2D) for best network vs. sample digits

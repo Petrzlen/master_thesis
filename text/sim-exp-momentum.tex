@@ -1,0 +1,9 @@
+%==========================================================
+\subsubsection{Momentum}
+\label{sec:our-momentum}
+
+\citep{rumelhart1986learning, yu1997efficient} is an extension for any learning rule of form $\Delta w_{ij}(t) = L(i,j,t)$ by adding a \emph{momentum} term: 
+\begin{equation} 
+  \Delta w_{ij}(t) = L(i,j,t) + \mu \Delta w_{ij}(t-1). \mbox{TODO L}
+\end{equation} 
+It is argued that momentum could overcome settling in local minima by using the second derivate (TODO cite). 

@@ -1,9 +1,11 @@
 
 \subsection{Complex Binary Vector Associations} 
-\label{sec:tlr-k3}
 
 \ref{sec:datasets-k3} 
 
+
+\subsubsection{Two learning rate} 
+\label{sec:tlr-k3}
 %Main purpose of this dataset is to test different hidden sizes 
 %======== (4D) L1 x L2 x patSuccF x hidden size =========
 %======== (4D) L1 x L2 x epochs x hidden size =========
@@ -23,3 +25,26 @@
   \caption{TLR success evolution for the \emph{CBVA} task.}
   \label{fig:results-tlr-k3-epoch} 
 \end{figure}
+
+\subsubsection{Comparison} 
+\label{sec:results-cmp-k3} 
+
+%===== TODO table: best parameter setting networks with hidden.size= constant (success, epoch, stddev) / model \\
+
+\begin{table}
+  \centering
+    \begin{tabular}{|l|l|l|l|l|}
+    \hline
+    Algorithm&$\lambda$&Success&Epcs&SEM \\
+    \hline
+    \end{tabular}
+  \caption{Comparing performance of different models on the \emph{CBVA} task.} 
+  \label{tab:results-cmp-k3}
+\end{table}
+
+
+\subsubsection{Different hidden sizes} 
+\label{sec:results-dhs-k3} 
+
+TODO ref 
+
