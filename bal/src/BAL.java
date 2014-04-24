@@ -490,7 +490,7 @@ public class BAL {
 			if(isStop){
 				if(MEASURE_IS){
 					double[] measure_padding = network.measure(current_epoch, inputs, outputs, false);
-					for(int e = current_epoch + 1; e <= BAL.INIT_MAX_EPOCHS ; e++){
+					for(int e = BAL.INIT_MAX_EPOCHS + 1; e > current_epoch ; e--){
 						if(isMeasureAtEpoch(e)){ 
 							double[] m = measure_padding.clone(); 
 							m[MEASURE_EPOCH] = e; 
