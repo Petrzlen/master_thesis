@@ -80,7 +80,7 @@ public class BAL {
 	private static int WU_BAL_SYM = 7; // non of BAL other learning rule works 
 	private static int WU_BAL_MID = 8; 
 	private static int WU_BAL_CHL = 9; 
-	private static final int WU_TYPE = WU_BAL_ORIG;
+	private static final int WU_TYPE = WU_BAL_RECIRC;
 
 	public static final boolean INIT_SYMMETRIC_IS = (WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_CHL || 
 			WU_TYPE == WU_GENEREC_MID || WU_TYPE == WU_GENEREC_SYM);
@@ -170,8 +170,7 @@ public class BAL {
 	public static boolean HIDDEN_REPRESENTATION_IS = false;
 	public static String HIDDEN_REPRESENTATION_DIRECTORY = "data/hr/"; 
 	public static int HIDDEN_REPRESENTATION_EACH = 1; 
-	public static int HIDDEN_REPRESENTATION_AFTER = 200;
-	public static int HIDDEN_REPRESENTATION_ONLY_EACH = 50;
+	public static double HIDDEN_REPRESENTATION_MIN_DIST = 0.02; 
 
 	public static boolean PRINT_NETWORK_IS = false;
 	//Dump each network which was trained 
@@ -380,9 +379,7 @@ public class BAL {
 
 			// which hidden representations should be saved 
 			RealVector[] hidden_representation = null; 
-			boolean is_save_hidden_representation = HIDDEN_REPRESENTATION_IS && ((current_epoch < HIDDEN_REPRESENTATION_AFTER) 
-					? current_epoch % HIDDEN_REPRESENTATION_EACH == 0 
-					: current_epoch % HIDDEN_REPRESENTATION_ONLY_EACH == 0); 
+			boolean is_save_hidden_representation = HIDDEN_REPRESENTATION_IS && ((current_epoch - 1) % HIDDEN_REPRESENTATION_EACH == 0);
 			if(is_save_hidden_representation){
 				hidden_representation = new RealVector[order.size()]; 
 			}
@@ -1637,24 +1634,38 @@ public class BAL {
 		if(!HIDDEN_REPRESENTATION_IS){
 			return;
 		}
+		
+		printBoth("==Printing hidden representations\n"); 
 
 		for(int i=0; i<hidden_repre_all.size() ; i++){
 			ArrayList<RealVector[]> priebeh = hidden_repre_all.get(i);
 
-			for(int k=0; k < priebeh.get(0).length ; k++){
+			int input_size = priebeh.get(0).length;
+			int vector_size = priebeh.get(0)[0].getDimension(); 
+			
+			for(int k=0; k < input_size ; k++){
 				String filename = HIDDEN_REPRESENTATION_DIRECTORY + ((post_measure.get(i)[MEASURE_ERROR] == 0.0) ? "good" : "bad") + "/" + MEASURE_RUN_ID.get(i) + "_" + k + ".csv";
 				PrintWriter hr_writer = new PrintWriter(filename, "UTF-8");
-				for(RealVector[] vectors : priebeh){
-					RealVector v = vectors[k]; 
+				RealVector last = new ArrayRealVector(vector_size, -1.0); 
+				for(int e=0; e < priebeh.size() ; e++){
+					RealVector v = priebeh.get(e)[k]; 
+					if(v.getDistance(last) < HIDDEN_REPRESENTATION_MIN_DIST){
+						continue;
+					}
+					
+					last = v; 
+					
 					for(int a =0 ; a < v.getDimension() - 1 ; a++ ){ // -1 stands for bias 
 						if(a != 0) hr_writer.print('\t');
 						hr_writer.print(v.getEntry(a)); 
 					}
-					hr_writer.println(); 
+					hr_writer.println("\t" + (e*HIDDEN_REPRESENTATION_EACH + 1));
 				}
 				hr_writer.close(); 
 			}
 		}
+		
+		printBoth("==Printing hidden representations DONE\n");
 	}
 	
 	public static void printBackwardImages(BAL network, int width, int height) throws IOException{ 
@@ -1845,8 +1856,7 @@ public class BAL {
 		HIDDEN_REPRESENTATION_IS = false;
 		HIDDEN_REPRESENTATION_DIRECTORY = "data/" + input_prefix; 
 		HIDDEN_REPRESENTATION_EACH = 1; 
-		HIDDEN_REPRESENTATION_AFTER = 200;
-		HIDDEN_REPRESENTATION_ONLY_EACH = 200;
+		HIDDEN_REPRESENTATION_MIN_DIST = 0.02; 
 
 		PRINT_NETWORK_IS = false;  
 		PRINT_NETWORK_TO_FILE_IS = false;
@@ -1917,7 +1927,7 @@ public class BAL {
 		//TRY_MOMENTUM = new double[]{0.001, 0.003, 0.01, 0.03, 0.1, 0.3}; //INIT_MOMENTUM_IS = true 
 
 		INIT_MAX_EPOCHS = 10000;
-		INIT_RUNS = 500 * TRY_LAMBDA.length * TRY_LAMBDA_V.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
+		INIT_RUNS = 50 * TRY_LAMBDA.length * TRY_LAMBDA_V.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
 
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 		RECIRCULATION_ITERATIONS_MAX = 50; //maximum number of iterations to approximate the underlying dynamic system  
@@ -1937,8 +1947,7 @@ public class BAL {
 		HIDDEN_REPRESENTATION_IS = true;
 		HIDDEN_REPRESENTATION_DIRECTORY = "data/hr/"; 
 		HIDDEN_REPRESENTATION_EACH = 1; 
-		HIDDEN_REPRESENTATION_AFTER = 200;
-		HIDDEN_REPRESENTATION_ONLY_EACH = 200;
+		HIDDEN_REPRESENTATION_MIN_DIST = 0.02; 
 
 		PRINT_NETWORK_IS = false;  
 		PRINT_NETWORK_TO_FILE_IS = false;
@@ -2012,12 +2021,6 @@ public class BAL {
 		
 		INIT_NORMAL_DISTRIBUTION_MU = 0;
 		NORMAL_DISTRIBUTION_SPAN = 15; 
-
-		HIDDEN_REPRESENTATION_IS = false;
-		HIDDEN_REPRESENTATION_DIRECTORY = "data/test/"; 
-		HIDDEN_REPRESENTATION_EACH = 1; 
-		HIDDEN_REPRESENTATION_AFTER = 200;
-		HIDDEN_REPRESENTATION_ONLY_EACH = 200;
 
 		PRINT_NETWORK_IS = false;  
 		PRINT_NETWORK_TO_FILE_IS = false;
