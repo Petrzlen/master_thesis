@@ -6,10 +6,8 @@
 \ref{sec:datasets-auto4} 
 %======== (3D) L1 x L2 x epochs =========
 %======== (3D) L1 x L2 x patSuccF =========
-%TODO treat as main plot of the work 
 \begin{figure}[H]
   \centering
-  %TODO 10^glabels, same range, non-log epochs  
   \includegraphics[width=0.48\textwidth]{img/tlr-auto4-success.pdf}   
   \includegraphics[width=0.48\textwidth]{img/tlr-auto4-epoch.pdf}     
   \caption{TLR success and convergence on the \emph{4-2-4 Encoder} task with $\sigma = 2.3$ and $\mu = 0.0$.}
@@ -20,7 +18,7 @@
 % TODO bitSucc, patSucc, F,B + std_dev 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.4\textwidth]{img/placeholder.png}  %TODO    
+  \includegraphics[width=0.4\textwidth]{img/placeholder.png}      
   \caption{TLR success evolution for the \emph{4-2-4 Encoder} task.}
   \label{fig:results-tlr-auto4-epoch} 
 \end{figure}
@@ -92,4 +90,28 @@ TODO note that one epoch computation is not same for different models, for insta
 \end{figure}
 
 On figure~\ref{fig:results-hidden-activations-bal-bad} we see unsuccessful networks. On the left image the network settled with constant hidden activations for which the resulting two--dimensional task is not linearly separable. On the right image the network failed to convergence swtich several hidden activation states.
+
+\subsubsection{Other} 
+
+%======== (3D) L1 x L2 x epochs =========
+%======== (3D) L1 x L2 x patSuccF =========
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.48\textwidth]{img/bal-recirc-auto4-success.pdf}   
+  \includegraphics[width=0.48\textwidth]{img/bal-recirc-auto4-epoch.pdf}     
+  \caption{BAL-recirc \ref{sec:our-bal-recirc} success and convergence on the \emph{4-2-4 Encoder} task with $\sigma = 2.3$ and $\mu = 0.0$.}
+  \label{fig:results-generec-auto4-performance}
+\end{figure}
+
+
+%======== (3D) L1 x L2 x epochs =========
+%======== (3D) L1 x L2 x patSuccF =========
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.48\textwidth]{img/generec-auto4-success.pdf}   
+  \includegraphics[width=0.48\textwidth]{img/generec-auto4-epoch.pdf}     
+  \caption{GeneRec \ref{sec:models-generec} success and convergence on the \emph{4-2-4 Encoder} task with $\sigma = 2.3$ and $\mu = 0.0$.}
+  \label{fig:results-generec-auto4-performance}
+\end{figure}
+
 
