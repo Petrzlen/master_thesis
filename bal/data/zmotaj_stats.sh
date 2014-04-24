@@ -27,7 +27,7 @@ then
 
   less $measure | grep '\.' | sed 's/\t/","/g' | sed 's/\(.*\)/INSERT INTO data VALUES ("\1");/g' > insert_table.sql
   #fix no measure at end 
-  less $post | grep '\.' | sed 's/\t/","/g' | sed 's/\(.*\)/INSERT INTO data VALUES ("NA","\1");/g' > insert_table.sql
+  less $post | grep '\.' | sed 's/\t/","/g' | sed 's/\(.*\)/INSERT INTO data VALUES ("NA","\1");/g' >> insert_table.sql
 
   echo "ALTER TABLE data ADD success INT; UPDATE data SET success = (CASE WHEN err = 0.0 THEN 1 ELSE 0 END); CREATE INDEX index_err ON data (err); CREATE INDEX index_success ON data (success); CREATE INDEX index_epoch ON data (epoch);" > update_table.sql
 
@@ -54,10 +54,14 @@ echo "success" >> cols.txt
 #for i in "err" "success" "h_dist" "h_f_b_dist" "m_avg_w" "m_sim" "first_second" "o_f_b_dist" "in_triangle" "fluctuation" "lambda_ih" 
 cat cols.txt | while read i
 do
-  #TODO optimize (stddev sucks)
+  #TODO optimize (stddev sucks in SQLlite) http://stackoverflow.com/questions/13190064/how-to-find-power-of-a-number-in-sqlite
   echo "epoch to '$i'" 
-  #sqlite3 measure.sqlite <<< "SELECT cast(D1.epoch as int) AS 'epoch', MIN(D1.$i) AS 'all_min_$i', MAX(D1.$i) AS 'all_max_$i', AVG(D1.$i) AS 'all_avg_$i', AVG((D1.$i - (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch)) * (D1.$i - (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch))) AS 'all_stdevp_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch AND D2.success=0) AS 'bad_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch AND D2.success=1) AS 'good_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch) AS 'a' FROM data D1 GROUP BY D1.epoch;" | sed 's/|/\t/g' > epoch_$i.dat 
-  sqlite3 measure.sqlite <<< "SELECT cast(D1.epoch as int) AS 'epoch', MIN(D1.$i) AS 'all_min_$i', MAX(D1.$i) AS 'all_max_$i', AVG(D1.$i) AS 'all_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch AND D2.success=0) AS 'bad_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch AND D2.success=1) AS 'good_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch) AS 'a' FROM data D1 GROUP BY D1.epoch;" | sed 's/|/\t/g' > epoch_$i.dat 
+  if [ -z "$4" ]
+  then 
+    sqlite3 measure.sqlite <<< "SELECT cast(D1.epoch as int) AS 'epoch', MIN(D1.$i) AS 'all_min_$i', MAX(D1.$i) AS 'all_max_$i', AVG(D1.$i) AS 'all_avg_$i', AVG((D1.$i - (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch)) * (D1.$i - (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch))) AS 'all_stdevp_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch AND D2.success=0) AS 'bad_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch AND D2.success=1) AS 'good_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch) AS 'a' FROM data D1 GROUP BY D1.epoch;" | sed 's/|/\t/g' > epoch_$i.dat 
+  else
+    sqlite3 measure.sqlite <<< "SELECT cast(D1.epoch as int) AS 'epoch', MIN(D1.$i) AS 'all_min_$i', MAX(D1.$i) AS 'all_max_$i', AVG(D1.$i) AS 'all_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch AND D2.success=0) AS 'bad_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch AND D2.success=1) AS 'good_avg_$i', (SELECT AVG(D2.$i) FROM data D2 WHERE D1.epoch=D2.epoch) AS 'a' FROM data D1 GROUP BY D1.epoch;" | sed 's/|/\t/g' > epoch_$i.dat 
+  fi
 done
 
 #========== POST MEASURES (success) ============
@@ -80,14 +84,14 @@ do
   
   awk '{if(NR>1) {print(log($1)/log(10), log($2)/log(10), $3);} else print $0;}' lambdah_lambdav_success_$fi.dat > lambdah_lambdav_success_log_$fi.dat 
   
-  awk '{if(NR>1) {print(log($1)/log(10), log($2)/log(10), log($3+1)/log(10));} else print $0;}' lambdah_lambdav_epoch_$fi.dat > lambdah_lambdav_epoch_log_$fi.dat 
+  awk '{if(NR>1) {print(log($1)/log(10), log($2)/log(10), $3);} else print $0;}' lambdah_lambdav_epoch_$fi.dat > lambdah_lambdav_epoch_log_$fi.dat 
   
   fi=$fi+1
 done 
 
 # ============ PLOT the data ================ 
-echo "plotting data" 
-gnuplot ../../panko_plot.p 
+# echo "plotting data" 
+# gnuplot ../../panko_plot.p 
 
 cd ../../
 
