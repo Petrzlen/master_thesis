@@ -25,7 +25,7 @@ then
   head -1 $measure | sed 's/\t/,\n/g' | tail -n +2 | sed 's/\(^[^,]*\)/  \1 DOUBLE/g' >> create_table.sql 
   echo ");" >> create_table.sql 
 
-  #less $measure | grep '\.' | sed 's/\t/","/g' | sed 's/\(.*\)/INSERT INTO data VALUES ("\1");/g' > insert_table.sql
+  less $measure | grep '\.' | sed 's/\t/","/g' | sed 's/\(.*\)/INSERT INTO data VALUES ("\1");/g' > insert_table.sql
   #fix no measure at end 
   less $post | grep '\.' | sed 's/\t/","/g' | sed 's/\(.*\)/INSERT INTO data VALUES ("NA","\1");/g' >> insert_table.sql
 
@@ -57,7 +57,7 @@ done
 cat cols.txt | while read i
 do
   echo "'$i' to success" 
-  sqlite3 measure.sqlite <<< "SELECT $i, AVG(success) AS 'success' FROM data WHERE epoch = (SELECT MAX(epoch) FROM data) GROUP BY $i;" | sed 's/|/\t/g' > $i"_success.dat"
+  sqlite3 measure.sqlite <<< "SELECT $i, AVG(success) AS 'success' FROM data WHERE epoch <> 0 GROUP BY $i;" | sed 's/|/\t/g' > $i"_success.dat"
 done
 
 fi=0
@@ -76,6 +76,7 @@ do
   #NEW TIMES 
   else
     sqlite3 measure.sqlite <<< "SELECT lam, lam_v, 100*AVG(success) AS 'success' FROM data WHERE epoch <> 0 GROUP BY lam,lam_v;" | sed 's/|/\t/g' > lls_$fi.dat 
+    #sqlite3 measure.sqlite <<< "SELECT lam, lam_v, mom, 100*AVG(success) AS 'success' FROM data WHERE epoch <> 0 GROUP BY lam,lam_v,mom;" | sed 's/|/\t/g' > lls_$fi.dat 
 
     echo "$f : lambdah_lambdav_epoch.dat" 
     #wasted work :/ 
@@ -83,6 +84,7 @@ do
     #php ../../epochs.php files[]=$f l1_id=2 l2_id=3 > lle_$fi.dat
     
     sqlite3 measure.sqlite <<< "SELECT D1.lam, D1.lam_v, (SELECT AVG(D2.epoch) FROM data D2 WHERE D2.epoch <> 0 AND D2.success = 1 AND D1.lam=D2.lam AND D1.lam_v=D2.lam_v) as 'epoch' FROM data D1 GROUP BY lam,lam_v;" | sed 's/|/\t/g' > lle_$fi.dat 
+    #sqlite3 measure.sqlite <<< "SELECT D1.lam, D1.lam_v, D1.mom, (SELECT AVG(D2.epoch) FROM data D2 WHERE D2.epoch <> 0 AND D2.success = 1 AND D1.lam=D2.lam AND D1.lam_v=D2.lam_v AND D1.mom=D2.mom) as 'epoch' FROM data D1 GROUP BY lam,lam_v,mom;" | sed 's/|/\t/g' > lle_$fi.dat 
   fi
   
   awk 'BEGIN{last=-42;}{if(NR==1 || $1==0 || $2==0) next; if(last!=-42 && last!=$1) {printf "\n";} last=$1; print(log($1)/log(10), log($2)/log(10), $3);}' lls_$fi.dat > log_lls_$fi.dat 

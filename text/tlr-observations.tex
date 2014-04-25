@@ -16,29 +16,42 @@ TODO talk about these points (item -> paragraph ; item -> other results):
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.45\textwidth]{img/placeholder.png}  %TODO
-  \includegraphics[width=0.45\textwidth]{img/placeholder.png}  %TODO
-  \caption{Comparing different \emph{momentums} for TLR on the \emph{4-2-4 encoder} task.}
+  \includegraphics[width=0.48\textwidth]{img/tlr-mom-auto4-success-0-001.pdf}  
+  \includegraphics[width=0.48\textwidth]{img/tlr-mom-auto4-epoch-0-001.pdf}  \\
+  \includegraphics[width=0.48\textwidth]{img/tlr-mom-auto4-success-0-3.pdf}  
+  \includegraphics[width=0.48\textwidth]{img/tlr-mom-auto4-epoch-0-3.pdf}  
+  \caption{Comparing momentums $\mu=0.01$ (above) and $\mu=0.3$ (bottom) for TLR on the \emph{4-2-4 encoder} task.}
   \label{fig:results-tlr-auto4-momentum}
 \end{figure}
 
+Momentum had no significant effect on network performance as shown in table~\ref{tab:results-mom-auto4}. Only a little improvement was achieved on the convergence rate. The simulations were run accross multiple $\lambda_v$ and $\lambda_h$ corresponding to figure~\ref{fig:results-tlr-auto4-momentum}. Then the average from all simulations was taken. 
+\begin{table}[H] 
+  \centering
+  {\small
+    \begin{tabular}{|l|l|}
+    \hline
+avg(success) & momentum \\
+    \hline
+0.001  & 0.4419 \\
+    \hline
+0.003  & 0.4428 \\
+    \hline
+0.01   & 0.4440 \\
+    \hline
+0.03   & 0.4464 \\
+    \hline
+0.1    & 0.4468 \\
+    \hline
+0.3    & 0.4493 \\
+    \hline
+    \end{tabular}
+  }
+  \caption{Comparing performance of different models on the \emph{4-2-4 encoder} task.} 
+  \label{tab:results-mom-auto4}
+\end{table}
+
 %======== (2D) best TLR on ALL_SUCC x epoch (std-dev) : TLR vs. best momentum ==========
 
-%\subsubsection{Weight initialization}
-%\label{sec:results-sigma} 
-
-%\ref{sec:our-sigma} 
-
-%\begin{figure}[H]
-%  \centering
-%  \includegraphics[width=0.45\textwidth]{img/placeholder.png} 
-%  \includegraphics[width=0.45\textwidth]{img/placeholder.png} 
-%  \caption{Comparing different \emph{weight initializations} for TLR on the \emph{4-2-4 encoder} task.}
-%  \label{fig:results-tlr-auto4-sigma}
-%\end{figure}
-%======== (3D) L1 x L2 x patSuccF : TLR vs. best sigma =========
-%======== (3D) L1 x L2 x epochs : TLR vs. best sigma =========
-%======== (2D) best TLR on ALL_SUCC x epoch (std-dev) : TLR vs. best sigma ==========
 
 \subsubsection{Long run} 
 \label{sec:results-long-run} 

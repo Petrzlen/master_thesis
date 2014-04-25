@@ -80,11 +80,9 @@ public class BAL {
 	private static int WU_BAL_SYM = 7; // non of BAL other learning rule works 
 	private static int WU_BAL_MID = 8; 
 	private static int WU_BAL_CHL = 9; 
-	private static final int WU_TYPE = WU_BAL_ORIG;
+	private static final int WU_TYPE = WU_BAL_CHL;
 
-	public static final boolean INIT_SYMMETRIC_IS = (WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_CHL || 
-			WU_TYPE == WU_GENEREC_MID || WU_TYPE == WU_GENEREC_SYM);
-	
+	public static final boolean INIT_SYMMETRIC_IS = true; //WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_CHL || WU_TYPE == WU_GENEREC_MID || WU_TYPE == WU_GENEREC_SYM;	
 	// ========= RECIRCULATION -- iterative activation ==============
 	private static boolean INIT_RECIRCULATION_IS = (WU_TYPE == WU_BAL_RECIRC || WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_SYM || WU_TYPE == WU_GENEREC_MID);
 	//if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop
@@ -645,7 +643,7 @@ public class BAL {
 
 	//Creates a BAL network with layer sizes [in_size, h_size, out_size] 
 	public BAL(int in_size, int h_size, int out_size) {
-		printBoth("Creating BAL of size ["+in_size + ","+h_size + ","+out_size + "] RunId=" + NETWORK_RUN_ID + "\n");
+		//printBoth("Creating BAL of size ["+in_size + ","+h_size + ","+out_size + "] RunId=" + NETWORK_RUN_ID + "\n");
 		//+1 stands for biases 
 		this.IH = createInitMatrix(in_size+(isBias(MATRIX_IH)?1:0), h_size);
 		this.HO = createInitMatrix(h_size+(isBias(MATRIX_HO)?1:0), out_size);
@@ -1878,7 +1876,7 @@ public class BAL {
 	public static void experiment_TestImplementation() throws IOException{
 		MEASURE_IS = true; 
 		MEASURE_SAVE_AFTER_EACH_RUN = true; 
-		MEASURE_RECORD_EACH = 250000;
+		MEASURE_RECORD_EACH = 100;
 
 		INPUT_FILEPATH = "auto4.in"; 
 		OUTPUT_FILEPATH = "auto4.in"; 
@@ -1887,47 +1885,47 @@ public class BAL {
 		POSTPROCESS_OUTPUT = true; 
 		POSTPROCESS_TYPE = POSTPROCESS_SIMPLE; 
 		
-		INIT_CANDIDATES_COUNT = 0;
+		//INIT_CANDIDATES_COUNT = 1000;
 		INIT_SHUFFLE_IS = true;
 		INIT_BATCH_IS = false;
 		INIT_TRAIN_ONLY_ON_ERROR = false; 
 
 		LAMBDA_ERROR_MOMENTUM_IS = false; 
 
-		//TRY_LAMBDA = new double[]{500}; 
+		TRY_LAMBDA = new double[]{500}; 
 		//TRY_LAMBDA = new double[]{0.1, 0.7, 3.0}; 
 		/*TRY_LAMBDA = new double[]{
 				0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 
 				0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 
 				50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0, 20000.0, 50000.0, 
 				100000.0, 200000.0, 500000.0, 1000000.0, 2000000.0, 5000000.0, 10000000.0};*/  
-		TRY_LAMBDA = new double[]{
+		/*TRY_LAMBDA = new double[]{
 				0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 
 				1.0, 3.0, 10.0, 30.0, 100.0, 300.0, 1000.0, 3000.0, 10000.0, 30000.0, 
 				100000.0, 300000.0, 1000000.0, 3000000.0, 10000000.0, 30000000.0, 100000000.0, 300000000.0, 1000000000.0
-		}; 
+		};*/ 
 		
-		//TRY_LAMBDA_V = new double[]{0.0002}; 
+		TRY_LAMBDA_V = new double[]{0.0002}; 
 		//TRY_LAMBDA_V = new double[]{0.1, 0.7, 3.0}; 
 		/*TRY_LAMBDA_V = new double[]{
 				0.00000001, 0.00000002, 0.00000005, 0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 
 				0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 
 				0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
 				100.0};*/  
-		TRY_LAMBDA_V = new double[]{
+		/*TRY_LAMBDA_V = new double[]{
 				0.0000000001, 0.0000000003, 0.000000001, 0.000000003, 0.00000001, 0.00000003, 0.0000001, 0.0000003, 0.000001, 0.000003,
 				0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 
 				1.0, 3.0, 10.0, 30.0, 100.0
-		}; 
+		};*/ 
 		
 		TRY_SIGMA = new double[]{2.3};
 		//TRY_SIGMA = new double[]{1.0, 2.3, 10.0};
 		
 		INIT_MOMENTUM_IS = true;  
-		//TRY_MOMENTUM = new double[]{0.0};
-		TRY_MOMENTUM = new double[]{0.001, 0.003, 0.01, 0.03, 0.1, 0.3}; //INIT_MOMENTUM_IS = true 
+		TRY_MOMENTUM = new double[]{0.0};
+		//TRY_MOMENTUM = new double[]{0.001, 0.003, 0.01, 0.03, 0.1, 0.3}; //INIT_MOMENTUM_IS = true 
 
-		INIT_MAX_EPOCHS = 20000;
+		INIT_MAX_EPOCHS = 100000;
 		INIT_RUNS = 100 * TRY_LAMBDA.length * TRY_LAMBDA_V.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
 
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
