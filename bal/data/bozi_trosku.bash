@@ -1,5 +1,64 @@
 #!/bin/bash
 
+#===================== hidden activations ==========================
+
+#bal_orig/bad/auto4_1_139846
+#bad init 3116205
+#non convex 3118534, 3574083
+#big step 3568416, 3572476
+#stagnation 3599582
+
+#bal_orig/good/auto4_1_139846
+#good init 3567401
+#rect 3565457
+#small 3565802, 3570398
+#corner 3573063
+#line-like 3566768
+#travel 3566929
+
+#tlr_can/bad/auto4_1_139846
+#two static 6290231 #only bad from 500
+#tlr/bad/auto4_1_139846
+#tiny corner 5047426, 5047426
+#two static 5050919
+#weird 5072307 , 5078142
+#non-convex init , 5053233
+#cannot leave non-convex 5054076
+
+#tlr_can/good/auto4_1_139846
+#perfect init 5046959
+#good init 5046299, 5046677
+#left non-convex 5046497, 5046763
+#expand 5049055, 5053958, 5050613
+#one left non-convex 5050037
+
+#=========== BAL 
+echo "copying hidden activations for BAL" 
+cp hr/bal_orig/bad/auto4_1_2_1398463116205.pdf  ../../text/img/hid-bal-bad-init.pdf
+cp hr/bal_orig/bad/auto4_1_2_1398463574083.pdf  ../../text/img/hid-bal-bad-convex.pdf
+cp hr/bal_orig/bad/auto4_1_2_1398463572476.pdf  ../../text/img/hid-bal-bad-step.pdf
+cp hr/bal_orig/bad/auto4_1_2_1398463599582.pdf  ../../text/img/hid-bal-bad-stagnation.pdf
+
+cp hr/bal_orig/good/auto4_1_2_1398463567401.pdf  ../../text/img/hid-bal-good-init.pdf
+cp hr/bal_orig/good/auto4_1_2_1398463565457.pdf  ../../text/img/hid-bal-good-convex.pdf
+cp hr/bal_orig/good/auto4_1_2_1398463570398.pdf  ../../text/img/hid-bal-good-step.pdf
+cp hr/bal_orig/good/auto4_1_2_1398463566929.pdf  ../../text/img/hid-bal-good-stagnation.pdf
+
+#=========== TLR 
+echo "copying hidden activations for TLR" 
+cp hr/tlr_can/bad/auto4_1_2_1398466290231.pdf  ../../text/img/hid-tlr-bad-static.pdf
+cp hr/tlr/bad/auto4_1_2_1398465047426.pdf  ../../text/img/hid-tlr-bad-tiny.pdf
+cp hr/tlr/bad/auto4_1_2_1398465054076.pdf  ../../text/img/hid-tlr-bad-init.pdf
+cp hr/tlr/bad/auto4_1_2_1398465072307.pdf  ../../text/img/hid-tlr-bad-weird.pdf
+
+cp hr/tlr/good/auto4_1_2_1398465050613.pdf  ../../text/img/hid-tlr-good-static.pdf
+cp hr/tlr/good/auto4_1_2_1398465050037.pdf  ../../text/img/hid-tlr-good-tiny.pdf
+cp hr/tlr/good/auto4_1_2_1398465046959.pdf  ../../text/img/hid-tlr-good-init.pdf
+cp hr/tlr/good/auto4_1_2_1398465049055.pdf  ../../text/img/hid-tlr-good-weird.pdf
+
+#cp hr/bal_orig/bad/auto4_1_139846.pdf  ../../text/img/hid-bal-bad-.pdf
+
+#===================== epoch evolution =============================
 sh performance.sh 'auto4_tlr_best' 500 0.2
 gnuplot -e "outpath='../../text/img/tlr-best-perf.pdf'" performance.p
 
@@ -59,7 +118,8 @@ gnuplot -e "inpath='stats/auto4_generec/log_lls_0.dat';outpath='../../text/img/g
 less stats/auto4_generec/log_lle_0.dat | bash post_epochs.bash 20000 > buf.dat
 gnuplot -e "inpath='buf.dat';outpath='../../text/img/generec-auto4-epoch.pdf';val_from=0;val_d=1000;val_to=50000;rxf=-4;rxt=2;ryf=-7;ryt=2;rgb_a=10;rgb_b=13;rgb_c=33" contour.p
 
-#=================== auto4 ====================
+#==================== HISTORY =====================
+  #=================== auto4 ====================
 ls | grep -o 'k3_139[0-9]\+_[3-9]' | sort | uniq | while read filename
 do
   num=$(echo $filename | grep -o '[0-9]$')
@@ -75,4 +135,5 @@ do
   gnuplot -e "inpath='buf.dat';outpath='../../text/img/k3/tlr-$num-epoch.pdf';val_from=0;val_d=300;val_to=2500;rxf=-4;rxt=4;ryf=-7;ryt=1;rgb_a=10;rgb_b=13;rgb_c=33" contour.p
 done
   
+  #TODO generec 
 

@@ -80,7 +80,7 @@ public class BAL {
 	private static int WU_BAL_SYM = 7; // non of BAL other learning rule works 
 	private static int WU_BAL_MID = 8; 
 	private static int WU_BAL_CHL = 9; 
-	private static final int WU_TYPE = WU_BAL_CHL;
+	private static final int WU_TYPE = WU_BAL_ORIG;
 
 	public static final boolean INIT_SYMMETRIC_IS = true; //WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_CHL || WU_TYPE == WU_GENEREC_MID || WU_TYPE == WU_GENEREC_SYM;	
 	// ========= RECIRCULATION -- iterative activation ==============
@@ -111,9 +111,9 @@ public class BAL {
 	public static String TEST_OUTPUT_FILEPATH = null; 
 	public static int INIT_HIDDEN_LAYER_SIZE = 2 ; 
 
-	public static int INIT_MAX_EPOCHS = 500000;
-	public static int INIT_RUNS = 1000; 
-	public static int INIT_CANDIDATES_COUNT = 1000;
+	public static int INIT_MAX_EPOCHS = 10000;
+	public static int INIT_RUNS = 1; 
+	public static int INIT_CANDIDATES_COUNT = 0;
 	public static boolean INIT_SHUFFLE_IS = true;
 	public static boolean INIT_BATCH_IS = false;
 	public static boolean INIT_TRAIN_ONLY_ON_ERROR = false; // network is trained only on samples which give error 
@@ -1293,7 +1293,7 @@ public class BAL {
 			}
 
 			if(MEASURE_IN_TRIANGLE < MEASURE_COUNT){
-				if(forward_hiddens.get(0).getDimension() == 2){
+				if(forward_hiddens.get(0).getDimension() == 3){
 					ArrayList<Point> hidden_points = new ArrayList<Point>(); 
 					for(int i=0; i<forward_hiddens.size() ; i++){
 						hidden_points.add(new Point((int)(1000.0 * forward_hiddens.get(i).getEntry(0)), (int)(1000.0 * forward_hiddens.get(i).getEntry(1)))); 
@@ -1647,7 +1647,7 @@ public class BAL {
 				RealVector last = new ArrayRealVector(vector_size, -1.0); 
 				for(int e=0; e < priebeh.size() ; e++){
 					RealVector v = priebeh.get(e)[k]; 
-					if(v.getDistance(last) < HIDDEN_REPRESENTATION_MIN_DIST){
+					if(e+1 < priebeh.size() && v.getDistance(last) < HIDDEN_REPRESENTATION_MIN_DIST){
 						continue;
 					}
 					
@@ -1657,7 +1657,7 @@ public class BAL {
 						if(a != 0) hr_writer.print('\t');
 						hr_writer.print(v.getEntry(a)); 
 					}
-					hr_writer.println("\t" + (e*HIDDEN_REPRESENTATION_EACH + 1));
+					hr_writer.println("\t" + (e*HIDDEN_REPRESENTATION_EACH));
 				}
 				hr_writer.close(); 
 			}
@@ -1876,7 +1876,7 @@ public class BAL {
 	public static void experiment_TestImplementation() throws IOException{
 		MEASURE_IS = true; 
 		MEASURE_SAVE_AFTER_EACH_RUN = true; 
-		MEASURE_RECORD_EACH = 100;
+		MEASURE_RECORD_EACH = 250000;
 
 		INPUT_FILEPATH = "auto4.in"; 
 		OUTPUT_FILEPATH = "auto4.in"; 
@@ -1885,15 +1885,14 @@ public class BAL {
 		POSTPROCESS_OUTPUT = true; 
 		POSTPROCESS_TYPE = POSTPROCESS_SIMPLE; 
 		
-		//INIT_CANDIDATES_COUNT = 1000;
 		INIT_SHUFFLE_IS = true;
 		INIT_BATCH_IS = false;
 		INIT_TRAIN_ONLY_ON_ERROR = false; 
 
 		LAMBDA_ERROR_MOMENTUM_IS = false; 
 
-		TRY_LAMBDA = new double[]{500}; 
-		//TRY_LAMBDA = new double[]{0.1, 0.7, 3.0}; 
+		//TRY_LAMBDA = new double[]{500}; 
+		TRY_LAMBDA = new double[]{0.9}; 
 		/*TRY_LAMBDA = new double[]{
 				0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 
 				0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 
@@ -1905,8 +1904,8 @@ public class BAL {
 				100000.0, 300000.0, 1000000.0, 3000000.0, 10000000.0, 30000000.0, 100000000.0, 300000000.0, 1000000000.0
 		};*/ 
 		
-		TRY_LAMBDA_V = new double[]{0.0002}; 
-		//TRY_LAMBDA_V = new double[]{0.1, 0.7, 3.0}; 
+		//TRY_LAMBDA_V = new double[]{0.0002}; 
+		TRY_LAMBDA_V = new double[]{0.9};  
 		/*TRY_LAMBDA_V = new double[]{
 				0.00000001, 0.00000002, 0.00000005, 0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 
 				0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 
@@ -1925,8 +1924,9 @@ public class BAL {
 		TRY_MOMENTUM = new double[]{0.0};
 		//TRY_MOMENTUM = new double[]{0.001, 0.003, 0.01, 0.03, 0.1, 0.3}; //INIT_MOMENTUM_IS = true 
 
+		INIT_CANDIDATES_COUNT = 0;
 		INIT_MAX_EPOCHS = 100000;
-		INIT_RUNS = 100 * TRY_LAMBDA.length * TRY_LAMBDA_V.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
+		INIT_RUNS = 1000 * TRY_LAMBDA.length * TRY_LAMBDA_V.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
 
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 		RECIRCULATION_ITERATIONS_MAX = 50; //maximum number of iterations to approximate the underlying dynamic system  
@@ -1943,7 +1943,7 @@ public class BAL {
 		HIDDEN_REPRESENTATION_IS = false;
 		HIDDEN_REPRESENTATION_DIRECTORY = "data/hr/"; 
 		HIDDEN_REPRESENTATION_EACH = 1; 
-		HIDDEN_REPRESENTATION_MIN_DIST = 0.02; 
+		HIDDEN_REPRESENTATION_MIN_DIST = 0.01; 
 
 		PRINT_NETWORK_IS = false;  
 		PRINT_NETWORK_TO_FILE_IS = false;

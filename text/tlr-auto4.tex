@@ -52,9 +52,11 @@ It's possible for both BAL \ref{sec:models-bal} and GeneRec \ref{sec:models-gene
     \hline
     CHL&1.2&56&77&1.8\\
     \hline
-    BAL&0.9&65&1000&\\
+    BAL&0.9&65& &\\
     \hline
-    BAL TLR&0.0002 | 500&94&8251&\\
+    BAL TLR&0.0002 | 500&93.12&5845.01&1.52e+08\\
+    \hline
+    BAL TLR 1000 can&0.0002 | 500&99.86&150.417&5,070,000\\
     \hline
     BAL Recirc&0.7&34&10000&\\
     \hline
@@ -74,24 +76,34 @@ TODO note that one epoch computation is not same for different models, for insta
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.45\textwidth]{../presentation/img/nice.png}  %TODO
-  \includegraphics[width=0.45\textwidth]{../presentation/img/left_top.png}   %TODO 
-  \caption{BAL hidden activations on the \emph{4-2-4 encoder} for successful networks.}
-  \label{fig:results-hidden-activations-bal-good}
+  \includegraphics[width=0.48\textwidth]{img/hid-bal-bad-init.pdf}  
+  \includegraphics[width=0.48\textwidth]{img/hid-bal-bad-convex.pdf}  \\
+  \includegraphics[width=0.48\textwidth]{img/hid-bal-bad-step.pdf}  
+  \includegraphics[width=0.48\textwidth]{img/hid-bal-bad-stagnation.pdf}  \\
+  \includegraphics[width=0.48\textwidth]{img/hid-bal-good-init.pdf}  
+  \includegraphics[width=0.48\textwidth]{img/hid-bal-good-convex.pdf}  \\
+  \includegraphics[width=0.48\textwidth]{img/hid-bal-good-step.pdf}  
+  \includegraphics[width=0.48\textwidth]{img/hid-bal-good-stagnation.pdf}  \\ 
+  \caption{\emph{BAL} hidden activations on the \emph{4-2-4 encoder}. Top $2\times2$ are {\bf un}successful networks and bottom $2\times2$ successful ones.}
+  \label{fig:results-hidden-activations-bal}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.45\textwidth]{../presentation/img/tazisko.png}   %TODO 
-  \includegraphics[width=0.45\textwidth]{../presentation/img/non-convergent.png}   %TODO  
-  \caption{BAL hidden activations on the \emph{4-2-4 encoder} for {\bf un}successful networks.}
-  \label{fig:results-hidden-activations-bal-bad}
+  \includegraphics[width=0.48\textwidth]{img/hid-tlr-bad-static.pdf}  
+  \includegraphics[width=0.48\textwidth]{img/hid-tlr-bad-tiny.pdf}  
+  \includegraphics[width=0.48\textwidth]{img/hid-tlr-bad-init.pdf}  
+  \includegraphics[width=0.48\textwidth]{img/hid-tlr-bad-weird.pdf}  
+  \includegraphics[width=0.48\textwidth]{img/hid-tlr-good-static.pdf}  
+  \includegraphics[width=0.48\textwidth]{img/hid-tlr-good-tiny.pdf}  
+  \includegraphics[width=0.48\textwidth]{img/hid-tlr-good-init.pdf}  
+  \includegraphics[width=0.48\textwidth]{img/hid-tlr-good-weird.pdf}  
+  \caption{\emph{TLR} hidden activations on the \emph{4-2-4 encoder}. Top $2\times2$ are {\bf un}successful networks and bottom $2\times2$ successful ones.}
+  \label{fig:results-hidden-activations-tlr}
 \end{figure}
 
-On figure~\ref{fig:results-hidden-activations-bal-bad} we see unsuccessful networks. On the left image the network settled with constant hidden activations for which the resulting two--dimensional task is not linearly separable. On the right image the network failed to convergence swtich several hidden activation states.
-
 %============================================================
-\subsubsection{Features}
+%\subsubsection{Features}
 
 %==== TODO feature to epoch of best (in worst we will throw away) 
 
