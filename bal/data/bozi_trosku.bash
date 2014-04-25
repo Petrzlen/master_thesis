@@ -1,5 +1,10 @@
 #!/bin/bash
 
+sh performance.sh 'auto4_tlr_best' 500 0.2
+gnuplot -e "outpath='../../text/img/tlr-best-perf.pdf'" performance.p
+
+exit 
+
 #=================== TLR ====================
   #=================== auto4 ====================
   echo "tlr-auto4-success.pdf"
@@ -47,9 +52,9 @@ do
   gnuplot -e "inpath='buf.dat';outpath='../../text/img/k3/tlr-$num-epoch.pdf';val_from=0;val_d=300;val_to=3000;rxf=-4;rxt=4;ryf=-7;ryt=1;rgb_a=10;rgb_b=13;rgb_c=33" contour.p
 done
   
-ls | grep -o 'k3_4_[0-9]_139[0-9]\+' | sort | uniq | while read filename
-do
-  echo "motam $filename"
-  bash zmotaj_stats.bash $filename $filename 
-done 
+#ls | grep -o 'k3_4_[0-9]_139[0-9]\+' | sort | uniq | while read filename
+#do
+#  echo "motam $filename"
+#  bash zmotaj_stats.bash $filename $filename 
+#done 
 

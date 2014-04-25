@@ -5,8 +5,8 @@ set yrange [0:1]
 set terminal pdf enhanced font "arial,10" size 500, 350     
 set output inpath.".pdf" 
 
-set xlabel "Hidden activation on unit 1"
-set ylabel "Hidden activation on unit 2"
+set xlabel "hidden activation on unit 1"
+set ylabel "hidden activation on unit 2"
 
 l '<./labels.sh '.inpath.'_0.csv 1 3'
 l '<./labels.sh '.inpath.'_1.csv 1 3'
