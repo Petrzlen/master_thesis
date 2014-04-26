@@ -48,9 +48,17 @@ On the following figure~\ref{fig:results-tlr-auto4-epoch} we see that the succes
 \subsubsection{Hidden activations}
 \ref{sec:our-hidden-activation}  
 
+On figures~\ref{fig:results-hidden-activations-bal} and~\ref{fig:results-hidden-activations-tlr} we show forward hidden activations. Each color represents the forward hidden representation of one of the four inputs in the \emph{4-2-4 encoder} task. As the hidden layer has size 2 it could be mapped to $(0,1)^2$. The activations started at the black dots and continued as outlined by the the lines. The numbers attached to the lines are the epoch numbers. 
+
+The main difference between TLR and BAL seems to be the speed of activation change. In BAL on figure~\ref{fig:results-hidden-activations-bal} we have a step of size 0.6 which corresponds to four, one for each input, weight updates. And after some initial steps BAL tends to stop the activation change. This could be contributed to settling $|H^F-H^B| \approx \overrightarrow{0}$ as discussed in \ref{sec:our-hidden-activation}. 
+
+Another source of error could be \emph{non--convex} hidden activation initializations. In the beginning the weight matrices are initialized by random what leads to random hidden activations. If they are also non--convex in the end then it's impossible to perfectly classify on the hidden--to--visible layer due the linear separability theorem discussed in section~\ref{sec:models-perceptron}. Thus the network must \emph{escape} the non--convex state which could introduce problems. 
+
 %===== hidden activation timelines with commentaries (for TLR, BAL, GeneRec) 
 % 2x success, 2x error (wrong settle, divergence) 
 
+%TODO somehow divide so it will be visible together with explanation (left, right page 2x2, reduce...) 
+%TODO should have also backward activations ... now we can only guess 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.48\textwidth]{img/hid-bal-bad-init.pdf}  
@@ -83,7 +91,7 @@ On the following figure~\ref{fig:results-tlr-auto4-epoch} we see that the succes
 \subsubsection{Features}
 \label{sec:results-auto4-bal-matrix-sim}
 
-TODO feature to epoch of best (in worst we will throw away) 
+TODO[opt] feature to epoch of best (in worst we will throw away) 
 
 \subsubsection{Other} 
 

@@ -23,7 +23,7 @@ y_k =
 \right.
 \end{equation} 
 
-Equation~\ref{eq:perceptron} describes a simple \emph{binary treshold perceptron}. One could observe that the binary perceptron divides the vector space $\mathbb{R}^N$ by a $(n-1)$--dimensional hyperplane. This behaviour was studied by \citet{rosenblatt1958perceptron}. Now we see the importance of bias which is the absolute term in the equation of the hyperplane. 
+Equation~\ref{eq:perceptron} describes a simple \emph{binary treshold perceptron}. One could observe that the binary perceptron divides the vector space $\mathbb{R}^N$ by a $(n-1)$--dimensional hyperplane. This behaviour was studied by \citet{rosenblatt1958perceptron}. Now we see the importance of bias which is the absolute term in the equation of the hyperplane. \label{sec:linear-sep} This leads to the fact that for one perceptron is impossible to classify non--\emph{linearly separable} vectors. 
 
 \paragraph{Continuous perceptron.}
 We put additional constraints for the activation function $\phi : \mathbb{R} \mapsto (0,1)$ that $\phi$ is differentiable, monotonously increasing and satisfying two asymptotic conditions $t(-\infty)=0$ and $t(\infty)=1$.  Usually, the activation function is realized by the logistic function $\frac{1}{1 + e^{-\eta}}$. To allow real numbered results from range $(0,1)$ we drop the treshold function and simply output $\phi(\eta_k)$. 
@@ -61,7 +61,7 @@ for e from 1 to EPOCHS:
     for i from 0 to N: 
       update w_{ij}
 \end{lstlisting}
-  \caption{Perceptron learning. Applying the \emph{weight update rule}~\ref{eq:perceptron-learning-rule} in loop for each sample in $T$. One loop is called \emph{epoch}.} 
+  \caption{Perceptron learning. Applying the \emph{weight update rule}~\ref{eq:perceptron-learning-rule} in loop for each sample in $T$. One loop is called \emph{epoch}.}  
   \label{fig:perceptron-learning}
 \end{figure}
 
