@@ -12,72 +12,37 @@
 In this section we inspect TLR\ref{sec:our-tlr} performance for broad range of parameters $\lambda_h$ and $\lambda_v$. The network architecture is 4-2-4 what allows us to run plethora of simulations. There were two kinds of simulations. One being \emph{two dimensional maps (TDM)} where on the $x$ and $y$ axis $\lambda_v$ and $\lambda_h$ were plotted color was used for the $z$ value. Second being \emph{timelines} where a best configuration found by TDM was inspected. For TDM we run about 200-500 networks for each ($\lambda_v$, $\lambda_h$) and for timelines about 5000-10000 runs. After the simulation ended we took the average for each parameter setting. The networks were trained while $patSucc^F \neq 0$ or $epoch < MAX\_EPOCH$ where $MAX\_EPOCH$ was set to 100,000 in TDM and 1,000,000 in timelines. Note that most of the plots are in \emph{logarithmic} scale. 
 
 %============================================================
-\subsubsection{Comparison} 
-\label{sec:tlr-auto4-cmp} 
-
-In the following table\ref{tab:results-cmp-auto4} we can see the comparison of the most important models which we analysed on the \emph{4-2-4 encoder} task. We achieved an improvement of BAL $patSucc^F$ from $62.7\%$ to $93.1\%$ by using two different learning rates \ref{sec:our-tlr}. This result was improved further to $99.86\%$ by preselecting networks based on initial weights \ref{sec:sim-exp-candidates}. This proved that hidden distance and representation convexity are important attributes of BAL \ref{sec:results-candidates}. 
-
-On the other hand, many of the analysed models achieved poorly. Notably we tried modified GeneRec learning rules \ref{sec:models-generec-modifications} on BAL, calling this model \emph{BAL GeneRec Learning Rules (BAL GLR)}. This lead to no results. Also \emph{BAL-recirc} \ref{sec:our-bal-recirc} being the combination of BAL and GeneRec achieved worse than BAL. We experimented with \emph{momentum} in section~\ref{sec:results-momentum}, symmetric version of BAL in section~\ref{sec:our-bal-sym} and other but with no significant improvement. 
-
-\begin{table}[H] 
-  \centering
-    \begin{tabular}{|l|l|l|l|l|l|}
-    \hline
-    Algorithm (section)&$\lambda_h$&$\lambda_v$&$patSucc^F$ &Epochs\\ %&SEM(success) \\
-    \hline
-    BP (\ref{sec:models-bp}) &2.4 &2.4 &100&60\\ %&5.1\\
-    \hline
-    GR (\ref{sec:models-generec}) &0.6 &0.6 &90&418\\ %&28\\
-    \hline
-    GR Sym (\ref{eq:models-generec-learning-rule-sym}) &1.4 &1.4 &56&88\\ %&2.9\\
-    \hline
-    GR Mid (\ref{eq:models-generec-learning-rule-mid}) &2.4 &2.4 &92&60\\ %&3.4\\
-    \hline
-    CHL (\ref{eq:models-chl}) &1.2 &1.2 &56&77\\ %&1.8\\
-    \hline
-    BAL (\ref{sec:models-bal})&0.9 &0.9 &62.7& 5136.11\\ %&2.0e+08\\
-    \hline
-    BAL TLR (\ref{sec:our-tlr})&0.0002  & 500&93.12&5845.01\\ %&1.52e+08\\
-    \hline
-    BAL TLR Can (\ref{sec:sim-exp-candidates})&0.0002&500&99.86&150.417\\ %&5,070,000\\
-    \hline
-    BAL Recirc (\ref{sec:our-bal-recirc})&5&1.2&43.9&2878.92\\ %&4.31e+07\\
-    \hline
-    BAL GLR (\ref{sec:models-generec-modifications})& any & 0 & 0 & N/A \\ 
-    \hline 
-    %TODO Symmetric BAL 
-    \end{tabular}
-  \caption{Comparing performance of different models on the \emph{4-2-4 encoder} task. Data for BP, GR, GR Sym, Gr Mid and CHL are taken from \citet{o1996bio}.} 
-  \label{tab:results-cmp-auto4}
-\end{table}
-
-Note that when comparing runtime in table~\ref{tab:results-cmp-auto4} based on \emph{epochs} we must be aware of that GeneRec and BAL-recirc epochs take longer than others. That's because the recirculation step~\ref{sec:models-generec-activation} where usually about 5-15 iterations are necessary for activation to settle~\ref{sec:generec-fluctuation}. Thus the 418 epochs of GeneRec are comparable to the 5845 epochs of TLR in terms of compuration time. 
+\input{results-auto4-cmp} 
 
 %============================================================
 \subsubsection{Two learning rate} 
 \label{sec:tlr-auto4} 
 \ref{sec:datasets-auto4} 
+
+On figure~\ref{fig:results-tlr-auto4-performance} we compare success rate for different settings of $\lambda_v$ and $\lambda_h$. It's interesting that the subspace with best achieving networks is around the halfline $(10, 0.001)$ to $(10^9, 0.001)$. That means the result is mainly depending on $\lambda_h$. Even more interesting is the epochs needed for successful networks where an \emph{abyss} occured around line $(0.01, 0.0002)$ to $(10^9, 0.0002)$. Unfortunatelly, we can only guess what is the reason behind this abyss. Maybe it's related to $MAX\_EPOCH$ and the fact that we are calculating only for successful networks and therefore networks having $\lambda_h < 10^{-6}$ converge fast because of $\lambda_v$ or fail to convergence because of very small $\lambda_h$. 
+
 %======== (3D) L1 x L2 x epochs =========
 %======== (3D) L1 x L2 x patSuccF =========
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.48\textwidth]{img/tlr-auto4-success.pdf}   
   \includegraphics[width=0.48\textwidth]{img/tlr-auto4-epoch.pdf}     
-  \caption{TLR success and convergence on the \emph{4-2-4 Encoder} task with $\sigma = 2.3$ and $\mu = 0.0$ best being $96.5\$$ with setting $\lambda_h=0.0003$ and $\lambda_v=1000.0$.}
+  \caption{TLR success and epochs needed for successful networks on the \emph{4-2-4 encoder} task with $\sigma = 2.3$ and $\mu = 0.0$ best being $96.5\$$ with setting $\lambda_h=0.0003$ and $\lambda_v=1000.0$.}
   \label{fig:results-tlr-auto4-performance}
 \end{figure}
 
-Note the inconsistency with table~\ref{tab:results-cmp-auto4} where 93.12\% success was stated as best and in figure~\ref{fig:results-tlr-auto4-performance} wher 96.5\%. That's because the law of big numbers 
+Note the inconsistency between table~\ref{tab:results-cmp-auto4} where 93.12\% success was stated for TLR and in figure~\ref{fig:results-tlr-auto4-performance} it was 96.5\%. We can explain this by the \emph{law of big numbers}. In the first case we run 10,000 networks and therefore the result is likely to mirror the reality. In the second case only 200 networks were run for each$(\lambda_v,\,\lambda_h)$ pairs with having about 50 candidates for best achievers. Thus if we do little amount of runs for these 50 candidates it's likely that some them will achieve better than in reality. 
+
+On the following figure~\ref{fig:results-tlr-auto4-epoch} we see that the success rate increases even after $10^5$ epochs and our intuition tells us that it will continue even after $10^6$ epoch. Also interesting is that $patSucc^B$ first follows $patSucc^F$ for about 100 epochs but then it stagnates at rate $\approx0.8$ and even it starts to drop a little. TODO explain, maybe an implementation error? It's so symmetric and weight update is independent on activation cimputation. 
 
 %======== (2D) best TLR on ALL_SUCC x epoch (std-dev) ==========
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.48\textwidth]{img/tlr-auto4-best-perf.pdf}   
   \includegraphics[width=0.48\textwidth]{img/tlr-auto4-best-can.pdf}      
-  \caption{TLR success evolution for the \emph{4-2-4 Encoder} task. Left without candidate selection and right with candidates selection. } %TODO backward success
+  \caption{TLR success timeline for the \emph{4-2-4 encoder} task with $\lambda_h=0.0002$ and $\lambda_v=500$. Left without candidate selection and right with candidates selection.}
   \label{fig:results-tlr-auto4-epoch} 
 \end{figure}
-
 
 %============================================================
 \subsubsection{Hidden activations}
