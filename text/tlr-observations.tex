@@ -30,7 +30,7 @@ Momentum had no significant effect on network performance as shown in table~\ref
   {\small
     \begin{tabular}{|l|l|}
     \hline
-avg(success) & momentum \\
+momentum & avg(success) \\
     \hline
 0.001  & 0.4419 \\
     \hline
@@ -51,22 +51,5 @@ avg(success) & momentum \\
 \end{table}
 
 %======== (2D) best TLR on ALL_SUCC x epoch (std-dev) : TLR vs. best momentum ==========
-
-
-\subsubsection{Long run} 
-\label{sec:results-long-run} 
-
-%======== (3D) L1 x L2 x patSuccF : TLR vs. long run best =========
-%======== (3D) L1 x L2 x epochs : TLR vs. long run best =========
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.45\textwidth]{img/placeholder.png}  %TODO   
-  \includegraphics[width=0.45\textwidth]{img/placeholder.png}  %TODO    
-  \caption{Running 1,000,000 epochs on the \emph{4-2-4 encoder} task with BAL. This could lead to $\approx 10\%$ success increase.}
-  \label{fig:results-tlr-auto4-long-run}
-\end{figure}
-
-
-%======== (2D) best TLR on ALL_SUCC x epoch (std-dev) : TLR vs. long run best ==========
 
 \input{tlr-other} 

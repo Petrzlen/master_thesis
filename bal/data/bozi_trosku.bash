@@ -62,7 +62,7 @@ cp hr/tlr/good/auto4_1_2_1398465049055.pdf  ../../text/img/hid-tlr-good-weird.pd
 sh performance.sh 'auto4_tlr_best' 500 0.2
 gnuplot -e "outpath='../../text/img/tlr-best-perf.pdf'" performance.p
 
-sh performance.sh 'auto4_tlr_best_can' 500 0.2
+sh performance.sh 'auto4_tlr_best_bcan' 500 0.2
 gnuplot -e "outpath='../../text/img/tlr-best-can.pdf'" performance.p
 
 #======================= MOMENTUM ==================
