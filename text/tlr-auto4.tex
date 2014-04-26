@@ -96,21 +96,20 @@ TODO[opt] feature to epoch of best (in worst we will throw away)
 \subsubsection{Other} 
 
 \paragraph{Recirculation BAL.} 
+
+Although, \emph{BAL-recirc} \ref{sec:our-bal-recirc} was not successful on the \emph{4-2-4 encoder} task as shown on figure~\ref{fig:results-bal-recirc-auto4-performance} it's interesting that the success depends on $\lambda_v$ and not $\lambda_h$ as in the case of TLR~\ref{fig:results-tlr-auto4-performance}. This observation is also true for GeneRec as shown on figure~\ref{fig:results-generec-auto4-performance}. Thus we can conclude that for the recirculation type networks this could hold. 
 %======== (3D) L1 x L2 x epochs =========
 %======== (3D) L1 x L2 x patSuccF =========
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.48\textwidth]{img/bal-recirc-auto4-success.pdf}   
   \includegraphics[width=0.48\textwidth]{img/bal-recirc-auto4-epoch.pdf}     
-  \caption{BAL-recirc \ref{sec:our-bal-recirc} success and convergence on the \emph{4-2-4 Encoder} task with $\sigma = 2.3$ and $\mu = 0.0$.}
+  \caption{BAL-recirc \ref{sec:our-bal-recirc} success and convergence on the \emph{4-2-4 encoder}. Best result $43.9\$$ achieved with setting $\lambda_h=5$ and $\lambda_v=1.2$.}
   \label{fig:results-bal-recirc-auto4-performance}
 \end{figure}
 
-\paragraph{Symmetric BAL.} 
-\label{sec:our-bal-sym} 
-\emph{Symmetric BAL (SymBAL)} is inspired by the necessary condition for convergence of GeneRec \citep{o1996bio} we set symmetric weights $W^{IH} = (W^{HI})^T$ and $W^{HO} = (W^{OH})^T$. We found no significant improvement when using this approach. TODO plot. 
-
 \paragraph{GeneRec.} 
+As with generalizing of BAL to TLR we tried also generalizing GeneRec with the two learning rate approach. Although, the performance was not increased it showed that the success depends mostly on $\lambda_v$ as shown on figure~\ref{fig:results-generec-auto4-performance}. 
 %======== (3D) L1 x L2 x epochs =========
 %======== (3D) L1 x L2 x patSuccF =========
 \begin{figure}[H]
@@ -121,6 +120,9 @@ TODO[opt] feature to epoch of best (in worst we will throw away)
   \label{fig:results-generec-auto4-performance}
 \end{figure}
 
+\paragraph{Symmetric BAL.} 
+\label{sec:our-bal-sym} 
+We were inspired by the necessary condition for convergence of GeneRec as stated by \citet{o1996bio}. Thus we introduced \emph{Symmetric BAL (SymBAL)} as a modification of BAL where we set symmetric weights $W^{IH} = (W^{HI})^T$ and $W^{HO} = (W^{OH})^T$. We found no significant improvement when using this approach. TODO plot. 
 
 \subsubsection{Conclusion} 
 \label{sec:tlr-auto4-conclusion} 
