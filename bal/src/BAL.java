@@ -1896,8 +1896,8 @@ public class BAL {
 		MEASURE_IS = true; 
 		MEASURE_SAVE_AFTER_EACH_RUN = true; 
 
-		INPUT_FILEPATH = "auto4.in"; 
-		OUTPUT_FILEPATH = "auto4.in"; 
+		INPUT_FILEPATH = "k3.in"; 
+		OUTPUT_FILEPATH = "k3.out"; 
 		INIT_HIDDEN_LAYER_SIZE = 2;
 		POSTPROCESS_INPUT = true; 
 		POSTPROCESS_OUTPUT = true; 
@@ -1944,9 +1944,9 @@ public class BAL {
 
 		//!!!NOTE: DON'T FORGET SYMMETRY SETTING!!!
 		INIT_CANDIDATES_COUNT = 1000;
-		MEASURE_RECORD_LOG = true; 
-		MEASURE_RECORD_EACH = 10;
-		INIT_MAX_EPOCHS = 10000;
+		MEASURE_RECORD_LOG = false; 
+		MEASURE_RECORD_EACH = 2500000;
+		INIT_MAX_EPOCHS = 3000;
 		INIT_RUNS = 200 * TRY_LAMBDA.length * TRY_LAMBDA_V.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
 
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 

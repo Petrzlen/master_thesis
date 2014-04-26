@@ -1,7 +1,6 @@
 #!/bin/bash
 
 
-
 #===================== hidden activations ==========================
 
 #bal_orig/bad/auto4_1_139846
@@ -59,11 +58,19 @@ cp hr/tlr/good/auto4_1_2_1398465046959.pdf  ../../text/img/hid-tlr-good-init.pdf
 cp hr/tlr/good/auto4_1_2_1398465049055.pdf  ../../text/img/hid-tlr-good-weird.pdf
 
 #===================== epoch evolution =============================
-sh performance.sh 'auto4_tlr_best' 500 0.2
-gnuplot -e "outpath='../../text/img/tlr-best-perf.pdf'" performance.p
+sh performance.sh 'auto4_tlrbbest' 500 0.2
+gnuplot -e "outpath='../../text/img/tlr-auto4-best-perf.pdf'" performance.p
 
 sh performance.sh 'auto4_tlr_best_bcan' 500 0.2
-gnuplot -e "outpath='../../text/img/tlr-best-can.pdf'" performance.p
+gnuplot -e "outpath='../../text/img/tlr-auto4-best-can.pdf'" performance.p
+
+sh performance.sh 'k3_3_tlr_best' 500 0.2
+gnuplot -e "outpath='../../text/img/tlr-k3-3-best-perf.pdf'" performance.p
+
+sh performance.sh 'k3_3_tlr_best_can' 500 0.2
+gnuplot -e "outpath='../../text/img/tlr-k3-3-best-can.pdf'" performance.p
+
+exit 
 
 #======================= MOMENTUM ==================
 declare -a mom_arr=("0.001" "0.003" "0.01" "0.03" "0.1" "0.3")
@@ -120,7 +127,7 @@ gnuplot -e "inpath='buf.dat';outpath='../../text/img/generec-auto4-epoch.pdf';va
 
 #==================== HISTORY =====================
   #=================== auto4 ====================
-ls | grep -o 'k3_139[0-9]\+_[3-9]' | sort | uniq | while read filename
+ls 'stats' | grep -o 'stats/k3_139[0-9]\+_[3-9]' | sort | uniq | while read filename
 do
   num=$(echo $filename | grep -o '[0-9]$')
   echo "motam $filename with num=$num"
@@ -135,5 +142,19 @@ do
   gnuplot -e "inpath='buf.dat';outpath='../../text/img/k3/tlr-$num-epoch.pdf';val_from=0;val_d=300;val_to=2500;rxf=-4;rxt=4;ryf=-7;ryt=1;rgb_a=10;rgb_b=13;rgb_c=33" contour.p
 done
   
-  #TODO generec 
 
+#=================== auto4 ====================
+ls 'stats' | grep -o 'k3_4_[3-9]_1398[0-9]\+' | sort | uniq | while read filename
+do
+  num=$(echo $filename | grep -o 'k3_4_[0-9]' | grep -o '[0-9]$')
+  echo "motam $filename with num=$num"
+  
+  #bash zmotaj_stats.bash w $filename w 
+  
+  echo "  generec-k3-$num-success.pdf"
+  gnuplot -e "inpath='stats/$filename/log_lls_0.dat';outpath='../../text/img/k3/generec-$num-success.pdf';val_from=0;val_d=10;val_to=100;rxf=-4;rxt=4;ryf=-7;ryt=1;rgb_a=33;rgb_b=13;rgb_c=10" contour.p
+
+  echo "  generec-k3-$num-epoch.pdf"
+  less stats/$filename/log_lle_0.dat | bash post_epochs.bash 5000 > buf.dat
+  gnuplot -e "inpath='buf.dat';outpath='../../text/img/k3/generec-$num-epoch.pdf';val_from=0;val_d=300;val_to=3000;rxf=-4;rxt=4;ryf=-7;ryt=1;rgb_a=10;rgb_b=13;rgb_c=33" contour.p
+done

@@ -31,8 +31,9 @@
 %======== (3D) best TLR on ALL_SUCC x epoch (std-dev) x hidden size ==========
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.45\textwidth]{img/placeholder.png}  %TODO    
-  \caption{TLR success evolution for the \emph{CBVA} task.}
+  \includegraphics[width=0.48\textwidth]{img/tlr-k3-3-best-perf.pdf}   
+  \includegraphics[width=0.48\textwidth]{img/tlr-k3-3-best-can.pdf}      
+  \caption{TLR success evolution for the \emph{4-2-4 Encoder} task. Left without candidate selection and right with candidates selection. }
   \label{fig:results-tlr-k3-epoch} 
 \end{figure}
 
@@ -53,8 +54,24 @@
 \end{table}
 
 
-\subsubsection{Different hidden sizes} 
-\label{sec:results-dhs-k3} 
+\subsubsection{GeneRec} 
+%TODO check if good epoch count 
 
-TODO ref 
+\begin{figure}[H]
+  \centering
+  Hidden size = 3 \\
+  %TODO \includegraphics[width=0.45\textwidth]{img/k3/tlr-3-success.pdf} 
+  %TODO \includegraphics[width=0.45\textwidth]{img/k3/tlr-3-epoch.pdf}   
+  Hidden size = 4 \\
+  \includegraphics[width=0.45\textwidth]{img/k3/generec-4-success.pdf} 
+  \includegraphics[width=0.45\textwidth]{img/k3/generec-4-epoch.pdf}   
+  Hidden size = 5 \\
+  \includegraphics[width=0.45\textwidth]{img/k3/generec-5-success.pdf} 
+  \includegraphics[width=0.45\textwidth]{img/k3/generec-5-epoch.pdf}  
+  Hidden size = 7 \\
+  \includegraphics[width=0.45\textwidth]{img/k3/generec-7-success.pdf} 
+  \includegraphics[width=0.45\textwidth]{img/k3/generec-7-epoch.pdf}    
+  \caption{\emph{GeneRec} performance on the \emph{CBVA} task with different hidden sizes.}
+  \label{fig:results-generec-k3-success}
+\end{figure}
 
