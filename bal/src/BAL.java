@@ -80,7 +80,7 @@ public class BAL {
 	private static int WU_BAL_SYM = 7; // non of BAL other learning rule works 
 	private static int WU_BAL_MID = 8; 
 	private static int WU_BAL_CHL = 9; 
-	private static final int WU_TYPE = WU_BAL_ORIG;
+	private static final int WU_TYPE = WU_BAL_RECIRC;
 
 	public static final boolean INIT_SYMMETRIC_IS = true; //WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_CHL || WU_TYPE == WU_GENEREC_MID || WU_TYPE == WU_GENEREC_SYM;	
 	// ========= RECIRCULATION -- iterative activation ==============
@@ -1892,7 +1892,7 @@ public class BAL {
 		LAMBDA_ERROR_MOMENTUM_IS = false; 
 
 		//TRY_LAMBDA = new double[]{500}; 
-		TRY_LAMBDA = new double[]{0.9}; 
+		TRY_LAMBDA = new double[]{1.2}; 
 		/*TRY_LAMBDA = new double[]{
 				0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 
 				0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 
@@ -1905,7 +1905,7 @@ public class BAL {
 		};*/ 
 		
 		//TRY_LAMBDA_V = new double[]{0.0002}; 
-		TRY_LAMBDA_V = new double[]{0.9};  
+		TRY_LAMBDA_V = new double[]{1.2};  
 		/*TRY_LAMBDA_V = new double[]{
 				0.00000001, 0.00000002, 0.00000005, 0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 
 				0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 
@@ -1925,7 +1925,7 @@ public class BAL {
 		//TRY_MOMENTUM = new double[]{0.001, 0.003, 0.01, 0.03, 0.1, 0.3}; //INIT_MOMENTUM_IS = true 
 
 		INIT_CANDIDATES_COUNT = 0;
-		INIT_MAX_EPOCHS = 100000;
+		INIT_MAX_EPOCHS = 50000;
 		INIT_RUNS = 1000 * TRY_LAMBDA.length * TRY_LAMBDA_V.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
 
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 

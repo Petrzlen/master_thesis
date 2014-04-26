@@ -52,13 +52,13 @@ It's possible for both BAL \ref{sec:models-bal} and GeneRec \ref{sec:models-gene
     \hline
     CHL&1.2&56&77&1.8\\
     \hline
-    BAL&0.9&65& &\\
+    BAL&0.9&62.7& 5136.11&2.0e+08\\
     \hline
     BAL TLR&0.0002 | 500&93.12&5845.01&1.52e+08\\
     \hline
     BAL TLR 1000 can&0.0002 | 500&99.86&150.417&5,070,000\\
     \hline
-    BAL Recirc&0.7&34&10000&\\
+    BAL Recirc&1.2&43.9&2878.92&4.31e+07\\
     \hline
     \end{tabular}
   \caption{Comparing performance of different models on the \emph{4-2-4 encoder} task.} 
@@ -71,7 +71,7 @@ TODO note that one epoch computation is not same for different models, for insta
 \subsubsection{Hidden activations}
 \ref{sec:our-hidden-activation}  
 
-%===== TODO hidden activation timelines with commentaries (for TLR, BAL, GeneRec) 
+%===== hidden activation timelines with commentaries (for TLR, BAL, GeneRec) 
 % 2x success, 2x error (wrong settle, divergence) 
 
 \begin{figure}[H]
@@ -103,10 +103,10 @@ TODO note that one epoch computation is not same for different models, for insta
 \end{figure}
 
 %============================================================
-%\subsubsection{Features}
+\subsubsection{Features}
+\label{sec:results-auto4-bal-matrix-sim}
 
-%==== TODO feature to epoch of best (in worst we will throw away) 
-
+TODO feature to epoch of best (in worst we will throw away) 
 
 \subsubsection{Other} 
 

@@ -6,28 +6,17 @@
 \markboth{Appendix A}{}
 \label{sec:appendix-impl} 
 
-
-%TODO crucial parts of the implementation 
-%TODO additional tables, measures 
-
 %Implementation – in implementation section you should mention the tools that you use to implement, the target environment (e.g. linux, windows). Limitations (e.g. buffer sizes, connections number).
 
 \subsection*{GeneRec} 
 \label{sec:appendix-impl-generec} 
 
-Activation is computed as in \ref{eq:models-generec-activation}. How we implemented the details which are not talked about in \citet{o1996bio}. They are related to BAL \ref{sec:models-bal}. 
+In this section we discuss how we implemented some of the details which are not talked about in \citet{o1996bio}. These are related mainly to \emph{BAL-recirc} \ref{sec:our-bal-recirc} and also BAL \ref{sec:models-bal}. For how GeneRec works please consult \ref{sec:models-generec}.  
 
 \subsubsection*{Bias} 
-%TODO reformulate
-%TODO add more recent citations 
-%TODO add results with / without bias 
-%TODO parse references 
-The use of such biases in neural networks has been discussed in the context of the fundamental bias/variance tradeoff \citet{geman1992neural}. This tradeoff emphasizes the fact that biases that are appropriate for the task can greatly facilitate learning and generalization by reducing the level of variance, where variance reflects the extent to which parameters are underconstrained by learning, and thus free to vary, causing random errors in generalization. These biases are also known as regularizers \citet{poggio1990networks}. However, inappropriate biases can obviously hurt performance by introducing systematic errors, such that there is no such thing as a single universally beneficial set of biases (Wolpert, 1996a; Wolpert, 1996b). 
 
+Most of artificial neural networks come with \emph{bias}es \ref{sec:models-perceptron} which allow arbitrary \emph{separating hyperplane}s. To our knowledge \citet{o1996bio} talks nothing about biases and therefore we had to try several setting, namely \emph{no bias}, \emph{only--input bias}, \emph{only--forward bias} and \emph{full bias}. TODO reformulate the itemize, maybe a table. 
 
-\paragraph{Generec-Bias} 
-
-Therefore we tried several settings: 
 \begin{itemize} 
 \item No bias - two patterns for 4-2-4, three patterns for 4-3-4, all four patterns for 4-4-4
 \item Bias only on the input layer:  
@@ -45,10 +34,11 @@ Therefore we tried several settings:
 \subsubsection*{Fluctuation} 
 \label{sec:generec-fluctuation}
 
-Asymmetric BIA \ref{sec:our-bal-recirc}.
+%Asymmetric BIA \ref{sec:our-bal-recirc}.
+TODO rewrite \\ 
 
 %\paragraph{Recirculation step} %====================
-If no stationary point solution is found after MAX\_ITERATION then we set the result to avarage of the last two activations. This lead to 80\% less fluctuation. But still occured: 
+If no stationary point solution is found after MAX\_ITERATION then we set the result to average of the last two activations. This lead to 80\% less fluctuation. But still occured: 
 \begin{itemize}
 \item Big fluctuation: 0.9591299483462391
 \item Not enough iterations: 20
@@ -63,34 +53,26 @@ If no stationary point solution is found after MAX\_ITERATION then we set the re
 \end{itemize} 
   
 %\paragraph{Conclusion} %====================
-Symmetric weights haven't helped BAL (35\%) - no param selection
+Symmetric weights haven't helped BAL (35\%) - no param selection \\ 
 Using bothward GeneRec (60\%) - no param selection 
   Forgot to symmetric init -> no perceivable change 
 In both cases (almost) no fluctuation 
 
 Non-symmetric case, fluctuation in about 1/5 cases 
-  About 30\% success 
-  About 3-33 iterations needed to settle, very network dependent 
-  About 50 - 5000 epochs needed 
+  About 30\% success \\
+  About 3-33 iterations needed to settle, very network dependent  \\
+  About 50 - 5000 epochs needed  \\
 
 IDEA: maybe bad implementation of backward
       using iterative activation has almost no reason (bothward is the generec idea) 
 
-%TODO Convergence & Stability & Fluctuation 
-
 \subsubsection*{Initial weight distribution} 
+\label{sec:results-sigma} %TODO merge? 
 \label{sec:our-sigma} 
 
 Based on \citet{o1996bio} we used the following probability distribution for weight initialization: 
-
 \begin{equation} 
-\frac{1}{\sqrt{2\pi \sigma^2} e^{-\frac{(x-\mu)^2}{2\sigma^2}}},
+\frac{1}{\sqrt{2\pi \sigma^2} e^{-\frac{(x-\mu)^2}{2\sigma^2}}} \nonumber,
 \end{equation} 
-
-where $\sigma$ is one of the network parameters (ref) and $\mu = 0$ as the expected value of the normal distribution. 
-
-Our motivation to try this approach came from the fact that most of the BAL networks were capable to learn the given tasks easily, but others converged to error states (ref). Therefore we believed that there should exists a classifier which separates the successfull weight initialization from the unsuccessfull ones (ref - future work). 
-
-TODO references.
-\ref{sec:results-sigma} 
+where $\sigma$ is one of the network parameters (ref) and $\mu = 0$ as the expected value of the normal distribution. As our experiemnts with hidden activations suggests \ref{sec:our-hidden-activation}, initial weight distribution could be crucial for BAL. Therefore we had the idea to classify initial weight matrices with labelling them successfull or unsuccessful. This could be implementable for the \emph{4-2-4 encoder} \ref{sec:datasets-auto4} tasks where we would have $4\times(4\times(2+1))=48$ attributes dataset, one for each weight, and one label.
 
