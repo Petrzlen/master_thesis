@@ -1,5 +1,7 @@
 #!/bin/bash
 
+
+
 #===================== hidden activations ==========================
 
 #bal_orig/bad/auto4_1_139846
@@ -56,14 +58,12 @@ cp hr/tlr/good/auto4_1_2_1398465050037.pdf  ../../text/img/hid-tlr-good-tiny.pdf
 cp hr/tlr/good/auto4_1_2_1398465046959.pdf  ../../text/img/hid-tlr-good-init.pdf
 cp hr/tlr/good/auto4_1_2_1398465049055.pdf  ../../text/img/hid-tlr-good-weird.pdf
 
-#cp hr/bal_orig/bad/auto4_1_139846.pdf  ../../text/img/hid-bal-bad-.pdf
-
 #===================== epoch evolution =============================
 sh performance.sh 'auto4_tlr_best' 500 0.2
 gnuplot -e "outpath='../../text/img/tlr-best-perf.pdf'" performance.p
 
-#sh performance.sh 'auto4_tlr_best_can' 500 0.2
-#gnuplot -e "outpath='../../text/img/tlr-best-can.pdf'" performance.p
+sh performance.sh 'auto4_tlr_best_can' 500 0.2
+gnuplot -e "outpath='../../text/img/tlr-best-can.pdf'" performance.p
 
 #======================= MOMENTUM ==================
 declare -a mom_arr=("0.001" "0.003" "0.01" "0.03" "0.1" "0.3")

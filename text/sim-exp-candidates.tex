@@ -20,7 +20,7 @@ The \emph{candidate selection} model was used to test and prove if some particul
 We denote $X_I$, $H_I$ and $Y_I$ as the front, hidden and back activation \emph{vector}s for input $I$ (and the corresponding target). For the rest of the notation please consult \ref{tab:models-bal-activation}. We measured the following \emph{features}: 
 
 \begin{itemize} 
-\item $\mbox{dist}_{H}$ (real) -- the average distance between all hidden activations of the inputs, i.e.~$avg_{I \neq J}\left(dist(H_I^{+},H_J^{+})\right)$.
+\item $\mbox{dist}_{H}$ (real) -- the average distance between all hidden activations of the inputs, i.e.~$avg_{I \neq J}\left(dist(H_I^{+},H_J^{+})\right)$. TODO forward / backward! 
 
 \label{sec:our-dist-h-fb}
 \item $\mbox{dist}_{H}^{FB}$ (real) -- the average distance between corresponding forward and backward hidden activations, i.e.~$avg_{I}\left(dist(H_I^{-},H_I^{+})\right)$.

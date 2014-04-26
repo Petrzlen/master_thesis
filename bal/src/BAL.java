@@ -80,7 +80,7 @@ public class BAL {
 	private static int WU_BAL_SYM = 7; // non of BAL other learning rule works 
 	private static int WU_BAL_MID = 8; 
 	private static int WU_BAL_CHL = 9; 
-	private static final int WU_TYPE = WU_BAL_RECIRC;
+	private static final int WU_TYPE = WU_BAL_ORIG;
 
 	public static final boolean INIT_SYMMETRIC_IS = true; //WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_CHL || WU_TYPE == WU_GENEREC_MID || WU_TYPE == WU_GENEREC_SYM;	
 	// ========= RECIRCULATION -- iterative activation ==============
@@ -99,6 +99,7 @@ public class BAL {
 	public static boolean MEASURE_IS = true; 
 	public static boolean MEASURE_SAVE_AFTER_EACH_RUN = true; 
 	public static int MEASURE_RECORD_EACH = 100;
+	public static boolean MEASURE_RECORD_LOG = false; // then MEASURE_RECORD_EACH record will be measured between 10^i and 10^{i+1} 
 	public static boolean POSTPROCESS_INPUT = false; // i.e. if treshold should be applied on the input layer (-> 0.0 or 1.0 result)  
 	public static boolean POSTPROCESS_OUTPUT = true; // i.e. if treshold should be applied on the output layer (-> 0.0 or 1.0 result)
 	public static final int POSTPROCESS_SIMPLE = 0; 
@@ -288,8 +289,20 @@ public class BAL {
 	private static String NETWORK_RUN_ID = null;
 	private static int NETWORK_EPOCH = 0; 
 
+	private static double measure_log_last = -1; 
 	private static boolean isMeasureAtEpoch(int epochs){
-		return MEASURE_IS && (MEASURE_SAVE_AFTER_EACH_RUN && epochs % BAL.MEASURE_RECORD_EACH == 0); 
+		if(!MEASURE_IS) return false; 
+		
+		if(!MEASURE_RECORD_LOG) return (MEASURE_SAVE_AFTER_EACH_RUN && epochs % BAL.MEASURE_RECORD_EACH == 0);
+		else{ // MEASURE_RECORD_LOG
+			if(Math.log(epochs+1) > measure_log_last) {
+				measure_log_last = Math.log(epochs+1) + 1.0 / ((double) MEASURE_RECORD_EACH);
+				return true; 
+			}
+			else{
+				return false; 
+			}
+		}
 	}
 	
 	public static BAL getCandidateNetwork(RealMatrix inputs, RealMatrix outputs){
@@ -327,6 +340,7 @@ public class BAL {
 	public static BAL run(BAL override_network, RealMatrix inputs, RealMatrix outputs) throws IOException{
 		NETWORK_EPOCH = 0; 
 		max_fluctuation = 0.0; 
+		measure_log_last = -1; 
 
 		generateNetworkRunId(); 
 
@@ -484,18 +498,8 @@ public class BAL {
 				printBoth("Training stopped at epoch=" + current_epoch + " as no improvement occured for " + STOP_IF_NO_IMPROVE_FOR + " epochs\n  Best=" + STOP_IF_NO_IMPROVE_BEST_ERR + " in epoch=" + STOP_IF_NO_IMPROVE_BEST_EPC + "\n");
 				isStop = true; 
 			}
-
+			
 			if(isStop){
-				if(MEASURE_IS){
-					double[] measure_padding = network.measure(current_epoch, inputs, outputs, false);
-					for(int e = BAL.INIT_MAX_EPOCHS + 1; e > current_epoch ; e--){
-						if(isMeasureAtEpoch(e)){ 
-							double[] m = measure_padding.clone(); 
-							m[MEASURE_EPOCH] = e; 
-							network.addMeasure(m);
-						}
-					}
-				}
 				break; 
 			}
 
@@ -507,6 +511,18 @@ public class BAL {
 			if(PRINT_EPOCH_SUMMARY) printBoth("==Epoch End time=" + (System.currentTimeMillis() - st_epoch) + "\n"); 
 		}
 
+		// print remaining measures 
+		if(MEASURE_IS){
+			double[] measure_padding = network.measure(current_epoch, inputs, outputs, false);
+			for(int e = current_epoch+1; e <= BAL.INIT_MAX_EPOCHS ; e++){
+				if(e == BAL.INIT_MAX_EPOCHS || isMeasureAtEpoch(e)){ 
+					double[] m = measure_padding.clone(); 
+					m[MEASURE_EPOCH] = e; 
+					network.addMeasure(m);
+				}
+			}
+		}
+		
 		if(PRINT_NETWORK_IS){
 			printNetworkWithPass(network, inputs, outputs, "Network after run");
 		}
@@ -1202,6 +1218,32 @@ public class BAL {
 		}
 	}
 	
+	public double measureDistance(ArrayList<RealVector> points){
+		double result = 0; 
+		for(int i=0; i<points.size() ; i++){
+			for(int j=i+1; j<points.size() ; j++){
+				result += points.get(i).getDistance(points.get(j)) / (points.size() * (points.size() + 1) / 2.0); 
+			}
+		}
+		return result; 
+	}
+	
+	public int measureInConvexHull(ArrayList<RealVector> points){
+		ArrayList<Point> hidden_points = new ArrayList<Point>(); 
+		for(int i=0; i<points.size() ; i++){
+			hidden_points.add(new Point((int)(1000.0 * points.get(i).getEntry(0)), (int)(1000.0 * points.get(i).getEntry(1)))); 
+		}
+		ArrayList<Point> convex_hull = ConvexHull.execute(hidden_points); 
+		return (hidden_points.size() - convex_hull.size());
+		
+		/*//DEVELOPER DEBUG 
+		log.println("Hidden points");
+		log.println(hidden_points);
+		log.println("ConvexHull points");
+		log.println(convex_hull);
+		log.println("End"); */
+	}
+	
 	//collect monitoring=measure data, epoch is used as identifier
 	//  !this data is also stored into measures array 
 	public double[] measure(int epoch, RealMatrix in, RealMatrix target, boolean isSave){
@@ -1226,7 +1268,7 @@ public class BAL {
 				|| MEASURE_PATSUCC_FORWARD < MEASURE_COUNT
 				|| MEASURE_PATSUCC_BACKWARD < MEASURE_COUNT){
 			ArrayList<RealVector> forward_hiddens = new ArrayList<RealVector>(); 
-			double hidden_dist = 0.0;
+			ArrayList<RealVector> backward_hiddens = new ArrayList<RealVector>(); 
 			double hidden_for_back_dist = 0.0;
 			double output_for_back_dist = 0.0;
 
@@ -1252,6 +1294,7 @@ public class BAL {
 				}
 
 				forward_hiddens.add(forward[1]);
+				backward_hiddens.add(backward[1]); 
 
 				/*
 				double[] output_arr = forward[2].toArray();
@@ -1281,32 +1324,13 @@ public class BAL {
 
 			if(MEASURE_HIDDEN_DIST < MEASURE_COUNT){
 				long st = System.currentTimeMillis(); 
-				
-				for(int i=0; i<forward_hiddens.size() ; i++){
-					for(int j=i+1; j<forward_hiddens.size() ; j++){
-						hidden_dist += forward_hiddens.get(i).getDistance(forward_hiddens.get(j)) / (forward_hiddens.size() * (forward_hiddens.size() + 1) / 2); 
-					}
-				}
-
-				result[MEASURE_HIDDEN_DIST] = hidden_dist;
+				result[MEASURE_HIDDEN_DIST] = (measureDistance(forward_hiddens) + measureDistance(backward_hiddens)) / 2.0;
 				if(PRINT_EPOCH_SUMMARY) printBoth("    hidden_dist_time=" + (System.currentTimeMillis() - st) + "\n"); 
 			}
 
 			if(MEASURE_IN_TRIANGLE < MEASURE_COUNT){
 				if(forward_hiddens.get(0).getDimension() == 3){
-					ArrayList<Point> hidden_points = new ArrayList<Point>(); 
-					for(int i=0; i<forward_hiddens.size() ; i++){
-						hidden_points.add(new Point((int)(1000.0 * forward_hiddens.get(i).getEntry(0)), (int)(1000.0 * forward_hiddens.get(i).getEntry(1)))); 
-					}
-					ArrayList<Point> convex_hull = ConvexHull.execute(hidden_points); 
-					result[MEASURE_IN_TRIANGLE] = (double)(hidden_points.size() - convex_hull.size());
-	
-					/*//DEVELOPER DEBUG 
-					log.println("Hidden points");
-					log.println(hidden_points);
-					log.println("ConvexHull points");
-					log.println(convex_hull);
-					log.println("End"); */
+					result[MEASURE_IN_TRIANGLE] = (measureInConvexHull(forward_hiddens) + measureInConvexHull(backward_hiddens)) / 2.0;
 				}
 				else{
 					result[MEASURE_IN_TRIANGLE] = -1.0; 
@@ -1876,7 +1900,6 @@ public class BAL {
 	public static void experiment_TestImplementation() throws IOException{
 		MEASURE_IS = true; 
 		MEASURE_SAVE_AFTER_EACH_RUN = true; 
-		MEASURE_RECORD_EACH = 250000;
 
 		INPUT_FILEPATH = "auto4.in"; 
 		OUTPUT_FILEPATH = "auto4.in"; 
@@ -1891,8 +1914,8 @@ public class BAL {
 
 		LAMBDA_ERROR_MOMENTUM_IS = false; 
 
-		//TRY_LAMBDA = new double[]{500}; 
-		TRY_LAMBDA = new double[]{1.2}; 
+		TRY_LAMBDA = new double[]{500}; 
+		//TRY_LAMBDA = new double[]{1.2}; 
 		/*TRY_LAMBDA = new double[]{
 				0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 
 				0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 
@@ -1902,10 +1925,10 @@ public class BAL {
 				0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 
 				1.0, 3.0, 10.0, 30.0, 100.0, 300.0, 1000.0, 3000.0, 10000.0, 30000.0, 
 				100000.0, 300000.0, 1000000.0, 3000000.0, 10000000.0, 30000000.0, 100000000.0, 300000000.0, 1000000000.0
-		};*/ 
+		};*/
 		
-		//TRY_LAMBDA_V = new double[]{0.0002}; 
-		TRY_LAMBDA_V = new double[]{1.2};  
+		TRY_LAMBDA_V = new double[]{0.0002}; 
+		//TRY_LAMBDA_V = new double[]{1.2};  
 		/*TRY_LAMBDA_V = new double[]{
 				0.00000001, 0.00000002, 0.00000005, 0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 
 				0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 
@@ -1915,18 +1938,21 @@ public class BAL {
 				0.0000000001, 0.0000000003, 0.000000001, 0.000000003, 0.00000001, 0.00000003, 0.0000001, 0.0000003, 0.000001, 0.000003,
 				0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 
 				1.0, 3.0, 10.0, 30.0, 100.0
-		};*/ 
+		};*/  
 		
 		TRY_SIGMA = new double[]{2.3};
 		//TRY_SIGMA = new double[]{1.0, 2.3, 10.0};
 		
-		INIT_MOMENTUM_IS = true;  
+		INIT_MOMENTUM_IS = false;  
 		TRY_MOMENTUM = new double[]{0.0};
 		//TRY_MOMENTUM = new double[]{0.001, 0.003, 0.01, 0.03, 0.1, 0.3}; //INIT_MOMENTUM_IS = true 
 
+		//!!!NOTE: DON'T FORGET SYMMETRY SETTING!!!
 		INIT_CANDIDATES_COUNT = 0;
-		INIT_MAX_EPOCHS = 50000;
-		INIT_RUNS = 1000 * TRY_LAMBDA.length * TRY_LAMBDA_V.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
+		MEASURE_RECORD_LOG = true; 
+		MEASURE_RECORD_EACH = 10;
+		INIT_MAX_EPOCHS = 10000;
+		INIT_RUNS = 500 * TRY_LAMBDA.length * TRY_LAMBDA_V.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
 
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 		RECIRCULATION_ITERATIONS_MAX = 50; //maximum number of iterations to approximate the underlying dynamic system  
