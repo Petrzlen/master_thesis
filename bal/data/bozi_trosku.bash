@@ -70,8 +70,6 @@ gnuplot -e "outpath='../../text/img/tlr-k3-3-best-perf.pdf'" performance.p
 sh performance.sh 'k3_3_tlr_best_can' 500 0.2
 gnuplot -e "outpath='../../text/img/tlr-k3-3-best-can.pdf'" performance.p
 
-exit 
-
 #======================= MOMENTUM ==================
 declare -a mom_arr=("0.001" "0.003" "0.01" "0.03" "0.1" "0.3")
 

@@ -40,8 +40,12 @@ unset key
 set xrange [rxf:rxt]
 set yrange [ryf:ryt]
 
+set xlabel "lambda visible"
+set ylabel "lambda hidden"
+
 set xtics ("0.1^9" -9, "0.1^8" -8, "0.1^7" -7, "0.1^6" -6, "0.1^5" -5, "0.1^4" -4, "0.001" -3, "0.01" -2, "0.1" -1, "1" 0, "10" 1, "100" 2, "1000" 3, "10^4" 4, "10^5" 5, "10^6" 6, "10^7" 7, "10^8" 8, "10^9" 9) rotate by 270
 set ytics ("0.1^9" -9, "0.1^8" -8, "0.1^7" -7, "0.1^6" -6, "0.1^5" -5, "0.1^4" -4, "0.001" -3, "0.01" -2, "0.1" -1, "1" 0, "10" 1, "100" 2, "1000" 3, "10^4" 4, "10^5" 5, "10^6" 6, "10^7" 7, "10^8" 8, "10^9" 9) 
+
 #set key font "Times-Roman, 15" 
 set terminal pdf font "arial,8" #size 500, 350 
 set output outpath
