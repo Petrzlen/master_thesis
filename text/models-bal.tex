@@ -24,12 +24,12 @@ Design of Bidirectional Activation-based Learning algorithm (BAL) by~\citet{fark
   \label{tab:models-bal-activation}
 \end{table}
 
-In the first phase called \emph{forward pass} the \emph{forward stimulus} is clamped and forward activations are computed. In the same way, in the second phase called \emph{backward pass} the \emph{backward stimulus} is clamped and backward activations are computed. We can imagine the backward pass as a reconstruction of the target pattern for the forward pass. For the learning rule the \emph{difference} between the forward pass and the backward pass is used: 
+In the first phase called \emph{forward pass} the \emph{forward stimulus} is clamped and forward activations are computed. In the same way, in the second phase called \emph{backward pass} the \emph{backward stimulus} is clamped and backward activations are computed. We can imagine the backward pass as a reconstruction of the target pattern for the forward pass. For the learning rule the \emph{difference} between the forward pass and the backward pass is used
 \begin{equation}
   \label{eq:models-bal-learning-rule-forward}
   \Delta w_{ij}^{\rm F} = \lambda \ a_i^{\rm F}(a_j^{\rm B} - a_j^{\rm F}),
 \end{equation}
-and for completeness we also provide the backward learning rule which is same as the forward learning rule~\ref{eq:models-bal-learning-rule-forward}: 
+and for completeness we also provide the backward learning rule which is same as the forward learning rule~\ref{eq:models-bal-learning-rule-forward} 
 \begin{equation}
   \label{eq:models-bal-learning-rule-backward}
   \Delta w_{ij}^{\rm B} = \lambda \ a_i^{\rm B}(a_j^{\rm F} - a_j^{\rm B}). 

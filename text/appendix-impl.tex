@@ -48,12 +48,12 @@ If no stationary point solution is found after MAX\_ITERATION then we set the re
 %\paragraph{Interesting} %====================
 \begin{itemize} 
   \item oscilation in iteration could occur randomly (just in some epochs and it will completely change the network) 
-  \item when using averages, it's less probable that a fluctuation will occur 
-  \item setting MAX\_iteration much higher doesn't affect performance. About 50 is enough but 20 is not. 
+  \item when using averages, it~is less probable that a fluctuation will occur 
+  \item setting MAX\_iteration much higher does no t affect performance. About 50 is enough but 20 is not. 
 \end{itemize} 
   
 %\paragraph{Conclusion} %====================
-Symmetric weights haven't helped BAL (35\%) - no param selection \\ 
+Symmetric weights have not helped BAL (35\%) - no param selection \\ 
 Using bothward GeneRec (60\%) - no param selection 
   Forgot to symmetric init -> no perceivable change 
 In both cases (almost) no fluctuation 
