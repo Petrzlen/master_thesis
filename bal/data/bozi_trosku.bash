@@ -101,6 +101,14 @@ gnuplot -e "inpath='stats/auto4_bal_orig/log_lls_0.dat';outpath='../../text/img/
   less stats/auto4_bal_orig/log_lle_0.dat | bash post_epochs.bash 20000 > buf.dat
 gnuplot -e "inpath='buf.dat';outpath='../../text/img/tlr-auto4-epoch.pdf';val_from=0;val_d=1000;val_to=5000;rxf=-4;rxt=9;ryf=-9;ryt=1;rgb_a=10;rgb_b=13;rgb_c=33" contour.p
 
+  #=================== digits ===================
+
+  echo "tlr-digits-error.pdf"
+gnuplot -e "inpath='stats/digits_tlr/log_llp_0.dat';outpath='../../text/img/tlr-digits-psf.pdf';val_from=0.5;val_d=0.05;val_to=1.0;rxf=-2;rxt=6;ryf=-9;ryt=-2;rgb_a=33;rgb_b=13;rgb_c=10" contour.p
+
+  echo "tlr-digits-epoch.pdf"
+gnuplot -e "inpath='stats/digits_tlr/log_lle_0.dat';outpath='../../text/img/tlr-digits-epoch.pdf';val_from=7;val_d=1;val_to=15;rxf=-2;rxt=6;ryf=-9;ryt=-2;rgb_a=10;rgb_b=13;rgb_c=33" contour.p
+
 #=================== BAL RECIRC ====================
   #=================== auto4 ====================
 #awk '{if(NF<=1||(-3.5<$1 && $1<2)) print $0}' stats/auto4_bal_recirc/log_lls_0.dat > buf.dat

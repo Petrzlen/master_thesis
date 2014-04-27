@@ -78,18 +78,27 @@ do
     sqlite3 measure.sqlite <<< "SELECT lam, lam_v, 100*AVG(success) AS 'success' FROM data WHERE epoch <> 0 GROUP BY lam,lam_v;" | sed 's/|/\t/g' > lls_$fi.dat 
     #sqlite3 measure.sqlite <<< "SELECT lam, lam_v, mom, 100*AVG(success) AS 'success' FROM data WHERE epoch <> 0 GROUP BY lam,lam_v,mom;" | sed 's/|/\t/g' > lls_$fi.dat 
 
-    echo "$f : lambdah_lambdav_epoch.dat" 
+    echo "$f : lambdah_lambdav_error.dat" 
+
+    sqlite3 measure.sqlite <<< "SELECT lam, lam_v, MIN(ps_f) AS 'ps_f' FROM data GROUP BY lam,lam_v;" | sed 's/|/\t/g' > llp_$fi.dat 
+
+    echo "$f : lambdah_lambdav_ps_f.dat" 
     #wasted work :/ 
     #php ../../epochs.php files[]=$f > lambdah_lambdav_epoch_$fi.dat
     #php ../../epochs.php files[]=$f l1_id=2 l2_id=3 > lle_$fi.dat
     
-    sqlite3 measure.sqlite <<< "SELECT D1.lam, D1.lam_v, (SELECT AVG(D2.epoch) FROM data D2 WHERE D2.epoch <> 0 AND D2.success = 1 AND D1.lam=D2.lam AND D1.lam_v=D2.lam_v) as 'epoch' FROM data D1 GROUP BY lam,lam_v;" | sed 's/|/\t/g' > lle_$fi.dat 
-    #sqlite3 measure.sqlite <<< "SELECT D1.lam, D1.lam_v, D1.mom, (SELECT AVG(D2.epoch) FROM data D2 WHERE D2.epoch <> 0 AND D2.success = 1 AND D1.lam=D2.lam AND D1.lam_v=D2.lam_v AND D1.mom=D2.mom) as 'epoch' FROM data D1 GROUP BY lam,lam_v,mom;" | sed 's/|/\t/g' > lle_$fi.dat 
+    #sqlite3 measure.sqlite <<< "SELECT D1.lam, D1.lam_v, (SELECT AVG(D2.epoch) FROM data D2 WHERE D2.epoch <> 0 AND D2.success = 1 AND D1.lam=D2.lam AND D1.lam_v=D2.lam_v) as 'epoch' FROM data D1 GROUP BY lam,lam_v;" | sed 's/|/\t/g' > lle_$fi.dat 
+    
+    #sqlite3 measure.sqlite <<< "SELECT D1.lam, D1.lam_v, D1.mom, (SELECT AVG(D2.epoch) FROM data D2 WHERE D2.epoch <> 0 AND D2.success = 1 AND D1.lam=D2.lam AND D1.lam_v=D2.lam_v AND D1.mom=D2.mom) as 'epoch' FROM data D1 GROUP BY lam,lam_v,mom;" | sed 's/|/\t/g' > lle_$fi.dat
+    
+    sqlite3 measure.sqlite <<< "SELECT D1.lam, D1.lam_v, MAX(D1.epoch) AS 'epoch' FROM data D1 GROUP BY lam,lam_v;" | sed 's/|/\t/g' > lle_$fi.dat  
   fi
   
   awk 'BEGIN{last=-42;}{if(NR==1 || $1==0 || $2==0) next; if(last!=-42 && last!=$1) {printf "\n";} last=$1; print(log($1)/log(10), log($2)/log(10), $3);}' lls_$fi.dat > log_lls_$fi.dat 
   
   awk 'BEGIN{last=-42;}{if(NR==1 || $1==0 || $2==0) next; if(last!=-42 && last!=$1) {printf "\n";} last=$1; print(log($1)/log(10), log($2)/log(10), $3);}' lle_$fi.dat > log_lle_$fi.dat 
+  
+  awk 'BEGIN{last=-42;}{if(NR==1 || $1==0 || $2==0) next; if(last!=-42 && last!=$1) {printf "\n";} last=$1; print(log($1)/log(10), log($2)/log(10), $3);}' llp_$fi.dat > log_llp_$fi.dat 
   
   fi=$fi+1
 done 

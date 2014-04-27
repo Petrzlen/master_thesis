@@ -54,7 +54,8 @@ set output outpath
 
 #set pm3d interpolate 4,4
 set palette rgbformulae rgb_a,rgb_b,rgb_c
-l '<./contour.sh cont-line.dat 10 20 7'
+#l '<./contour.sh cont-line.dat 10 20 7'
+l '<./contour.sh cont-line.dat 8 16 7'
 p inpath u 1:2:3 with image, 'cont-line.dat' w l lt -1 lw 1.5
 
 #set terminal pngcairo enhanced font "arial,10" size 800, 800 

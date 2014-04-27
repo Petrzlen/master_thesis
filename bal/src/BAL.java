@@ -62,15 +62,14 @@ public class BAL {
 		//experiment_Default();
 		//experiment_DifferentHiddenSizes("k3");
 		//experiment_RerunGoodBad();
-		experiment_TestImplementation();
-		//experiment_Digits(); 
+		//experiment_TestImplementation();
+		experiment_Digits(); 
 	}
 
 	private static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0"); 
 
 	private static boolean IS_PRINT = false; 
 
-	//TODO symetricka verzia so standardnym BALom 
 	private static int WU_BAL_ORIG = 1; 
 	private static int WU_GENEREC_CHL = 2; // works but slow 
 	private static int WU_BAL_RECIRC = 3; 
@@ -80,9 +79,9 @@ public class BAL {
 	private static int WU_BAL_SYM = 7; // non of BAL other learning rule works 
 	private static int WU_BAL_MID = 8; 
 	private static int WU_BAL_CHL = 9; 
-	private static final int WU_TYPE = WU_GENEREC;
+	private static final int WU_TYPE = WU_BAL_ORIG;
 
-	public static final boolean INIT_SYMMETRIC_IS = true; //WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_CHL || WU_TYPE == WU_GENEREC_MID || WU_TYPE == WU_GENEREC_SYM;	
+	public static final boolean INIT_SYMMETRIC_IS = WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_CHL || WU_TYPE == WU_GENEREC_MID || WU_TYPE == WU_GENEREC_SYM;	
 	// ========= RECIRCULATION -- iterative activation ==============
 	private static boolean INIT_RECIRCULATION_IS = (WU_TYPE == WU_BAL_RECIRC || WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_SYM || WU_TYPE == WU_GENEREC_MID);
 	//if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop
@@ -2012,7 +2011,9 @@ public class BAL {
 				50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0
 		}; */
 		TRY_LAMBDA = new double[]{
-				0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 1000000.0
+				//0.01, 0.1, 1.0, 10.0, 100.0, 1000.0, 10000.0, 1000000.0
+				0.001, 0.0001
+				//0.00001, 0.000001
 		};
 		
 		//TRY_LAMBDA_V = new double[]{0.00001};
@@ -2022,7 +2023,7 @@ public class BAL {
 				0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05
 		}; */
 		TRY_LAMBDA_V = new double[]{
-				0.000000001, 0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01
+				0.000000001, 0.00000001, 0.0000001, 0.000001, 0.00001, 0.0001, 0.001//, 0.01
 		};
 
 		INIT_MAX_EPOCHS = 20;
