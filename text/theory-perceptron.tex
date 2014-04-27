@@ -17,8 +17,8 @@ The whole transformation of the input vector to the output activation could be w
 y_k =
 \left\{
 	\begin{array}{ll}
-		0 & \mbox{if } \phi(\sum_{i=0}^N x_iw_{ik}) < \theta_k \\
-		1 & \mbox{otherwise}
+		1 & \mbox{if } \phi(\sum_{i=0}^N x_iw_{ik}) > \theta_k \\
+		0 & \mbox{otherwise}
 	\end{array}
 \right.
 \end{equation} 
@@ -26,42 +26,43 @@ y_k =
 Equation~\ref{eq:perceptron} describes a simple \emph{binary treshold perceptron}. One could observe that the binary perceptron divides the vector space $\mathbb{R}^N$ by a $(n-1)$--dimensional hyperplane. This behaviour was studied by~\citet{rosenblatt1958perceptron}. Now we see the importance of bias which is the absolute term in the equation of the hyperplane. \label{sec:linear-sep} This leads to the fact that for one perceptron is impossible to classify non--\emph{linearly separable} vectors. 
 
 \paragraph{Continuous perceptron.}
-We put additional constraints for the activation function $\phi : \mathbb{R} \mapsto (0,1)$ that $\phi$ is differentiable, monotonously increasing and satisfying two asymptotic conditions $t(-\infty)=0$ and $t(\infty)=1$.  Usually, the activation function is realized by the logistic function $\frac{1}{1 + e^{-\eta}}$. To allow real numbered results from range $(0,1)$ we drop the treshold function and simply output $\phi(\eta_k)$. 
+We put additional constraints for the activation function $\phi : \mathbb{R} \mapsto (0,1)$ that $\phi$ is differentiable, monotonously increasing and satisfying two asymptotic conditions $t(-\infty)=0$ and $t(\infty)=1$.  Usually, the activation function is realized by the logistic function $\frac{1}{1 + \exp{-\eta}}$. To allow real numbered results from the range $(0,1)$, we drop the treshold function and simply output $\phi(\eta_k)$. 
 
 \paragraph{Learning.} 
-The goal of a perceptron is to \emph{learn} a given set $T = \{(X^j, t_j)\}$ mappings, where $X^j$ is the input vector $(x_{j0},x_{j1}, \ldots, x_{jN})$ and $t_j$ is the corresponding target. Ideally, we want from the perceptron to be able generalize for novel inputs. The goal is formalized by minimizing an error function: 
+The goal of a perceptron is to \emph{learn} the mapping given by the set $T = \{(X^j, t_j)\}$ of pairs, where $X^j$ is the input vector $(x_{j0},x_{j1}, \ldots, x_{jN})$ and $t_j$ is the corresponding target. Ideally, we want from the perceptron to be able generalize for novel inputs. The goal is formalized by minimizing an error function: 
 
 \begin{equation}
 \label{eq:perceptron-error} 
-E = \sum_{k=1}^{N} \frac{1}{2}(y_k-t_k)^2.
+E = \sum_{k=1}^{N} \frac{1}{2}(t_k-y_k)^2.
 \end{equation} 
 
 A straightforward method for the network to minimize the error function \ref{eq:perceptron-error} is simply updating weights according to the partial derivates of the error function: 
 
 \begin{equation}
 \label{eq:perceptron-learning} 
-\frac{\partial E}{\partial w_{ik}} = (y_k - t_k)\phi'(\eta_k)x_i = (y_k - t_k)y_k(1 - y_k)x_i,
+\frac{\partial E}{\partial w_{ik}} = (t_k - y_k)\phi'(\eta_k)x_i = (y_k - t_k)y_k(1 - y_k)x_i,
 \end{equation} 
 which gives us the \emph{update rule} written as: 
 \
 \begin{equation} 
 \label{eq:perceptron-learning-rule} 
-\Delta w_{ik} = \lambda (y_k - t_k)y_k(1 - y_k)x_i,
+\Delta w_{ik} = \lambda (t_k - y_k)y_k(1 - y_k)x_i,
 \end{equation} 
 where $\lambda$ is the \emph{learning rate}. 
 
 Using the learning rule \ref{eq:perceptron-learning-rule} and the following \emph{training} process the perceptron is able to \emph{learn}: 
-\begin{figure}[H]
-  \centering
-\begin{lstlisting}
-TODO nicer code listing 
-for e from 1 to EPOCHS: 
-  foreach (X^j, t_j) in T: 
-    calculate y_j
-    for i from 0 to N: 
-      update w_{ij}
-\end{lstlisting}
-  \caption{Perceptron learning. Applying the \emph{weight update rule}~\ref{eq:perceptron-learning-rule} in loop for each sample in $T$. One loop is called \emph{epoch}.}  
-  \label{fig:perceptron-learning}
-\end{figure}
+\begin{algorithm}[H]
+  \begin{algorithmic}
+    \For{$epoch = 1$ to $MAX\_EPOCH$} 
+      \ForAll{$(X^j, t_j)$ in $T$} 
+        \State $y_j \gets \phi(\sum_{i=0}^N x_iw_{ik}) > \theta_k$
+        \For{$i=0$ to $N$} 
+          \State $w_{ij} \gets w_{ij} + \lambda (t_k - y_k)y_k(1 - y_k)x_i$
+        \EndFor
+      \EndFor
+    \EndFor
+  \end{algorithmic}
+  \caption{Perceptron learning. Applying the \emph{weight update rule}~\ref{eq:perceptron-learning-rule} in loop for each sample in $T$. One main loop is called \emph{epoch}.}  
+  \label{alg:perceptron-learning}
+\end{algorithm} 
 
