@@ -2,9 +2,9 @@
 \subsubsection{Comparison} 
 \label{sec:tlr-auto4-cmp} 
 
-In the following table\ref{tab:results-cmp-auto4} we can see the comparison of the most important models which we analysed on the \emph{4-2-4 encoder} task. We achieved an improvement of BAL $patSucc^F$ from $62.7\%$ to $93.1\%$ by using two different learning rates (\ref{sec:our-tlr}). This result was improved further to $99.86\%$ by preselecting networks based on initial weights (\ref{sec:sim-exp-candidates}). This proved that hidden distance and representation convexity are important attributes of BAL (\ref{sec:results-candidates}). 
+In the following table\ref{tab:results-cmp-auto4} we can see the comparison of the most important models which we analysed on the \emph{4-2-4 encoder} task. We achieved an improvement of BAL $patSucc^F$ from $62.7\%$ to $93.1\%$ by using two different learning rates~(\ref{sec:our-tlr}). This result was improved further to $99.86\%$ by preselecting networks based on initial weights~(\ref{sec:sim-exp-candidates}). This proved that hidden distance and representation convexity are important attributes of BAL~(\ref{sec:results-candidates}). 
 
-On the other hand, many of the analysed models achieved poorly. Notably we tried modified GeneRec learning rules (\ref{sec:models-generec-modifications}) on BAL, calling this model \emph{BAL GeneRec Learning Rules (BAL GLR)}. This lead to no results. Also \emph{BAL-recirc} (\ref{sec:our-bal-recirc}) being the combination of BAL and GeneRec achieved worse than BAL. We experimented with \emph{momentum} in section~(\ref{sec:results-momentum}), symmetric version of BAL in section~(\ref{sec:our-bal-sym}) and other but with no significant improvement. 
+On the other hand, many of the analysed models achieved poorly. Notably we tried modified GeneRec learning rules~(\ref{sec:models-generec-modifications}) on BAL, calling this model \emph{BAL GeneRec Learning Rules (BAL GLR)}. This lead to no results. Also \emph{BAL-recirc}~(\ref{sec:our-bal-recirc}) being the combination of BAL and GeneRec achieved worse than BAL. We experimented with \emph{momentum} in section~(\ref{sec:results-momentum}), symmetric version of BAL in section~(\ref{sec:our-bal-sym}) and other but with no significant improvement. 
 
 \begin{table}[H] 
   \centering
@@ -12,29 +12,29 @@ On the other hand, many of the analysed models achieved poorly. Notably we tried
     \hline
     Algorithm (section)&$\lambda_h$&$\lambda_v$&$patSucc^F$ &Epochs\\ %&SEM(success) \\
     \hline
-    BP (\ref{sec:models-bp}) &2.4 &2.4 &100&60\\ %&5.1\\
+    BP~(\ref{sec:models-bp}) &2.4 &2.4 &100&60\\ %&5.1\\
     \hline
-    GR (\ref{sec:models-generec}) &0.6 &0.6 &90&418\\ %&28\\
+    GR~(\ref{sec:models-generec}) &0.6 &0.6 &90&418\\ %&28\\
     \hline
-    GR Sym (\ref{eq:models-generec-learning-rule-sym}) &1.4 &1.4 &56&88\\ %&2.9\\
+    GR Sym~(\ref{eq:models-generec-learning-rule-sym}) &1.4 &1.4 &56&88\\ %&2.9\\
     \hline
-    GR Mid (\ref{eq:models-generec-learning-rule-mid}) &2.4 &2.4 &92&60\\ %&3.4\\
+    GR Mid~(\ref{eq:models-generec-learning-rule-mid}) &2.4 &2.4 &92&60\\ %&3.4\\
     \hline
-    CHL (\ref{sec:models-chl}) &1.2 &1.2 &56&77\\ %&1.8\\
+    CHL~(\ref{sec:models-chl}) &1.2 &1.2 &56&77\\ %&1.8\\
     \hline
-    BAL (\ref{sec:models-bal})&0.9 &0.9 &62.7& 5136.11\\ %&2.0e+08\\
+    BAL~(\ref{sec:models-bal})&0.9 &0.9 &62.7& 5136.11\\ %&2.0e+08\\
     \hline
-    BAL TLR (\ref{sec:our-tlr})&0.0002  & 500&93.12&5845.01\\ %&1.52e+08\\
+    BAL TLR~(\ref{sec:our-tlr})&0.0002  & 500&93.12&5845.01\\ %&1.52e+08\\
     \hline
-    BAL TLR Can (\ref{sec:sim-exp-candidates})&0.0002&500&99.86&150.417\\ %&5,070,000\\
+    BAL TLR Can~(\ref{sec:sim-exp-candidates})&0.0002&500&99.86&150.417\\ %&5,070,000\\
     \hline
-    BAL Recirc (\ref{sec:our-bal-recirc})&5&1.2&43.9&2878.92\\ %&4.31e+07\\
+    BAL Recirc~(\ref{sec:our-bal-recirc})&5&1.2&43.9&2878.92\\ %&4.31e+07\\
     \hline
-    BAL GLR (\ref{sec:models-generec-modifications})& any & 0 & 0 & N/A \\ 
+    BAL GLR~(\ref{sec:models-generec-modifications})& any & 0 & 0 & N/A \\ 
     \hline 
     %TODO Symmetric BAL 
     \end{tabular}
-  \caption{Comparing performance of different models on the \emph{4-2-4 encoder} task. Data for BP, GR, GR Sym, Gr Mid and CHL are taken from \citet{o1996bio}.} 
+  \caption{Comparing performance of different models on the \emph{4-2-4 encoder} task. Data for BP, GR, GR Sym, Gr Mid and CHL are taken from~\citet{o1996bio}.} 
   \label{tab:results-cmp-auto4}
 \end{table}
 

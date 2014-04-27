@@ -2,7 +2,7 @@
 \subsubsection{Perceptron.}
 \label{sec:models-perceptron}
 
-The theory behind artificial neural networks started with the model of \emph{Perceptron} introduced by \citet{mcculloch1943logical}. It is a simple model which transforms a vector of inputs $s$ to an output value $y$. The notation as depicted on figure~\ref{fig:perceptron}: $x$ is the \emph{input vector} where always $x_0=1$, $w_{0k}$ is the \emph{weight} vector, $\Sigma$ is the \emph{summing} junction, $\eta_k$ is the \emph{net input}, $\phi$ is the \emph{activation function}, $\theta_k$ is the \emph{treshold}, $y_k$ is the \emph{output} and $b_k$ is the \emph{bias}.
+The theory behind artificial neural networks started with the model of \emph{Perceptron} introduced by~\citet{mcculloch1943logical}. It is a simple model which transforms a vector of inputs $s$ to an output value $y$. The notation as depicted on figure~\ref{fig:perceptron}: $x$ is the \emph{input vector} where always $x_0=1$, $w_{0k}$ is the \emph{weight} vector, $\Sigma$ is the \emph{summing} junction, $\eta_k$ is the \emph{net input}, $\phi$ is the \emph{activation function}, $\theta_k$ is the \emph{treshold}, $y_k$ is the \emph{output} and $b_k$ is the \emph{bias}.
 
 \begin{figure}[H]
   \centering
@@ -23,7 +23,7 @@ y_k =
 \right.
 \end{equation} 
 
-Equation~\ref{eq:perceptron} describes a simple \emph{binary treshold perceptron}. One could observe that the binary perceptron divides the vector space $\mathbb{R}^N$ by a $(n-1)$--dimensional hyperplane. This behaviour was studied by \citet{rosenblatt1958perceptron}. Now we see the importance of bias which is the absolute term in the equation of the hyperplane. \label{sec:linear-sep} This leads to the fact that for one perceptron is impossible to classify non--\emph{linearly separable} vectors. 
+Equation~\ref{eq:perceptron} describes a simple \emph{binary treshold perceptron}. One could observe that the binary perceptron divides the vector space $\mathbb{R}^N$ by a $(n-1)$--dimensional hyperplane. This behaviour was studied by~\citet{rosenblatt1958perceptron}. Now we see the importance of bias which is the absolute term in the equation of the hyperplane. \label{sec:linear-sep} This leads to the fact that for one perceptron is impossible to classify non--\emph{linearly separable} vectors. 
 
 \paragraph{Continuous perceptron.}
 We put additional constraints for the activation function $\phi : \mathbb{R} \mapsto (0,1)$ that $\phi$ is differentiable, monotonously increasing and satisfying two asymptotic conditions $t(-\infty)=0$ and $t(\infty)=1$.  Usually, the activation function is realized by the logistic function $\frac{1}{1 + e^{-\eta}}$. To allow real numbered results from range $(0,1)$ we drop the treshold function and simply output $\phi(\eta_k)$. 

@@ -1,16 +1,16 @@
 \subsubsection{Backpropagation}
 \label{sec:models-bp} 
 
-Backpropagation is multilayer feedforward network (\ref{sec:theory-multilayer}) which differes from our definition only with its learning rule. The aim is to find a powerful synaptic modification rule that will allow an arbitrarily connected neural network to develop an internal structure that is appropriate for a particular task domain \citep{rumelhart1986learning}. 
+Backpropagation is multilayer feedforward network~(\ref{sec:theory-multilayer}) which differes from our definition only with its learning rule. The aim is to find a powerful synaptic modification rule that will allow an arbitrarily connected neural network to develop an internal structure that is appropriate for a particular task domain~\citep{rumelhart1986learning}. 
 
-A criticism of backpropagation is that it is neurally implausible (and hard to implement in hardware) because it requires all the connections to be used backward and it requires the units to use different input-output functions for the forward and backward passes \citep{hinton1988learning}.
+A criticism of backpropagation is that it is neurally implausible (and hard to implement in hardware) because it requires all the connections to be used backward and it requires the units to use different input-output functions for the forward and backward passes~\citep{hinton1988learning}.
 
 We computed $\partial E / \partial y_j$ for any unit when $\partial E / \partial y_j$ given in the last layer. Repeating this procedure we get $\partial E / \partial y_j$ for all weights. 
 
 \begin{equation} 
 \frac{\partial E}{\partial w_{ij}} = -\sum_k(t_k-y_k)w_{jk}\sigma'(\eta_j)s_i,
 \end{equation}
-where $t_k$ is the target value, $o_k$ is the output value, $\sigma$ is the nonlinear function, $\eta_j$ is the net input and $s_i$ is the stimulus input \citet{o1996bio}.
+where $t_k$ is the target value, $o_k$ is the output value, $\sigma$ is the nonlinear function, $\eta_j$ is the net input and $s_i$ is the stimulus input~\citet{o1996bio}.
 
 \begin{table}[H] 
   \centering

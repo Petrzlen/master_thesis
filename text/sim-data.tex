@@ -2,25 +2,25 @@
 \subsection{Datasets}  
 \label{sec:sim-data} 
 
-For analysing our versions of BAL (\ref{sec:models-bal}) we have chosen three datasets on which we tested and compared the performance of our models. 
+For analysing our versions of BAL~(\ref{sec:models-bal}) we have chosen three datasets on which we tested and compared the performance of our models. 
 
 \subsubsection{4-2-4 Encoder} 
 \label{sec:datasets-auto4}
 
 
-The \emph{4-2-4 econder} task is the simplest dataset we have been working with. It consists of four four--dimensional samples $(1,0,0,0)$, $(0,1,0,0)$, $(0,0,1,0)$ and $(0,0,0,1)$ which are each mapped to itself. We use two units on the hidden layer what gives us the 4-2-4 architecture. The 4-2-4 encoder task is a well--known problem and used previously for testing GeneRec \citep{o1996bio} and BAL \citep{farkas2013bal}. In the case of BAL only 60--65\% \emph{patSucc} was achieved which leaves a gap for improvement. Also this dataset as it's convenient for testing novel approaches as the learning progress of the network could be checked by hand and eye. 
+The \emph{4-2-4 econder} task is the simplest dataset we have been working with. It consists of four four--dimensional samples $(1,0,0,0)$, $(0,1,0,0)$, $(0,0,1,0)$ and $(0,0,0,1)$ which are each mapped to itself. We use two units on the hidden layer what gives us the 4-2-4 architecture. The 4-2-4 encoder task is a well--known problem and used previously for testing GeneRec~\citep{o1996bio} and BAL~\citep{farkas2013bal}. In the case of BAL only 60--65\% \emph{patSucc} was achieved which leaves a gap for improvement. Also this dataset as it's convenient for testing novel approaches as the learning progress of the network could be checked by hand and eye. 
 
 %TODO consider \subsubsection{Simple Binary Vector Associations} 
 
 \subsubsection{Complex Binary Vector Associations} 
 \label{sec:datasets-k3}
 
-The \emph{complex binary vector associations (CBVA)} task was used in \citet{farkas2013bal} and its motivated by the sensory--motor mappings between distributed patterns \citep{farkas2013bal}. The task is to associate sixteen 16--dimensional vectors all with 3 active units. There are always 4 distinct overlapping input patterns associated with exactly one output pattern. As the association is not unique in the \emph{backward} way it's impossible to achieve perfect $\mbox{bitSucc}^B$ or $\mbox{patSucc}^B$. Therefore we would expect from the network to gives a \emph{blend} of the four input patterns corresponding the one output. 
+The \emph{complex binary vector associations (CBVA)} task was used in~\citet{farkas2013bal} and its motivated by the sensory--motor mappings between distributed patterns~\citep{farkas2013bal}. The task is to associate sixteen 16--dimensional vectors all with 3 active units. There are always 4 distinct overlapping input patterns associated with exactly one output pattern. As the association is not unique in the \emph{backward} way it's impossible to achieve perfect $\mbox{bitSucc}^B$ or $\mbox{patSucc}^B$. Therefore we would expect from the network to gives a \emph{blend} of the four input patterns corresponding the one output. 
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{img/datasets-k3.png} 
-  \caption{BAL performance on \emph{CBVA}. Black color stands for target--estimate match, gray for target only and gray with a cross for false--positive estimate \citep{farkas2013bal}.}
+  \caption{BAL performance on \emph{CBVA}. Black color stands for target--estimate match, gray for target only and gray with a cross for false--positive estimate~\citep{farkas2013bal}.}
   \label{fig:datasets-k3}
 \end{figure}
 
@@ -38,7 +38,7 @@ The \emph{complex binary vector associations (CBVA)} task was used in \citet{far
 \subsubsection{Hand-written Digits} 
 \label{sec:datasets-digits} 
 
-The well--known MNIST dataset of \emph{Hand-written Digits} analysed by \citet{lecun1998gradient} and others (TODO cite) consists of 42,000 $28 \times 28$ grayscale images mapped to ten classes each representing one digit. We have chosen this dataset for three reasons. First, it's big and complex enough to test the practicallity of our models. Second, performance of many models (TODO ref: \url{http://yann.lecun.com/exdb/mnist/}) is known on this dataset and therefore we can easily compare performance of our models to these models. And third, we can easily visualize (TODO ref) the backward \emph{blend} representations and intuitively see if our models perform well. 
+The well--known MNIST dataset of \emph{Hand-written Digits} analysed by~\citet{lecun1998gradient} and others (TODO cite) consists of 42,000 $28 \times 28$ grayscale images mapped to ten classes each representing one digit. We have chosen this dataset for three reasons. First, it's big and complex enough to test the practicallity of our models. Second, performance of many models (TODO ref: \url{http://yann.lecun.com/exdb/mnist/}) is known on this dataset and therefore we can easily compare performance of our models to these models. And third, we can easily visualize (TODO ref) the backward \emph{blend} representations and intuitively see if our models perform well. 
 
 \begin{figure}[H]
   \centering

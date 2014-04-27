@@ -2,7 +2,7 @@
 \label{sec:our-bal-recirc} 
 
 %\paragraph{Introduction} %====================
-The aim of \emph{Recirculation BAL} is to combine the ideas of BAL (\ref{sec:models-bal}) and iterative activation from GeneRec (\ref{sec:models-generec-activation}). In other words instead of computing the forward pass using only $W^{IH}$ and $W^{HO}$ we add a recirculation step between matrices $W^{HO}$ and $W^{OH}$ and similary for the backward pass and $W^{HI}$ and $W^{IH}$. We tried two approaches of such combination. First one is \emph{Bidirectional Iterative Activation (BIA)} which is a straightforward implementation of the idea. Its activations are show in table~\ref{tab:our-bia-activation}.  
+The aim of \emph{Recirculation BAL} is to combine the ideas of BAL~(\ref{sec:models-bal}) and iterative activation from GeneRec~(\ref{sec:models-generec-activation}). In other words instead of computing the forward pass using only $W^{IH}$ and $W^{HO}$ we add a recirculation step between matrices $W^{HO}$ and $W^{OH}$ and similary for the backward pass and $W^{HI}$ and $W^{IH}$. We tried two approaches of such combination. First one is \emph{Bidirectional Iterative Activation (BIA)} which is a straightforward implementation of the idea. Its activations are show in table~\ref{tab:our-bia-activation}.  
 
 \begin{table}[H] 
   \centering
@@ -34,9 +34,9 @@ The second one is \emph{Bidirectional GeneRec (BiGeneRec)} which has three phase
     Hidden (h)   &  $C^{+}$  & $\eta^{+}_j = \sum_{i}w_{ij}^{IH}x^{\rm F}_i$ + $\sum_k w_{kj}^{OH}y^{\rm B}_k$ & $h^{+}_{j} = \sigma(\eta^{+}_j)$ \\
     \hline
   \end{tabular}
-  \caption{Difference between BiGeneRec and BIA \ref{tab:our-bia-activation} is the additional $C^{+}$ phase corresponding to the plus phase of GeneRec (\ref{sec:models-generec}).} 
+  \caption{Difference between BiGeneRec and BIA \ref{tab:our-bia-activation} is the additional $C^{+}$ phase corresponding to the plus phase of GeneRec~(\ref{sec:models-generec}).} 
   \label{tab:our-bigenerec-activation}
 \end{table} 
 
-For both BIA and BiGeneRec we experimented with both asymmetric and symmetric versions. For the asymmetric version a lot of problems with \emph{fluctuation} \ref{eq:our-fluctuation} arised. This issue is analysed in the appendix (\ref{sec:generec-fluctuation}). 
+For both BIA and BiGeneRec we experimented with both asymmetric and symmetric versions. For the asymmetric version a lot of problems with \emph{fluctuation} \ref{eq:our-fluctuation} arised. This issue is analysed in the appendix~(\ref{sec:generec-fluctuation}). 
 

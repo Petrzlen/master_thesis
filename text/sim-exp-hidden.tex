@@ -3,7 +3,7 @@
 \subsubsection{Hidden activations}
 \label{sec:our-hidden-activation} 
 
-We observed that hidden activations in BAL (\ref{sec:models-bal}) tend to settle fast as shown on figure~\ref{fig:results-candidates-dist-h-fb}, i.e.~the weight changes become close to zero because $|H^F - H^B| \approx \overrightarrow{0}$. Therefore the network is \emph{de--facto} reduced to a two--layer network between the constant hidden activations and the target values. Thus \emph{at least} all cases when the hidden activations are not linearly separable \emph{sec:linear-sep} it is impossible for $w_{HI}$ and $w_{HO}$ to learn targets. This behaviour is demonstrated by the \emph{in\_triangle} measure (\ref{sec:our-in-triangle}). 
+We observed that hidden activations in BAL~(\ref{sec:models-bal}) tend to settle fast as shown on figure~\ref{fig:results-candidates-dist-h-fb}, i.e.~the weight changes become close to zero because $|H^F - H^B| \approx \overrightarrow{0}$. Therefore the network is \emph{de--facto} reduced to a two--layer network between the constant hidden activations and the target values. Thus \emph{at least} all cases when the hidden activations are not linearly separable \emph{sec:linear-sep} it is impossible for $w_{HI}$ and $w_{HO}$ to learn targets. This behaviour is demonstrated by the \emph{in\_triangle} measure~(\ref{sec:our-in-triangle}). 
 
 A more formal explaination why the hidden activations tend to settle fast could be given by the GeneRec learning rule \ref{eq:models-generec-learning-rule}: 
 \begin{equation} 
@@ -14,5 +14,5 @@ which for the $W^{IH}$ and $W^{OH}$ yields:
   \Delta w_{ij}^{IH} &= x^F_i(h^B_j - h^F_j) \nonumber \\ 
   \Delta w_{ij}^{OH} &= y^B_i(h^F_j - h^B_j). \nonumber  
 \end{align} 
-We see that both terms $(h^B_j - h^F_j)$ and $(h^F_j - h^B_j)$ push $W^{IH}$ and $W^{OH}$ to settle $h^B_j = h^F_j$. This experiment was one of the reasons we started experimenting with dynamic learning rate (\ref{sec:our-dynamic-lambda}) what lead to the TLR model (\ref{sec:our-tlr}). 
+We see that both terms $(h^B_j - h^F_j)$ and $(h^F_j - h^B_j)$ push $W^{IH}$ and $W^{OH}$ to settle $h^B_j = h^F_j$. This experiment was one of the reasons we started experimenting with dynamic learning rate~(\ref{sec:our-dynamic-lambda}) what lead to the TLR model~(\ref{sec:our-tlr}). 
 

@@ -5,9 +5,10 @@
 % 4) Possible impacts of your work into the field (e.g. “The proposed solution can be used to offload the CPU by executing data parallel computation intensive code on GPUs and thus obtaining additional Speedup for no cost”).
 
 \section*{Abstract}
+TODO - crucial part of the thesis 
 
 % 1) About the problem you want to solve
-We analysed artificial neural networks without error backpropagation (BP), based on the Generalized recirculation algorithm (GeneRec) by \citet{o1996bio} and the Bidirectional Activation-based Learning algorithm (BAL) by \citet{farkas2013bal}. The main idea of both algorithms is to update weights based on the differences between forward and backward activations. Hence, both are biologically plausible than standard models. On the other hand, both algorithms have a considerable performance gap in comparison to BP.
+We analysed artificial neural networks without error backpropagation (BP), based on the Generalized recirculation algorithm (GeneRec) by~\citet{o1996bio} and the Bidirectional Activation-based Learning algorithm (BAL) by~\citet{farkas2013bal}. The main idea of both algorithms is to update weights based on the differences between forward and backward activations. Hence, both are biologically plausible than standard models. On the other hand, both algorithms have a considerable performance gap in comparison to BP.
 
 % 2) About your solution – how you solve the problem
 We have done several model evaluations and modifications. After analysing these we eventually came up with a Two learning rates (TLR) version of BAL. TLR uses different learning rates for different weight matrices. Our simulations proved increase in success rate while having a smooth relation between success and the learning rates. The most surprising was the fact that the two learning rates in the best networks differed by magnitude of $10^8$. We further applied the idea of TLR to GeneRec and BIA and experimented with momentum, weight initialization, hidden activations, dynamic learning rate, dropout and other. 

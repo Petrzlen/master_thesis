@@ -3,7 +3,7 @@
 \label{sec:models-bal} 
 % If your work builds on top of an existing one, this is the place to describe the existing work in more detail, pointing out the parts that you extend or improve and why you extend or improve these parts.
 
-Design of Bidirectional Activation-based Learning algorithm (BAL) by \citet{farkas2013bal} is motivated by the biological plausibility of GeneRec. BAL inherits the learning rule of GeneRec \ref{eq:models-generec-learning-rule} and also the two phases. But unlike GeneRec, BAL aims to learn bidirectional mapping between inputs and outputs and for this purpose it uses four weights $W^{IH}$, $W^{HO}$, $W^{OH}$ and $W^{HI}$. The design of BAL is symmetric as shown in table~\ref{tab:models-bal-activation} and thus we avoid calling inputs, outpus, minus phase or plus phase. We rather choose \emph{forward} and \emph{backward} which could be interchanged. Note that the forward activations are denoted as $a^{\rm F}$ and backward activations as $a^{\rm B}$. 
+Design of Bidirectional Activation-based Learning algorithm (BAL) by~\citet{farkas2013bal} is motivated by the biological plausibility of GeneRec. BAL inherits the learning rule of GeneRec \ref{eq:models-generec-learning-rule} and also the two phases. But unlike GeneRec, BAL aims to learn bidirectional mapping between inputs and outputs and for this purpose it uses four weights $W^{IH}$, $W^{HO}$, $W^{OH}$ and $W^{HI}$. The design of BAL is symmetric as shown in table~\ref{tab:models-bal-activation} and thus we avoid calling inputs, outpus, minus phase or plus phase. We rather choose \emph{forward} and \emph{backward} which could be interchanged. Note that the forward activations are denoted as $a^{\rm F}$ and backward activations as $a^{\rm B}$. 
 
 \begin{table}[H]
   \centering
@@ -20,7 +20,7 @@ Design of Bidirectional Activation-based Learning algorithm (BAL) by \citet{fark
     \Bx & B  & $\eta^{\rm B}_i = \sum_j w_{ji}^{HI}h^{\rm B}_j$ & $x^{\rm B}_i = \sigma(\eta^{\rm B}_i)$\\
     \hline
   \end{tabular}
-  \caption{Activation phases and states in BAL \citep{farkas2013bal}. Where \Bx is the first activation layer, i.e. \emph{front layer}, \By is the third activation layer, i.e. \emph{back layer}, $F$ means \emph{forward pass} and $B$ means \emph{backward pass}. Layers \Bx and \By are \emph{visible} and layer \By is hidden. Note that all non--stimulus units have learnable biases and their weights are updated in a same way as regular weights.} 
+  \caption{Activation phases and states in BAL~\citep{farkas2013bal}. Where \Bx is the first activation layer, i.e. \emph{front layer}, \By is the third activation layer, i.e. \emph{back layer}, $F$ means \emph{forward pass} and $B$ means \emph{backward pass}. Layers \Bx and \By are \emph{visible} and layer \By is hidden. Note that all non--stimulus units have learnable biases and their weights are updated in a same way as regular weights.} 
   \label{tab:models-bal-activation}
 \end{table}
 
@@ -34,7 +34,7 @@ and for completeness we also provide the backward learning rule which is same as
   \label{eq:models-bal-learning-rule-backward}
   \Delta w_{ij}^{\rm B} = \lambda \ a_i^{\rm B}(a_j^{\rm F} - a_j^{\rm B}). 
 \end{equation}
-Note that we can treat the differences $(a_j^{\rm B} - a_j^{\rm F})$ and $(a_j^{\rm F} - a_j^{\rm B})$ as \emph{error terms} which push the forward and backward activation to settle. Both forward~\ref{eq:models-bal-learning-rule-forward} and backward~\ref{eq:models-bal-learning-rule-backward} learning rules are same as the basic GeneRec learning rule~\ref{eq:models-generec-learning-rule}. We experimented with different learning rules (\ref{sec:our-learning-rules}). 
+Note that we can treat the differences $(a_j^{\rm B} - a_j^{\rm F})$ and $(a_j^{\rm F} - a_j^{\rm B})$ as \emph{error terms} which push the forward and backward activation to settle. Both forward~\ref{eq:models-bal-learning-rule-forward} and backward~\ref{eq:models-bal-learning-rule-backward} learning rules are same as the basic GeneRec learning rule~\ref{eq:models-generec-learning-rule}. We experimented with different learning rules~(\ref{sec:our-learning-rules}). 
 
  
 
