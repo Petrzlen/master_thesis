@@ -2,7 +2,7 @@
 \label{sec:models-generec} 
 
 \paragraph{Introduction.} 
-The \emph{Generalized recirculation algorithm}, or \emph{GeneRec}, was developed by \citet{o1996bio}. It's a supervised algorithm which in comparison with Backpropagation \ref{sec:models-bp} is argued to be a more biologically plausible model as error is computed locally as a difference between activations \citep{o1998six, o2001generalization, da2011advances, schneider2009application}. In summary, GeneRec is a combination of CHL \ref{sec:models-chl} and the Recirculation algorithm \ref{sec:models-recirc}. It overcomes limitations of the Recirculation algorithm to be an encoder by having a three layer network. For the error computation a backward weight matrix from output layer to hidden layer is used and the learning rule is derived from the CHL learning rule~\ref{eq:models-chl-learning-rule}. It could be proven that GeneRec, as Backpropagation, could learn arbitrary input--output mappings \citep{o1996bio}. 
+The \emph{Generalized recirculation algorithm}, or \emph{GeneRec}, was developed by \citet{o1996bio}. It's a supervised algorithm which in comparison with Backpropagation (\ref{sec:models-bp}) is argued to be a more biologically plausible model as error is computed locally as a difference between activations \citep{o1998six, o2001generalization, da2011advances, schneider2009application}. In summary, GeneRec is a combination of CHL (\ref{sec:models-chl}) and the Recirculation algorithm (\ref{sec:models-recirc}). It overcomes limitations of the Recirculation algorithm to be an encoder by having a three layer network. For the error computation a backward weight matrix from output layer to hidden layer is used and the learning rule is derived from the CHL learning rule~\ref{eq:models-chl-learning-rule}. It could be proven that GeneRec, as Backpropagation, could learn arbitrary input--output mappings \citep{o1996bio}. 
 
 \paragraph{Learning rule.} 
 \label{sec:models-generec-learning-rule} 
@@ -32,10 +32,10 @@ The main difference between CHL and GeneRec is that GeneRec has layers and it's 
            &  +  & - & $o^{+}_k$ = \mbox{target output} \\
     \hline
   \end{tabular}
-  \caption{Equilibrium network variables in GeneRec model \citet{o1996bio}. We can see the inspiration from the Recirculation algorithm \ref{sec:models-recirc} and a correspondence between $T$ and GeneRec phases. In particular $s^{-} \approx T=0$, $h^{-} \approx T=1$, $o^{-} \approx T=2$ and $h^{+}$ corresponds to $T=3$. The activation flow is depicted on figure~\ref{fig:models-generec-phase}.}
+  \caption{Equilibrium network variables in GeneRec model \citet{o1996bio}. We can see the inspiration from the Recirculation algorithm (\ref{sec:models-recirc}) and a correspondence between $T$ and GeneRec phases. In particular $s^{-} \approx T=0$, $h^{-} \approx T=1$, $o^{-} \approx T=2$ and $h^{+}$ corresponds to $T=3$. The activation flow is depicted on figure~\ref{fig:models-generec-phase}.}
   \label{tab:models-generec}
 \end{table}
-In case of the \emph{plus} phase only the hidden activations are necessary to compute what could be achieved by computing $\phi(\eta_i)$. In case of the \emph{minus} phase where only inputs are clamped it's necessary to find an \emph{equilibrium} activation state for which the equations~\ref{tab:models-generec} hold. As dicussed in recurrent networks~\ref{sec:theory-recurrent} there are several approaches. In our implementation~\ref{sec:appendix-impl-generec} we choose the \emph{iterative method} with following rules for computing activations $a_i$: 
+In case of the \emph{plus} phase only the hidden activations are necessary to compute what could be achieved by computing $\phi(\eta_i)$. In case of the \emph{minus} phase where only inputs are clamped it's necessary to find an \emph{equilibrium} activation state for which the equations~\ref{tab:models-generec} hold. As dicussed in recurrent networks~(\ref{sec:theory-recurrent}) there are several approaches. In our implementation~(\ref{sec:appendix-impl-generec}) we choose the \emph{iterative method} with following rules for computing activations $a_i$: 
 \begin{align}
   \label{eq:models-generec-activation}
   a_i(0) &= \left\{
@@ -51,7 +51,7 @@ In case of the \emph{plus} phase only the hidden activations are necessary to co
 	\end{array}
 \right. \\
 \end{align} 
-where $a_i(t)$ is the activation of $i$--th unit in discrete time $t$. The rules~\ref{eq:models-generec-activation} while are iterated while $|a_i(t+1) a_i(t)| > \epsilon$ for some unit $i$. This method is further discussed in \ref{sec:generec-fluctuation} and \citep{orru2008sabio}.
+where $a_i(t)$ is the activation of $i$--th unit in discrete time $t$. The rules~\ref{eq:models-generec-activation} while are iterated while $|a_i(t+1) a_i(t)| > \epsilon$ for some unit $i$. This method is further discussed in (\ref{sec:generec-fluctuation}) and \citep{orru2008sabio}.
 
 \begin{figure}[H]
   \centering
@@ -82,4 +82,4 @@ where~\ref{eq:models-generec-learning-rule-mid} is called the \emph{midpoint lea
 \end{equation}
 which is indeed the CHL learning rule~\ref{eq:models-chl-learning-rule}. Thus we see that GeneRec is closely related to CHL. 
 
-Note that we encountered some missing details in \citet{o1996bio} about how to implement the GeneRec algorithm which are further discussed in \ref{sec:appendix-impl-generec}.
+Note that we encountered some missing details in \citet{o1996bio} about how to implement the GeneRec algorithm which are further discussed in (\ref{sec:appendix-impl-generec}).

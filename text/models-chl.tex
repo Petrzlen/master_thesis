@@ -5,7 +5,7 @@
 \subsubsection{Contrastive Hebbian Learning}
 \label{sec:models-chl} 
 
-The main idea of \emph{Contrastive Hebbian Learning} developed by \citet{movellan1990contrastive} is to have two activation phases in an aribtrary Hopfield network \citep{hopfield1984neurons} described in \ref{sec:theory-hopfield}. In the first phase, called \emph{minus phase} and denoted \quotes{-}, only the input vector is \emph{clamped}, i.e. activations of the clamped units as equal to the clamped values. In the second phase, called \emph{plus phase} and denoted \quotes{+}, both the input and target are clambed to the underlying network. The learning is based on the difference of these two activations. Note that CHL brings no assumptions about the structure of the underlying network and therefore it has no layers in general. 
+The main idea of \emph{Contrastive Hebbian Learning} developed by \citet{movellan1990contrastive} is to have two activation phases in an aribtrary Hopfield network \citep{hopfield1984neurons} described in (\ref{sec:theory-hopfield}). In the first phase, called \emph{minus phase} and denoted \quotes{-}, only the input vector is \emph{clamped}, i.e. activations of the clamped units as equal to the clamped values. In the second phase, called \emph{plus phase} and denoted \quotes{+}, both the input and target are clambed to the underlying network. The learning is based on the difference of these two activations. Note that CHL brings no assumptions about the structure of the underlying network and therefore it has no layers in general. 
 
 As mentioned previously CHL is based on Hopfield networks. Therefore it has an energy function $J$ which is based on the Helmholtz free energy function $F$ \citep{hinton1989deterministic}:
 \begin{equation}

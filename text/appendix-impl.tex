@@ -11,11 +11,11 @@
 \subsection*{GeneRec} 
 \label{sec:appendix-impl-generec} 
 
-In this section we discuss how we implemented some of the details which are not talked about in \citet{o1996bio}. These are related mainly to \emph{BAL-recirc} \ref{sec:our-bal-recirc} and also BAL \ref{sec:models-bal}. For how GeneRec works please consult \ref{sec:models-generec}.  
+In this section we discuss how we implemented some of the details which are not talked about in \citet{o1996bio}. These are related mainly to \emph{BAL-recirc} (\ref{sec:our-bal-recirc}) and also BAL (\ref{sec:models-bal}). For how GeneRec works please consult (\ref{sec:models-generec}).  
 
 \subsubsection*{Bias} 
 
-Most of artificial neural networks come with \emph{bias}es \ref{sec:models-perceptron} which allow arbitrary \emph{separating hyperplane}s. To our knowledge \citet{o1996bio} talks nothing about biases and therefore we had to try several setting, namely \emph{no bias}, \emph{only--input bias}, \emph{only--forward bias} and \emph{full bias}. TODO reformulate the itemize, maybe a table. 
+Most of artificial neural networks come with \emph{bias}es (\ref{sec:models-perceptron}) which allow arbitrary \emph{separating hyperplane}s. To our knowledge \citet{o1996bio} talks nothing about biases and therefore we had to try several setting, namely \emph{no bias}, \emph{only--input bias}, \emph{only--forward bias} and \emph{full bias}. TODO reformulate the itemize, maybe a table. 
 
 \begin{itemize} 
 \item No bias - two patterns for 4-2-4, three patterns for 4-3-4, all four patterns for 4-4-4
@@ -34,7 +34,7 @@ Most of artificial neural networks come with \emph{bias}es \ref{sec:models-perce
 \subsubsection*{Fluctuation} 
 \label{sec:generec-fluctuation}
 
-%Asymmetric BIA \ref{sec:our-bal-recirc}.
+%Asymmetric BIA (\ref{sec:our-bal-recirc}).
 TODO rewrite \\ 
 
 %\paragraph{Recirculation step} %====================
@@ -74,5 +74,5 @@ Based on \citet{o1996bio} we used the following probability distribution for wei
 \begin{equation} 
 \frac{1}{\sqrt{2\pi \sigma^2} e^{-\frac{(x-\mu)^2}{2\sigma^2}}} \nonumber,
 \end{equation} 
-where $\sigma$ is one of the network parameters (ref) and $\mu = 0$ as the expected value of the normal distribution. As our experiemnts with hidden activations suggests \ref{sec:our-hidden-activation}, initial weight distribution could be crucial for BAL. Therefore we had the idea to classify initial weight matrices with labelling them successfull or unsuccessful. This could be implementable for the \emph{4-2-4 encoder} \ref{sec:datasets-auto4} tasks where we would have $4\times(4\times(2+1))=48$ attributes dataset, one for each weight, and one label.
+where $\sigma$ is one of the network parameters (ref) and $\mu = 0$ as the expected value of the normal distribution. As our experiemnts with hidden activations suggests (\ref{sec:our-hidden-activation}), initial weight distribution could be crucial for BAL. Therefore we had the idea to classify initial weight matrices with labelling them successfull or unsuccessful. This could be implementable for the \emph{4-2-4 encoder} (\ref{sec:datasets-auto4}) tasks where we would have $4\times(4\times(2+1))=48$ attributes dataset, one for each weight, and one label.
 

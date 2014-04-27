@@ -7,16 +7,16 @@
 \section*{Abstract}
 
 % 1) About the problem you want to solve
-We analysed artificial neural networks without error propagation based on the Generalized recirculation algorithm (GeneRec) by \citet{o1996bio} and the Bidirectional Activation-based Learning algorithm (BAL) by \citet{farkas2013bal}. The main idea of both algorithms is to update weights based on the differences between forward and backward activations. Thus both being more biologically plausible than standard models such as the Backpropagation algorithm (BP). On the other hand both algorithms have a considerable performance gap in comparison to BP.
+We analysed artificial neural networks without error backpropagation (BP), based on the Generalized recirculation algorithm (GeneRec) by \citet{o1996bio} and the Bidirectional Activation-based Learning algorithm (BAL) by \citet{farkas2013bal}. The main idea of both algorithms is to update weights based on the differences between forward and backward activations. Hence, both are biologically plausible than standard models. On the other hand, both algorithms have a considerable performance gap in comparison to BP.
 
 % 2) About your solution – how you solve the problem
-We introduced the Two learning rate model (TLR) which is based on BAL and uses different learning rates for different weight matrices. Our simulations proved increase in success rate from $\approx 65\%$ to $\approx 95\%$ while having a smooth relation between success and the learning rates. We achieved TODO\% on the well--known hand--written digits dataset. The most shocking being the fact that the two learning rates differed by magnitude of $10^8$ what we found hard to explain. We further applied the idea of TLR to GeneRec and BIA and experimented with momentum, weight initialization, hidden activations, dynamic learning rate, dropout and other. 
+We have done several model evaluations and modifications. After analysing these we eventually came up with a Two learning rates (TLR) version of BAL. TLR uses different learning rates for different weight matrices. Our simulations proved increase in success rate while having a smooth relation between success and the learning rates. The most surprising was the fact that the two learning rates in the best networks differed by magnitude of $10^8$. We further applied the idea of TLR to GeneRec and BIA and experimented with momentum, weight initialization, hidden activations, dynamic learning rate, dropout and other. 
 
 % 4) Possible impacts of your work into the field (e.g. “The proposed solution can be used to of
 We believe that using the idea of TLR could lead to performance increase in other artificial neural network models and even several layered networks. The idea of different parameters for different weight matrices could be used also for momentum or weight initialization. We outline further experiments which should be done. 
 
 \begin{flushleft}
-  \textbf{Keywords:} supervised learning, artificial neural network, classification, heteroassociative mapping, dynamic learning rate, activation based learning, generec, bal, hand--written digits. 
+  \textbf{Keywords:} supervised learning, artificial neural network, heteroassociative mapping, dynamic learning rate, activation based learning, hand-written digits. 
 \end{flushleft}
 
 %keywords={ Internet; TCP streams; Tor network;}
