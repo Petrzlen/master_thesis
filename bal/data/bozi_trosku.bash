@@ -132,24 +132,24 @@ less stats/auto4_generec/log_lle_0.dat | bash post_epochs.bash 20000 > buf.dat
 gnuplot -e "inpath='buf.dat';outpath='../../text/img/generec-auto4-epoch.pdf';val_from=0;val_d=1000;val_to=8000;rxf=-4;rxt=2;ryf=-7;ryt=2;rgb_a=10;rgb_b=13;rgb_c=33" contour.p
 
 #==================== HISTORY =====================
-  #=================== auto4 ====================
-ls 'stats' | grep -o 'stats/k3_139[0-9]\+_[3-9]' | sort | uniq | while read filename
+  #=================== k3 ====================
+ls 'stats' | grep -o 'k3_139[0-9]\+_[3-9]' | sort | uniq | while read filename
 do
   num=$(echo $filename | grep -o '[0-9]$')
   echo "motam $filename with num=$num"
   
   #bash zmotaj_stats.bash w $filename w 
   
-  echo "tlr-k3-$num-success.pdf"
+  echo "  tlr-k3-$num-success.pdf"
   gnuplot -e "inpath='stats/$filename/log_lls_0.dat';outpath='../../text/img/k3/tlr-$num-success.pdf';val_from=0;val_d=10;val_to=100;rxf=-4;rxt=4;ryf=-7;ryt=1;rgb_a=33;rgb_b=13;rgb_c=10" contour.p
 
-  echo "tlr-k3-$num-epoch.pdf"
+  echo "  tlr-k3-$num-epoch.pdf"
   less stats/$filename/log_lle_0.dat | bash post_epochs.bash 5000 > buf.dat
   gnuplot -e "inpath='buf.dat';outpath='../../text/img/k3/tlr-$num-epoch.pdf';val_from=0;val_d=300;val_to=2500;rxf=-4;rxt=4;ryf=-7;ryt=1;rgb_a=10;rgb_b=13;rgb_c=33" contour.p
 done
   
 
-#=================== auto4 ====================
+#=================== k3 ====================
 ls 'stats' | grep -o 'k3_4_[3-9]_1398[0-9]\+' | sort | uniq | while read filename
 do
   num=$(echo $filename | grep -o 'k3_4_[0-9]' | grep -o '[0-9]$')

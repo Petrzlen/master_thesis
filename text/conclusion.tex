@@ -8,10 +8,15 @@ Still, many work should be done.
 
 ==ZAVER 
 \begin{itemize} 
-\item   spravili sme toto toto
+\item   spravili sme toto toto \\ 
+hidden activations, tlr \ref{sec:tlr-auto4-hypothesis} 
+We could introduce a hypothesis why TLR outperforms BAL on the \emph{4-2-4 encoder task}. The hypothesis is suggested by sections on hidden distances~(\ref{sec:tlr-auto4-hidden}) and~(\ref{sec:our-hidden-activation}) and on candidate selection~(\ref{fig:results-tlr-auto4-epoch}). The reason is that the hidden activations settle to fast. This is explained by the fact that forward and backward hidden activations become same to fast and moreove, the weight initialization could help this. These issues are solved by $\lambda_h \ll \lambda_h$ which adds epochs to the training phase and by candidate selection which prevents initializing hidden activations close to each other. \\
+\\
+half line hypothesis 
 \item   toto je otvorene
 \item   toto vyzera tazko
-\item   tymto by sme sa zaoberali dalej 
+\item   tymto by sme sa zaoberali dalej (Future work) 
+
 \end{itemize} 
 
 %What left unfinished from your work? What are you future plans to develop better your work?

@@ -4,18 +4,17 @@
 %Vyhýbajte sa používaniu žargónu.
 %Používajte starú múdrosť: 1 obrázok je viac než 1000 slov.
 
+%============================================================
 \subsection{Complex binary vector associations} 
 \label{sec:results-k3}
 
-TODO Explain how it was measured (runs, epochs, stopping) \\
-TODO Explain / Make up hypotheses why it behaves as measured (Future work). \\
+In this section, we inspect TLR~(\ref{sec:our-tlr}) and GeneRec~(\ref{sec:models-generec}) performance on the \emph{CBVA} task~(\ref{sec:datasets-k3}). The methodology is similar as in case of the 4-2-4 encoder task described in \ref{sec:results-auto4-introduction}. The main difference is that we tried several architectures of type 16-$n$-16 for $n \in \{3,\,4,\cdots,\,10\}.$. Second difference was the setting of $Epoch_{\rm max}$ to 20,000 for TLR and 5,000 for GeneRec. 
 
-(\ref{sec:datasets-k3}) 
-
-
+%============================================================
 \subsubsection{Two learning rates} 
 \label{sec:tlr-k3}
-TODO write here sth 
+
+On figure~(\ref{fig:results-tlr-k3-performance}) we compare success rate of TLR for different settings of $\lambda_v$ and $\lambda_h$ and different hidden sizes. We see that even for the 16-3-16 architecture TLR was able to learn the for ($\lambda_v, \lambda_h$) on the half line from  $(1, 0.1)$ to $(10^4, 0.1)$. This behaviour of TLR is similar to the behaviour of TLR on the \emph{4-2-4 encoder} task shown on figure~(\ref{fig:results-bal-recirc-auto4-performance}). Again, the performance mostly depends on $\lambda_h$ and it is bounded by a value of $\lambda_v$. Also, It is interesting how the success space expanded from top to down when increasing the hidden size.
 
 %Main purpose of this dataset is to test different hidden sizes 
 %======== (4D) L1 x L2 x patSuccF x hidden size =========
@@ -23,33 +22,38 @@ TODO write here sth
 
 \begin{figure}[H]
   \centering
-  Hidden size = 3 \\
+  %Hidden size = 3 \\
   \includegraphics[width=0.49\textwidth]{img/k3/tlr-3-success.pdf} 
   \includegraphics[width=0.49\textwidth]{img/k3/tlr-3-epoch.pdf}   
-  Hidden size = 4 \\
+  %Hidden size = 4 \\
   \includegraphics[width=0.49\textwidth]{img/k3/tlr-4-success.pdf} 
   \includegraphics[width=0.49\textwidth]{img/k3/tlr-4-epoch.pdf}   
-  Hidden size = 5 \\
+  %Hidden size = 5 \\
   \includegraphics[width=0.49\textwidth]{img/k3/tlr-5-success.pdf}   
   \includegraphics[width=0.49\textwidth]{img/k3/tlr-5-epoch.pdf}  
-  Hidden size = 7 \\
+  %Hidden size = 8 \\
   \includegraphics[width=0.49\textwidth]{img/k3/tlr-7-success.pdf} 
   \includegraphics[width=0.49\textwidth]{img/k3/tlr-7-epoch.pdf}    
-  \caption{TLR performance on the \emph{CBVA} task with different hidden sizes.}
-  \label{fig:results-tlr-k3-success}
+  \caption{TLR performance on the \emph{CBVA} task with hidden sizes 3, 4, 5 and 7 from top to bottom.}
+  \label{fig:results-tlr-k3-performance}
 \end{figure}
+
+On figure~\ref{fig:results-tlr-auto4-epoch} the success timeline for TLR with best $\lambda_h$ and $\lambda_v$ is inspected. We can observe that TLR is increasing its success in time steadily. Moreover, we see that the candidate preselection~(\ref{sec:sim-exp-candidates}) has an positive impact on the network performance.
+Note that as the CBVA task is non bijective, i.e. one output has several inputs, it is impossible to achieve 100\% $patSucc^B$ or $bitSucc^B$. 
 
 %======== (3D) best TLR on ALL_SUCC x epoch (std-dev) x hidden size ==========
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{img/tlr-k3-3-best-perf.pdf}   
   \includegraphics[width=0.8\textwidth]{img/tlr-k3-3-best-can.pdf}      
-  \caption{TLR success timeline for the \emph{CBVA} task with $\lambda_h=0.1$ and $\lambda_v=100$. Top without candidate selection and bottom with candidates selection. }
+  \caption{TLR success timeline for the \emph{CBVA} task with $\lambda_h=0.1$ and $\lambda_v=100$. Top without candidate selection and bottom with candidate selection. }
   \label{fig:results-tlr-k3-epoch} 
 \end{figure}
 
 \subsubsection{Comparison} 
 \label{sec:results-cmp-k3} 
+
+In table~(\ref{tab:results-cmp-k3}) the comparison of TLR and Generec on the \emph{CBVA} task is shown. TODO rerun bugfix and explain 
 
 %===== TODO table: best parameter setting networks with hidden.size= constant (success, epoch, stddev) / model \\
 
@@ -59,36 +63,25 @@ TODO write here sth
     \hline
     Algorithm (section)&$\lambda_h$&$\lambda_v$&$patSucc^F$ &Epochs\\ %&SEM(success) \\
     \hline
-    GR~(\ref{sec:models-generec}) &1.0 &1.0 &95&191.24\\ %&28\\
+    GR~(\ref{sec:models-generec}) & & & & \\ %&28\\
     \hline
-    GR TLR~(\ref{sec:models-generec}) &3.0 &0.1 &97&156.52\\ %&28\\
+    GR TLR & & & & \\ %&28\\
     \hline
-    BAL~(\ref{sec:models-bal})&0.5 &0.5 &100& 54\\ %&2.0e+08\\
+    BAL~(\ref{sec:models-bal})&0.5& 0.5&100& 54\\ %&2.0e+08\\
     \hline
     BAL TLR~(\ref{sec:our-tlr})&1.0& 5.0 & 100& 64\\ %&1.52e+08\\
-    \hline
-    BAL TLR Can~(\ref{sec:sim-exp-candidates})& & & & \\ %&5,070,000\\ %TODO shit, wrong params 
+    %\hline
+    %BAL TLR Can~(\ref{sec:sim-exp-candidates})& & & & \\ %&5,070,000\\ 
     \hline 
     \end{tabular}
-  \caption{Comparing performance of different models on the \emph{4-2-4 encoder} task with 3 hidden neurons.} 
+  \caption{Comparing performance of different models on the \emph{4-2-4 encoder} task with 3 hidden neurons. } 
   \label{tab:results-cmp-k3}
 \end{table}
 
 %SELECT lambda, lambda_ih, 100*AVG(success) AS 'suc', AVG(epoch) AS 'epc' FROM data WHERE epoch <> 0 GROUP BY lambda,lambda_ih ORDER BY suc ASC, epc DESC; 
 %generec tlr
-%0.3|1.0|95.0|181.68
-%0.1|0.03|96.0|293.77
-%0.1|1.0e-08|96.0|213.9
-%0.3|0.0001|96.0|191.85
-%0.1|3.0|97.0|156.52
 
 %generec pure 
-%0.01|0.01|85.0|960.62
-%0.03|0.03|93.0|433.5
-%0.1|0.1|95.0|260.0
-%0.3|0.3|95.0|202.93
-%1.0|1.0|95.0|191.24
-
 
 %tlr pure 
 %2.0|0.5|100.0|98.7777777777778
@@ -101,7 +94,8 @@ TODO write here sth
 
 
 \subsubsection{GeneRec} 
-TODO write here sthh
+
+On figure~\ref{fig:results-tlr-k3-performance} we compare success rate of TLR for different settings of $\lambda_v$ and $\lambda_h$ and different hidden sizes. TODO rerun bugfix and explain 
 
 \begin{figure}[H]
   \centering
@@ -117,7 +111,7 @@ TODO write here sthh
 %  Hidden size = 7 \\
 %  \includegraphics[width=0.49\textwidth]{img/k3/generec-7-success.pdf} 
 %  \includegraphics[width=0.49\textwidth]{img/k3/generec-7-epoch.pdf}    
-  \caption{\emph{GeneRec} performance on the \emph{CBVA} task with different hidden sizes. For greater hidden sizes the results were very similar to the results with hidden size 5.}
+  \caption{\emph{GeneRec} performance on the \emph{CBVA} task with different hidden sizes.} %For greater hidden sizes the results were very similar to the results with hidden size 5.}
   \label{fig:results-generec-k3-success}
 \end{figure}
 
