@@ -62,8 +62,8 @@ public class BAL {
 		//experiment_Default();
 		//experiment_DifferentHiddenSizes("k3");
 		//experiment_RerunGoodBad();
-		//experiment_TestImplementation();
-		experiment_Digits(); 
+		experiment_TestImplementation();
+		//experiment_Digits(); 
 	}
 
 	private static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("0"); 
@@ -137,12 +137,12 @@ public class BAL {
 	public static double INIT_SIGMA = 2.3; // should be 1 / sqrt{input.size + 1}
 	public static double TRY_SIGMA[] = {2.3}; 
 
-	public static double INIT_LAMBDA = 0.7; 
+	public static double INIT_LAMBDA_V = 0.7; 
 	//public static double TRY_LAMBDA[] = {0.7}; 
-	public static double TRY_LAMBDA[] = {0.7}; 
+	public static double TRY_LAMBDA_V[] = {0.7}; 
 
-	private static double INIT_LAMBDA_V = 0.0001;
-	private static double TRY_LAMBDA_V[] = {0.0001};
+	private static double INIT_LAMBDA_H = 0.0001;
+	private static double TRY_LAMBDA_H[] = {0.0001};
 	//public static double INIT_LAMBDA_V[] = {0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1.0, 2.0};
 	/*public static double INIT_LAMBDA_V[] = {0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
 											 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 
@@ -181,15 +181,15 @@ public class BAL {
 	public static Map<Integer, String> MEASURE_RUN_ID = new HashMap<Integer, String>(); 
 	public static long MEASURE_EXECUTION_TIME = 0; 
 	public static String[] MEASURE_HEADINGS = {
-		"epoch", "err", "lam", "lam_v", "mom", "sigma",  
+		"epoch", "err", "lam_v", "lam_h", "mom", "sigma",  
 		"bs_f", "bs_b", "ps_f", "ps_b", 
 		"m_wei", "m_sim", "h_fb_d", "o_fb_d", 
 		"h_dist", "in_tri", "fluct"
 	};
 	public static int MEASURE_EPOCH = 0;
 	public static int MEASURE_ERROR = 1; //error function (RMSE), bitSucc forward 
-	public static int MEASURE_LAMBDA = 2; 
-	public static int MEASURE_LAMBDA_V = 3; 
+	public static int MEASURE_LAMBDA_V = 2; 
+	public static int MEASURE_LAMBDA_H = 3; 
 	public static int MEASURE_MOMENTUM = 4;
 	public static int MEASURE_SIGMA = 5; 
 
@@ -231,7 +231,7 @@ public class BAL {
 	public static int MEASURE_COUNT = 17;  
 
 	//public static int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_IN_TRIANGLE};
-	public static int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_LAMBDA_V, MEASURE_MOMENTUM};
+	public static int[] MEASURE_GROUP_BY_COLS = {MEASURE_ERROR, MEASURE_SIGMA, MEASURE_LAMBDA_V, MEASURE_LAMBDA_H, MEASURE_MOMENTUM};
 
 	public static int MEASURE_GROUP_BY = MEASURE_ERROR;  
 
@@ -563,13 +563,8 @@ public class BAL {
 
 		return network; 
 	}
-	private static double calculateLambda(double init_lambda, int weight_matrix) {
-		if(WU_TYPE == WU_BAL_ORIG){
-			return  ((weight_matrix == MATRIX_IH || weight_matrix == MATRIX_OH) ? INIT_LAMBDA_V : init_lambda);
-		}
-		else{
-			return init_lambda; 
-		}
+	private static double calculateLambda(int weight_matrix) {
+		return  ((weight_matrix == MATRIX_IH || weight_matrix == MATRIX_OH) ? INIT_LAMBDA_H : INIT_LAMBDA_V);
 
 		//return init_lambda * Math.max(1.0, (100 / (epochs + 50)));
 
@@ -1070,10 +1065,10 @@ public class BAL {
 			RealVector[] backward = this.backwardPass(target);
 			//IS_PRINT = false; 
 
-			subLearn(this.IH, forward[0], backward[1], forward[1], calculateLambda(INIT_LAMBDA, MATRIX_IH), this.MOM_IH, this.BATCH_IH, this.ERR_IH, d_all, d_hidden); 
-			subLearn(this.HO, forward[1], backward[2], forward[2], calculateLambda(INIT_LAMBDA, MATRIX_HO), this.MOM_HO, this.BATCH_HO, this.ERR_HO, d_hidden, d_all); 
-			subLearn(this.OH, backward[2], forward[1], backward[1], calculateLambda(INIT_LAMBDA, MATRIX_OH), this.MOM_OH, this.BATCH_OH, this.ERR_OH, d_all, d_hidden); 
-			subLearn(this.HI, backward[1], forward[0], backward[0], calculateLambda(INIT_LAMBDA, MATRIX_HI), this.MOM_HI, this.BATCH_HI, this.ERR_HI, d_hidden, d_all);
+			subLearn(this.IH, forward[0], backward[1], forward[1], calculateLambda(MATRIX_IH), this.MOM_IH, this.BATCH_IH, this.ERR_IH, d_all, d_hidden); 
+			subLearn(this.HO, forward[1], backward[2], forward[2], calculateLambda(MATRIX_HO), this.MOM_HO, this.BATCH_HO, this.ERR_HO, d_hidden, d_all); 
+			subLearn(this.OH, backward[2], forward[1], backward[1], calculateLambda(MATRIX_OH), this.MOM_OH, this.BATCH_OH, this.ERR_OH, d_all, d_hidden); 
+			subLearn(this.HI, backward[1], forward[0], backward[0], calculateLambda(MATRIX_HI), this.MOM_HI, this.BATCH_HI, this.ERR_HI, d_hidden, d_all);
 		}
 		if(WU_TYPE == WU_BAL_RECIRC){
 			/**/ 
@@ -1082,16 +1077,16 @@ public class BAL {
 			RealVector[] backward = this.backwardPassWithRecirculation(target);
 			//IS_PRINT = false; 
 
-			subLearn(this.IH, forward[0], backward[1], forward[1], calculateLambda(INIT_LAMBDA, MATRIX_IH), this.MOM_IH, this.BATCH_IH, this.ERR_IH, d_all, d_hidden); 
-			subLearn(this.HO, forward[1], backward[2], forward[2], calculateLambda(INIT_LAMBDA, MATRIX_HO), this.MOM_HO, this.BATCH_HO, this.ERR_HO, d_hidden, d_all); 
+			subLearn(this.IH, forward[0], backward[1], forward[1], calculateLambda(MATRIX_IH), this.MOM_IH, this.BATCH_IH, this.ERR_IH, d_all, d_hidden); 
+			subLearn(this.HO, forward[1], backward[2], forward[2], calculateLambda(MATRIX_HO), this.MOM_HO, this.BATCH_HO, this.ERR_HO, d_hidden, d_all); 
 
 			if(INIT_SYMMETRIC_IS){
 				makeSymmetric(this.HI, this.IH, this.IH.getColumnDimension(), this.IH.getRowDimension() - (isBias(MATRIX_IH)?1:0));
 				makeSymmetric(this.OH, this.HO, this.HO.getColumnDimension(), this.HO.getRowDimension() - (isBias(MATRIX_HO)?1:0));
 			}
 
-			subLearn(this.OH, backward[2], forward[1], backward[1], calculateLambda(INIT_LAMBDA, MATRIX_OH), this.MOM_OH, this.BATCH_OH, this.ERR_OH, d_all, d_hidden); 
-			subLearn(this.HI, backward[1], forward[0], backward[0], calculateLambda(INIT_LAMBDA, MATRIX_HI), this.MOM_HI, this.BATCH_HI, this.ERR_HI, d_hidden, d_all);
+			subLearn(this.OH, backward[2], forward[1], backward[1], calculateLambda(MATRIX_OH), this.MOM_OH, this.BATCH_OH, this.ERR_OH, d_all, d_hidden); 
+			subLearn(this.HI, backward[1], forward[0], backward[0], calculateLambda(MATRIX_HI), this.MOM_HI, this.BATCH_HI, this.ERR_HI, d_hidden, d_all);
 
 			if(INIT_SYMMETRIC_IS){
 				makeSymmetric(this.IH, this.HI, this.HI.getColumnDimension(), this.HI.getRowDimension() - (isBias(MATRIX_HI)?1:0));
@@ -1106,8 +1101,8 @@ public class BAL {
 			//RealVector biased_target = addBias(target); 
 			//IS_PRINT = false; 
 
-			subLearn(this.IH, forward[0], bothward, forward[1], calculateLambda(INIT_LAMBDA, MATRIX_IH), this.MOM_IH, this.BATCH_IH, this.ERR_IH, d_all, d_hidden); 
-			subLearn(this.HO, forward[1], target, forward[2], calculateLambda(INIT_LAMBDA, MATRIX_HO), this.MOM_HO, this.BATCH_HO, this.ERR_HO, d_hidden, d_all); 
+			subLearn(this.IH, forward[0], bothward, forward[1], calculateLambda(MATRIX_IH), this.MOM_IH, this.BATCH_IH, this.ERR_IH, d_all, d_hidden); 
+			subLearn(this.HO, forward[1], target, forward[2], calculateLambda(MATRIX_HO), this.MOM_HO, this.BATCH_HO, this.ERR_HO, d_hidden, d_all); 
 			//subLearn(this.OH, biased_target, forward[1], bothward, lambda, this.MOM_OH, this.BATCH_OH, d_all, d_hidden); 
 
 			makeSymmetric(this.OH, this.HO, this.HO.getColumnDimension(), this.HO.getRowDimension() - (isBias(MATRIX_HO)?1:0));
@@ -1128,8 +1123,8 @@ public class BAL {
 			RealVector[] forward = this.forwardPassWithRecirculation(in); 
 			RealVector bothward = this.bothwardPass(in, target); 
 
-			subCHLLearn(this.IH, forward[0], forward[1], forward[0], bothward, calculateLambda(INIT_LAMBDA, MATRIX_IH));
-			subCHLLearn(this.HO, forward[1], forward[2], addBias(bothward, MATRIX_HO), target, calculateLambda(INIT_LAMBDA, MATRIX_HO));
+			subCHLLearn(this.IH, forward[0], forward[1], forward[0], bothward, calculateLambda(MATRIX_IH));
+			subCHLLearn(this.HO, forward[1], forward[2], addBias(bothward, MATRIX_HO), target, calculateLambda(MATRIX_HO));
 
 			makeSymmetric(this.OH, this.HO, this.HO.getColumnDimension(), this.HO.getRowDimension() - (isBias(MATRIX_HO)?1:0));
 		}
@@ -1143,10 +1138,10 @@ public class BAL {
 			//IS_PRINT = false;
 
 			//RealVector a_minus_i, RealVector a_minus_j, RealVector a_plus_i, RealVector a_plus_j
-			subCHLLearn(this.IH, forward[0], forward[1], addBias(backward[0], MATRIX_IH), backward[1], calculateLambda(INIT_LAMBDA, MATRIX_IH)); 
-			subCHLLearn(this.HO, forward[1], forward[2], addBias(backward[1], MATRIX_HO), backward[2], calculateLambda(INIT_LAMBDA, MATRIX_HO)); 
-			subCHLLearn(this.OH, backward[2], backward[1], addBias(forward[2], MATRIX_OH), forward[1], calculateLambda(INIT_LAMBDA, MATRIX_OH)); 
-			subCHLLearn(this.HI, backward[1], backward[0], addBias(forward[1], MATRIX_HI), forward[0], calculateLambda(INIT_LAMBDA, MATRIX_HI)); 
+			subCHLLearn(this.IH, forward[0], forward[1], addBias(backward[0], MATRIX_IH), backward[1], calculateLambda(MATRIX_IH)); 
+			subCHLLearn(this.HO, forward[1], forward[2], addBias(backward[1], MATRIX_HO), backward[2], calculateLambda(MATRIX_HO)); 
+			subCHLLearn(this.OH, backward[2], backward[1], addBias(forward[2], MATRIX_OH), forward[1], calculateLambda(MATRIX_OH)); 
+			subCHLLearn(this.HI, backward[1], backward[0], addBias(forward[1], MATRIX_HI), forward[0], calculateLambda(MATRIX_HI)); 
 		}
 
 		//log.print(BAL.printVector(forward[1]));
@@ -1255,7 +1250,7 @@ public class BAL {
 
 		if(MEASURE_EPOCH < MEASURE_COUNT) result[MEASURE_EPOCH] = ((double)epoch); 
 		if(MEASURE_SIGMA < MEASURE_COUNT) result[MEASURE_SIGMA] = BAL.INIT_SIGMA; 
-		if(MEASURE_LAMBDA < MEASURE_COUNT) result[MEASURE_LAMBDA] = BAL.INIT_LAMBDA; 
+		if(MEASURE_LAMBDA_V < MEASURE_COUNT) result[MEASURE_LAMBDA_V] = BAL.INIT_LAMBDA_V; 
 		if(MEASURE_MOMENTUM < MEASURE_COUNT) result[MEASURE_MOMENTUM] = BAL.INIT_MOMENTUM; 
 
 		if(MEASURE_HIDDEN_FOR_BACK_DIST < MEASURE_COUNT 
@@ -1367,8 +1362,8 @@ public class BAL {
 			result[MEASURE_MATRIX_SIMILARITY] = matrix_similarity;
 		}
 
-		if(MEASURE_LAMBDA_V < MEASURE_COUNT){
-			result[MEASURE_LAMBDA_V] = BAL.INIT_LAMBDA_V; 
+		if(MEASURE_LAMBDA_H < MEASURE_COUNT){
+			result[MEASURE_LAMBDA_H] = BAL.INIT_LAMBDA_H; 
 		}
 		
 		if(isSave){
@@ -1736,17 +1731,17 @@ public class BAL {
 		while(ri<BAL.INIT_RUNS) {
 			for(int si=0; si<BAL.TRY_SIGMA.length; si++) {
 				for(int mi=0; mi<BAL.TRY_MOMENTUM.length ; mi++){
-					for(int li=0; li<BAL.TRY_LAMBDA.length ; li++){
-						for(int tlri=0; tlri<BAL.TRY_LAMBDA_V.length ; tlri++){
+					for(int li=0; li<BAL.TRY_LAMBDA_V.length ; li++){
+						for(int tlri=0; tlri<BAL.TRY_LAMBDA_H.length ; tlri++){
 							ri++; 
 							if(ri > BAL.INIT_RUNS){
 								break;
 							}
 
 							BAL.INIT_SIGMA = BAL.TRY_SIGMA[si]; 
-							BAL.INIT_LAMBDA = BAL.TRY_LAMBDA[li];
+							BAL.INIT_LAMBDA_V = BAL.TRY_LAMBDA_V[li];
 							BAL.INIT_MOMENTUM = BAL.TRY_MOMENTUM[mi];
-							BAL.INIT_LAMBDA_V = BAL.TRY_LAMBDA_V[tlri];
+							BAL.INIT_LAMBDA_H = BAL.TRY_LAMBDA_H[tlri];
 
 							long start_time = System.currentTimeMillis(); 
 							MEASURE_EXECUTION_TIME = 0; 
@@ -1877,9 +1872,9 @@ public class BAL {
 		PRINT_NETWORK_IS = false;  
 		PRINT_NETWORK_TO_FILE_IS = false;
 
-		TRY_LAMBDA = new double[]{0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
+		TRY_LAMBDA_V = new double[]{0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
 
-		TRY_LAMBDA_V = new double[]{0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
+		TRY_LAMBDA_H = new double[]{0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
 				0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 
 				0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
 				100.0};
@@ -1895,9 +1890,9 @@ public class BAL {
 		MEASURE_IS = true; 
 		MEASURE_SAVE_AFTER_EACH_RUN = true; 
 
-		INPUT_FILEPATH = "k3.in"; 
-		OUTPUT_FILEPATH = "k3.out"; 
-		INIT_HIDDEN_LAYER_SIZE = 3;
+		INPUT_FILEPATH = "auto4.in"; 
+		OUTPUT_FILEPATH = "auto4.in"; 
+		INIT_HIDDEN_LAYER_SIZE = 2;
 		POSTPROCESS_INPUT = true; 
 		POSTPROCESS_OUTPUT = true; 
 		POSTPROCESS_TYPE = POSTPROCESS_SIMPLE; 
@@ -1908,32 +1903,31 @@ public class BAL {
 
 		LAMBDA_ERROR_MOMENTUM_IS = false; 
 
-		//TRY_LAMBDA = new double[]{100}; 
-		//TRY_LAMBDA = new double[]{500}; 
-		/*TRY_LAMBDA = new double[]{
+		//TRY_LAMBDA_V = new double[]{100};
+		/*TRY_LAMBDA_V = new double[]{
 				0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 
 				0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 
 				50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0, 20000.0, 50000.0, 
 				100000.0, 200000.0, 500000.0, 1000000.0, 2000000.0, 5000000.0, 10000000.0};*/  
-		TRY_LAMBDA = new double[]{
+		TRY_LAMBDA_V = new double[]{
 				0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 
-				1.0, 3.0, 10.0, 30.0, 100.0, 300.0, 1000.0, 3000.0, 10000.0//, 30000.0, 
+				1.0, 3.0, 10.0, 30.0, 100.0, //300.0, 1000.0, 3000.0, 10000.0//, 30000.0, 
 				//100000.0, 300000.0, 1000000.0, 3000000.0, 10000000.0, 30000000.0, 100000000.0, 300000000.0, 1000000000.0
 		}; 
 		
-		//TRY_LAMBDA_V = new double[]{0.1}; 
-		//TRY_LAMBDA_V = new double[]{0.0002};  
-		/*TRY_LAMBDA_V = new double[]{
+		//TRY_LAMBDA_H = new double[]{0.1}; 
+		//TRY_LAMBDA_H = new double[]{0.0002};  
+		/*TRY_LAMBDA_H = new double[]{
 				0.00000001, 0.00000002, 0.00000005, 0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 
 				0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 
 				0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
 				100.0};*/  
-		TRY_LAMBDA_V = new double[]{
-				//0.0000000001, 0.0000000003, 0.000000001, 0.000000003, 
-				0.00000001, 0.00000003, 0.0000001, 0.0000003, 0.000001, 0.000003,
+		TRY_LAMBDA_H = new double[]{
+				//0.0000000001, 0.0000000003, 0.000000001, 0.000000003, 0.00000001, 0.00000003, 
+				0.0000001, 0.0000003, 0.000001, 0.000003,
 				0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 
 				1.0, 3.0, 10.0, 30.0, 100.0
-		};   
+		};    
 		
 		TRY_SIGMA = new double[]{2.3};
 		//TRY_SIGMA = new double[]{1.0, 2.3, 10.0};
@@ -1945,9 +1939,9 @@ public class BAL {
 		//!!!NOTE: DON'T FORGET SYMMETRY SETTING!!!
 		INIT_CANDIDATES_COUNT = 0;
 		MEASURE_RECORD_LOG = false; 
-		MEASURE_RECORD_EACH = 2500000;
-		INIT_MAX_EPOCHS = 3000;
-		INIT_RUNS = 100 * TRY_LAMBDA.length * TRY_LAMBDA_V.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
+		MEASURE_RECORD_EACH = 5425897;
+		INIT_MAX_EPOCHS = 5000;
+		INIT_RUNS = 100 * TRY_LAMBDA_V.length * TRY_LAMBDA_H.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
 
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 		RECIRCULATION_ITERATIONS_MAX = 50; //maximum number of iterations to approximate the underlying dynamic system  
@@ -1978,7 +1972,7 @@ public class BAL {
 		MEASURE_COUNT = MEASURE_HIDDEN_DIST; 
 		MEASURE_SAVE_AFTER_EACH_RUN = true; 
 		MEASURE_RECORD_EACH = 1;
-		MEASURE_GROUP_BY_COLS = new int[]{MEASURE_PATSUCC_FORWARD, MEASURE_SIGMA, MEASURE_LAMBDA, MEASURE_LAMBDA_V, MEASURE_MOMENTUM};
+		MEASURE_GROUP_BY_COLS = new int[]{MEASURE_PATSUCC_FORWARD, MEASURE_SIGMA, MEASURE_LAMBDA_V, MEASURE_LAMBDA_H, MEASURE_MOMENTUM};
 
 		//INPUT_FILEPATH = "small.in"; 
 		//OUTPUT_FILEPATH = "small.out";
@@ -2004,7 +1998,7 @@ public class BAL {
 		INIT_MOMENTUM_IS = true;
 		TRY_MOMENTUM = new double[]{0.01}; 
 		
-		TRY_LAMBDA = new double[]{0.0001};
+		TRY_LAMBDA_V = new double[]{0.0001};
 		/* TRY_LAMBDA = new double[]{
 				0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 
 				50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0
@@ -2015,7 +2009,7 @@ public class BAL {
 				//0.00001, 0.000001
 		};*/ 
 		
-		TRY_LAMBDA_V = new double[]{0.00000001};
+		TRY_LAMBDA_H = new double[]{0.00000001};
 		//TRY_LAMBDA_V = new double[]{0.0000001, 0.000001, 0.00001, 0.0001, 0.001, 0.01, 0.1, 1.0, 10.0, 100.0};
 		/* TRY_LAMBDA_V = new double[]{
 				0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
@@ -2026,7 +2020,7 @@ public class BAL {
 		};*/ 
 
 		INIT_MAX_EPOCHS = 100;
-		INIT_RUNS = 1 * TRY_LAMBDA.length * TRY_LAMBDA_V.length * TRY_SIGMA.length * TRY_MOMENTUM.length; 
+		INIT_RUNS = 1 * TRY_LAMBDA_V.length * TRY_LAMBDA_H.length * TRY_SIGMA.length * TRY_MOMENTUM.length; 
 		STOP_IF_NO_IMPROVE_FOR = 3; 
 		
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
