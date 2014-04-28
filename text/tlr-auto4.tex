@@ -1,4 +1,4 @@
-%Experimental Results and Analysis – in this section you should show the quantitative results – charts and tables. Analyze the results by explaining and highlighting what is important on them in terms of your goals and what is bad. You should explain the strange results too.
+%Experimental Results and Analysis – in this section,you should show the quantitative results – charts and tables. Analyze the results by explaining and highlighting what is important on them in terms of your goals and what is bad. You should explain the strange results too.
 
 %V ďalšej časti prezentujte vlastný prínos a vlastné výsledky porovnajte s výsledkami iných. Charakterizujte použité metódy.
 %Vyhýbajte sa používaniu žargónu.
@@ -9,7 +9,7 @@
 
 %==================================================================
 \paragraph{Introduction.} 
-In this section we inspect TLR~(\ref{sec:our-tlr}) performance for broad range of parameters $\lambda_h$ and $\lambda_v$. The network architecture is 4-2-4 what allows us to run plethora of simulations. There were two kinds of simulations. One being \emph{two dimensional maps (TDM)} where on the $x$ and $y$ axis $\lambda_v$ and $\lambda_h$ were plotted color was used for the $z$ value. Second being \emph{timelines} where a best configuration found by TDM was inspected. For TDM we run about 200-500 networks for each ($\lambda_v$, $\lambda_h$) and for timelines about 5000-10000 runs. After the simulation ended we took the average for each parameter setting. The networks were trained while $patSucc^F \neq 0$ or $epoch < MAX\_EPOCH$ where $MAX\_EPOCH$ was set to 100,000 in TDM and 1,000,000 in timelines. Note that most of the plots are in \emph{logarithmic} scale. 
+In this section,we inspect TLR~(\ref{sec:our-tlr}) performance for broad range of parameters $\lambda_h$ and $\lambda_v$. The network architecture is 4-2-4 what allows us to run plethora of simulations. There were two kinds of simulations. One being \emph{two dimensional maps (TDM)} where on the $x$ and $y$ axis $\lambda_v$ and $\lambda_h$ were plotted color was used for the $z$ value. Second being \emph{timelines} where a best configuration found by TDM was inspected. For TDM we run about 200-500 networks for each ($\lambda_v$, $\lambda_h$) and for timelines about 5000-10000 runs. After the simulation ended we took the average for each parameter setting. The networks were trained while $patSucc^F \neq 0$ or $epoch < MAX\_EPOCH$ where $MAX\_EPOCH$ was set to 100,000 in TDM and 1,000,000 in timelines. Note that most of the plots are in \emph{logarithmic} scale. 
 
 %============================================================
 \input{results-auto4-cmp} 
@@ -19,7 +19,7 @@ In this section we inspect TLR~(\ref{sec:our-tlr}) performance for broad range o
 \label{sec:tlr-auto4} 
 (\ref{sec:datasets-auto4}) 
 
-On figure~\ref{fig:results-tlr-auto4-performance} we compare success rate for different settings of $\lambda_v$ and $\lambda_h$. It~is interesting that the subspace with best achieving networks is around the halfline $(10, 0.001)$ to $(10^9, 0.001)$. That means the result is mainly depending on $\lambda_h$. Even more interesting is the epochs needed for successful networks where an \emph{abyss} occured around line $(0.01, 0.0002)$ to $(10^9, 0.0002)$. Unfortunatelly, we can only guess what is the reason behind this abyss. Maybe it~is related to $MAX\_EPOCH$ and the fact that we are calculating only for successful networks and therefore networks having $\lambda_h < 10^{-6}$ converge fast because of $\lambda_v$ or fail to convergence because of very small $\lambda_h$. 
+On figure~\ref{fig:results-tlr-auto4-performance} we compare success rate for different settings of $\lambda_v$ and $\lambda_h$. It~is interesting that the subspace with best achieving networks is around the halfline $(10, 0.001)$ to $(10^9, 0.001)$. That means the result is mainly depending on $\lambda_h$. Even more interesting is the epochs needed for successful networks where an \emph{abyss} occured around line $(0.01, 0.0002)$ to $(10^9, 0.0002)$. Unfortunatelly, we can only guess what is the reason behind this abyss. Maybe it~is related to $MAX\_EPOCH$ and the fact that we are calculating only for successful networks and therefore, networks having $\lambda_h < 10^{-6}$ converge fast because of $\lambda_v$ or fail to convergence because of very small $\lambda_h$. 
 
 %======== (3D) L1 x L2 x epochs =========
 %======== (3D) L1 x L2 x patSuccF =========
@@ -31,7 +31,7 @@ On figure~\ref{fig:results-tlr-auto4-performance} we compare success rate for di
   \label{fig:results-tlr-auto4-performance}
 \end{figure}
 
-Note the inconsistency between table~\ref{tab:results-cmp-auto4} where 93.12\% success was stated for TLR and in figure~\ref{fig:results-tlr-auto4-performance} it was 96.5\%. We can explain this by the \emph{law of big numbers}. In the first case we run 10,000 networks and therefore the result is likely to mirror the reality. In the second case only 200 networks were run for each$(\lambda_v,\,\lambda_h)$ pairs with having about 50 candidates for best achievers. Thus if we do little amount of runs for these 50 candidates it~is likely that some them will achieve better than in reality. 
+Note the inconsistency between table~\ref{tab:results-cmp-auto4} where 93.12\% success was stated for TLR and in figure~\ref{fig:results-tlr-auto4-performance} it was 96.5\%. We can explain this by the \emph{law of big numbers}. In the first case we run 10,000 networks and therefore, the result is likely to mirror the reality. In the second case only 200 networks were run for each$(\lambda_v,\,\lambda_h)$ pairs with having about 50 candidates for best achievers. Thus if we do little amount of runs for these 50 candidates it~is likely that some them will achieve better than in reality. 
 
 On the following figure~\ref{fig:results-tlr-auto4-epoch} we see that the success rate increases even after $10^5$ epochs and our intuition tells us that it will continue even after $10^6$ epoch. Also interesting is that $patSucc^B$ first follows $patSucc^F$ for about 100 epochs but then it stagnates at rate $\approx0.8$ and even it starts to drop a little. TODO explain, maybe an implementation error? It~is so symmetric and weight update is independent on activation cimputation. 
 
@@ -50,7 +50,7 @@ On the following figure~\ref{fig:results-tlr-auto4-epoch} we see that the succes
 
 On figures~\ref{fig:results-hidden-activations-bal} and~\ref{fig:results-hidden-activations-tlr} we show forward hidden activations. Each color represents the forward hidden representation of one of the four inputs in the \emph{4-2-4 encoder} task. As the hidden layer has size 2 it could be mapped to $(0,1)^2$. The activations started at the black dots and continued as outlined by the the lines. The numbers attached to the lines are the epoch numbers. 
 
-The main difference between TLR and BAL seems to be the speed of activation change. In BAL on figure~\ref{fig:results-hidden-activations-bal} we have a step of size 0.6 which corresponds to four, one for each input, weight updates. And after some initial steps BAL tends to stop the activation change. This could be contributed to settling $|H^F-H^B| \approx \overrightarrow{0}$ as discussed in~(\ref{sec:our-hidden-activation}). 
+The main difference between TLR and BAL seems to be the speed of activation change. In BAL on figure~\ref{fig:results-hidden-activations-bal} we have a step of size 0.6 which corresponds to four, one for each input, weight updates. And after some initial steps BAL tends to stop the activation change. This could be contributed to settling $|H^F-H^B| \approx 0$ as discussed in~(\ref{sec:our-hidden-activation}). 
 
 Another source of error could be \emph{non--convex} hidden activation initializations. In the beginning the weight matrices are initialized by random what leads to random hidden activations. If they are also non--convex in the end then it~is impossible to perfectly classify on the hidden--to--visible layer due the linear separability theorem discussed in section~(\ref{sec:models-perceptron}). Thus the network must \emph{escape} the non--convex state which could introduce problems. 
 

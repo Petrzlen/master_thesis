@@ -17,7 +17,7 @@ For the reconstruction to work \emph{symmetric} weights are used. The learning r
 \frac{\partial E}{\partial w_{ij}} &= -(\eta^{*}_j - \eta_j) \phi'(\eta_j) t_k \nonumber \\
 &\approx -(h^{*}_j - h_j)t_k \nonumber 
 \end{align} 
-The approximation step could be made because $\phi'(\eta_j)$ has \emph{usually} the same sign as $(\eta^{*}_j - \eta_j) $~\citep{hinton1988learning, o1996bio}. The approximation works better if the difference of activations is smaller and therefore the activation for the reconstructed pattern $o$  is made similar to target pattern $t$: 
+The approximation step could be made because $\phi'(\eta_j)$ has \emph{usually} the same sign as $(\eta^{*}_j - \eta_j) $~\citep{hinton1988learning, o1996bio}. The approximation works better if the difference of activations is smaller and therefore, the activation for the reconstructed pattern $o$  is made similar to target pattern $t$: 
 \begin{equation}
 o_k = \alpha t_k + (1-\alpha)f(\eta_k). 
 \end{equation} 

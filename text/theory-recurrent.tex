@@ -1,7 +1,7 @@
 \subsubsection{Recurrent Networks}
 \label{sec:theory-recurrent} 
 
-In \emph{recurrent} neural networks also cycles of connections are allowed. This arises problems with computing their activations. That means that output of a particular unit could affect its input. Therefore the activations in general could not be computed only by one forward pass. This introduces real valued dynamic systems for computing the activations. We can observe that it holds that $\partial\eta / \partial t = 0$ for the activations of neurons in the fixed point state. There are several approaches solving these dynamic systems and deriving the learning rule~\citep{pineda1987generalization, pearlmutter1989learning, williams1989learning, elman1990finding, haykin1994neural}. 
+In \emph{recurrent} neural networks also cycles of connections are allowed. This arises problems with computing their activations. That means that output of a particular unit could affect its input. Therefore, the activations in general could not be computed only by one forward pass. This introduces real valued dynamic systems for computing the activations. We can observe that it holds that $\partial\eta / \partial t = 0$ for the activations of neurons in the fixed point state. There are several approaches solving these dynamic systems and deriving the learning rule~\citep{pineda1987generalization, pearlmutter1989learning, williams1989learning, elman1990finding, haykin1994neural}. 
 
 \begin{figure}[H]
   \centering
