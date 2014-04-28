@@ -53,20 +53,55 @@ TODO write here sth
 
 %===== TODO table: best parameter setting networks with hidden.size= constant (success, epoch, stddev) / model \\
 
-\begin{table}
+\begin{table}[H] 
   \centering
     \begin{tabular}{|l|l|l|l|l|}
     \hline
-    Algorithm&$\lambda$&Success&Epcs&SEM \\
+    Algorithm (section)&$\lambda_h$&$\lambda_v$&$patSucc^F$ &Epochs\\ %&SEM(success) \\
     \hline
+    GR~(\ref{sec:models-generec}) &1.0 &1.0 &95&191.24\\ %&28\\
+    \hline
+    GR TLR~(\ref{sec:models-generec}) &3.0 &0.1 &97&156.52\\ %&28\\
+    \hline
+    BAL~(\ref{sec:models-bal})&0.5 &0.5 &100& 54\\ %&2.0e+08\\
+    \hline
+    BAL TLR~(\ref{sec:our-tlr})&1.0& 5.0 & 100& 64\\ %&1.52e+08\\
+    \hline
+    BAL TLR Can~(\ref{sec:sim-exp-candidates})& & & & \\ %&5,070,000\\ %TODO shit, wrong params 
+    \hline 
     \end{tabular}
-  \caption{Comparing performance of different models on the \emph{CBVA} task.} 
-  \label{tab:results-cmp-k3}
+  \caption{Comparing performance of different models on the \emph{4-2-4 encoder} task with 3 hidden neurons.} 
+  \label{tab:results-cmp-auto4}
 \end{table}
+
+%SELECT lambda, lambda_ih, 100*AVG(success) AS 'suc', AVG(epoch) AS 'epc' FROM data WHERE epoch <> 0 GROUP BY lambda,lambda_ih ORDER BY suc ASC, epc DESC; 
+%generec tlr
+%0.3|1.0|95.0|181.68
+%0.1|0.03|96.0|293.77
+%0.1|1.0e-08|96.0|213.9
+%0.3|0.0001|96.0|191.85
+%0.1|3.0|97.0|156.52
+
+%generec pure 
+%0.01|0.01|85.0|960.62
+%0.03|0.03|93.0|433.5
+%0.1|0.1|95.0|260.0
+%0.3|0.3|95.0|202.93
+%1.0|1.0|95.0|191.24
+
+
+%tlr pure 
+%2.0|0.5|100.0|98.7777777777778
+%2000.0|1.0|100.0|86.48
+%5000.0|0.5|100.0|77.1428571428571
+%5.0|1.0|100.0|64.0
+%0.5|0.5|100.0|54.0
+
+%tlr candidate 
 
 
 \subsubsection{GeneRec} 
-TODO write here sth
+TODO write here sthh
 
 \begin{figure}[H]
   \centering
