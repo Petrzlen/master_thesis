@@ -66,7 +66,7 @@ where $a_i(t)$ is the activation of $i$--th unit in discrete time $t$. The rules
 \paragraph{Modifications.}
 \label{sec:our-learning-rules}
 \label{sec:models-generec-modifications} 
-It~is important to note that~\citet{o1996bio} proved that GeneRec converges if the learning rule~\ref{eq:models-generec-learning-rule} is a valid approximation to the error derivate and the weights beeing symmetric, i.e. $W^{HO} = W^{OH^{T}}$.~\citet{o1996bio} based on CHL and the midpoint method for gradient computation~\citep{press1990numerical} proposed two more learning rules for GeneRec: 
+It~is important to note that~\citet{o1996bio} proved that GeneRec converges if the learning rule~\ref{eq:models-generec-learning-rule} is a valid approximation to the error derivate and the weights beeing symmetric, i.e. $W^{HO} = W^{OH^{T}}$.~\citet{o1996bio} based on CHL and the midpoint method for gradient computation proposed two more learning rules for GeneRec:
 \begin{align}
   \label{eq:models-generec-learning-rule-mid}
   \frac{1}{\lambda} \Delta w_{ij} &=  \frac{1}{2}(a^{-}_i + a^{+}_i)(a^{+}_j - a^{-}_j) \\

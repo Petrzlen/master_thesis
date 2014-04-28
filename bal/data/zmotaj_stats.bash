@@ -78,6 +78,8 @@ do
     sqlite3 measure.sqlite <<< "SELECT lam, lam_v, 100*AVG(success) AS 'success' FROM data WHERE epoch <> 0 GROUP BY lam,lam_v;" | sed 's/|/\t/g' > lls_$fi.dat 
     #sqlite3 measure.sqlite <<< "SELECT lam, lam_v, mom, 100*AVG(success) AS 'success' FROM data WHERE epoch <> 0 GROUP BY lam,lam_v,mom;" | sed 's/|/\t/g' > lls_$fi.dat 
 
+    #SELECT lambda, lambda_ih, 100*AVG(success) AS 'suc', AVG(epoch) AS 'epc' FROM data WHERE epoch <> 0 GROUP BY lambda,lambda_ih ORDER BY suc ASC, epc DESC;
+
     echo "$f : lambdah_lambdav_error.dat" 
 
     sqlite3 measure.sqlite <<< "SELECT lam, lam_v, MIN(ps_f) AS 'ps_f' FROM data GROUP BY lam,lam_v;" | sed 's/|/\t/g' > llp_$fi.dat 
