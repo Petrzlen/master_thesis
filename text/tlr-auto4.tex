@@ -9,7 +9,7 @@
 
 %==================================================================
 \paragraph{Introduction.} 
-In this section, we inspect TLR~(\ref{sec:our-tlr}) performance for broad range of parameters $\lambda_h$ and $\lambda_v$. The network architecture is only 4-2-4~
+In this section, we inspect TLR~(\ref{sec:our-tlr}) performance for a broad range of parameters $\lambda_h$ and $\lambda_v$. The network architecture is only 4-2-4~
 (\ref{sec:datasets-auto4}) what allows us to run plethora of simulations. There were two kinds of simulations. First were \emph{two dimensional maps (TDM)} where we plotted $\lambda_v$ on the $x$ axis, $\lambda_h$ on the $y$ axis and used color for the $z$ axis. Second were \emph{timelines} (TL) where a best configuration found by TDM was inspected. For TDM we ran about 200-500 networks for each ($\lambda_v$, $\lambda_h$) and for timelines about 5000-10000 runs. After the simulation ended we took the average for each parameter setting. The networks were trained while $patSucc^F \neq 0$ or $epoch < Epoch_{\rm max}$ where $Epoch_{\rm max}$ was set to 100,000 in TDM and 1,000,000 in TL. Note that most of the plots are in \emph{logarithmic} scale. 
 
 %============================================================
@@ -19,7 +19,7 @@ In this section, we inspect TLR~(\ref{sec:our-tlr}) performance for broad range 
 \subsubsection{Two learning rates} 
 \label{sec:tlr-auto4}
 
-On figure~\ref{fig:results-tlr-auto4-performance} we compare success rate for different settings of $\lambda_v$ and $\lambda_h$. It~is interesting that the subspace with best achieving networks is around the half line $(10, 0.001)$ to $(10^9, 0.001)$. That means the result mainly depends on $\lambda_h$. Even more interesting is the epochs needed for successful networks where an \emph{rift} occurred around line $(0.01, 0.0002)$ to $(10^9, 0.0002)$. Unfortunatelly, we can only guess what is the reason behind this rift. Maybe it~is related to $Epoch_{\rm max}$ and the fact that we are calculating only for successful networks and therefore, networks having $\lambda_h < 10^{-6}$ converge fast because of $\lambda_v$ or fail to convergence because of very small $\lambda_h$. 
+On figure~\ref{fig:results-tlr-auto4-performance} we compare success rate for different settings of $\lambda_v$ and $\lambda_h$. It~is interesting that the subspace with best achieving networks is around the half line $(10, 0.001)$ to $(10^9, 0.001)$. That means the result mainly depends on $\lambda_h$. Even more interesting is the epochs needed for successful networks where an \emph{rift} occurred around line $(0.01, 0.0002)$ to $(10^9, 0.0002)$. Unfortunatelly, we can only guess what is the reason behind this rift. Maybe it~is related to $Epoch_{\rm max}$ and the fact that we are calculating only for successful networks and therefore, networks having $\lambda_h < 10^{-6}$ converge fast because of $\lambda_v$ or fail to converge because of very small $\lambda_h$. 
 
 %======== (3D) L1 x L2 x epochs =========
 %======== (3D) L1 x L2 x patSuccF =========
@@ -27,7 +27,7 @@ On figure~\ref{fig:results-tlr-auto4-performance} we compare success rate for di
   \centering
   \includegraphics[width=0.49\textwidth]{img/tlr-auto4-success.pdf}   
   \includegraphics[width=0.49\textwidth]{img/tlr-auto4-epoch.pdf}     
-  \caption{TLR success and epochs needed for successful networks on the \emph{4-2-4 encoder} task with $\sigma = 2.3$ and $\mu = 0.0$ best being $96.5\$$ with setting $\lambda_h=0.0003$ and $\lambda_v=1000.0$.}
+  \caption{TLR success and epochs needed for successful networks on the \emph{4-2-4 encoder} task with $\sigma = 2.3$ and $\mu = 0.0$ best being $96.5\$$ with $\lambda_h=0.0003$ and $\lambda_v=1000.0$.}
   \label{fig:results-tlr-auto4-performance}
 \end{figure}
 
@@ -46,6 +46,7 @@ On the following figure~\ref{fig:results-tlr-auto4-epoch} we see that the succes
 
 %============================================================
 \subsubsection{Hidden activations} 
+\label{sec:tlr-auto4-hidden}
 
 On figures~\ref{fig:results-hidden-activations-bal} and~\ref{fig:results-hidden-activations-tlr} we show forward hidden activations. Each color represents the forward hidden representation of one of the four inputs in the \emph{4-2-4 encoder} task. As the hidden layer has size 2 it could be mapped to $(0,1)^2$. The activations started at the black dots and continued as outlined by the the lines. The numbers attached to the lines are the epoch numbers. 
 
@@ -58,8 +59,6 @@ Another source of error could be \emph{non--convex} hidden activation initializa
 %===== hidden activation timelines with commentaries (for TLR, BAL, GeneRec) 
 % 2x success, 2x error (wrong settle, divergence) 
 
-%TODO somehow divide so it will be visible together with explanation (left, right page 2x2, reduce...) 
-%TODO should have also backward activations ... now we can only guess 
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.45\textwidth]{img/hid-bal-bad-init.pdf}  
@@ -105,7 +104,7 @@ Although, \emph{BAL-recirc}~(\ref{sec:our-bal-recirc}) was not successful on the
   \centering
   \includegraphics[width=0.49\textwidth]{img/bal-recirc-auto4-success.pdf}   
   \includegraphics[width=0.49\textwidth]{img/bal-recirc-auto4-epoch.pdf}     
-  \caption{BAL-recirc~(\ref{sec:our-bal-recirc}) success and convergence on the \emph{4-2-4 encoder}. Best result $43.9\%$ achieved with $\lambda_h=5$ and $\lambda_v=1.2$.}
+  \caption{BAL-recirc~(\ref{sec:our-bal-recirc}) success and epochs on the \emph{4-2-4 encoder}. Best result $43.9\%$ achieved with $\lambda_h=5$ and $\lambda_v=1.2$.}
   \label{fig:results-bal-recirc-auto4-performance}
 \end{figure}
 
@@ -117,7 +116,7 @@ As with generalizing of BAL to TLR we tried also generalizing GeneRec with the t
   \centering
   \includegraphics[width=0.49\textwidth]{img/generec-auto4-success.pdf}   
   \includegraphics[width=0.49\textwidth]{img/generec-auto4-epoch.pdf}     
-  \caption{GeneRec~(\ref{sec:models-generec}) success and convergence on the \emph{4-2-4 Encoder} task with $\sigma = 2.3$ and $\mu = 0.0$.}
+  \caption{GeneRec~(\ref{sec:models-generec}) success and epochs on the \emph{4-2-4 encoder} task with $\sigma = 2.3$ and $\mu = 0.0$.}
   \label{fig:results-generec-auto4-performance}
 \end{figure}
 
@@ -128,4 +127,8 @@ We were inspired by the necessary condition for convergence of GeneRec as stated
 \subsubsection{Conclusion} 
 \label{sec:tlr-auto4-conclusion} 
 
-TODO Explain / Make up hypotheses why it behaves as measured (Future work). \\
+\label{sec:tlr-auto4-hypothesis} 
+We could introduce a hypothesis why TLR outperforms BAL on the \emph{4-2-4 encoder task}. The hypothesis is suggested by sections on hidden distances~(\ref{sec:tlr-auto4-hidden}) and~(\ref{sec:our-hidden-activation}) and on candidate selection~(\ref{fig:results-tlr-auto4-epoch}). The reason is that the hidden activations settle to fast. This is explained by the fact that forward and backward hidden activations become same to fast and moreove, the weight initialization could help this. These issues are solved by $\lambda_h \ll \lambda_h$ which adds epochs to the training phase and by candidate selection which prevents initializing hidden activations close to each other. 
+
+%TODO candidate selection on difference between forward and backward activations. 
+
