@@ -1,4 +1,4 @@
-%Experimental Results and Analysis – in this section,you should show the quantitative results – charts and tables. Analyze the results by explaining and highlighting what is important on them in terms of your goals and what is bad. You should explain the strange results too.
+%Experimental Results and Analysis – in this section, you should show the quantitative results – charts and tables. Analyze the results by explaining and highlighting what is important on them in terms of your goals and what is bad. You should explain the strange results too.
 
 %V ďalšej časti prezentujte vlastný prínos a vlastné výsledky porovnajte s výsledkami iných. Charakterizujte použité metódy.
 %Vyhýbajte sa používaniu žargónu.
@@ -15,6 +15,8 @@ TODO Explain / Make up hypotheses why it behaves as measured (Future work). \\
 
 \subsubsection{Two learning rates} 
 \label{sec:tlr-k3}
+TODO write here sth 
+
 %Main purpose of this dataset is to test different hidden sizes 
 %======== (4D) L1 x L2 x patSuccF x hidden size =========
 %======== (4D) L1 x L2 x epochs x hidden size =========
@@ -22,17 +24,17 @@ TODO Explain / Make up hypotheses why it behaves as measured (Future work). \\
 \begin{figure}[H]
   \centering
   Hidden size = 3 \\
-  \includegraphics[width=0.45\textwidth]{img/k3/tlr-3-success.pdf} 
-  \includegraphics[width=0.45\textwidth]{img/k3/tlr-3-epoch.pdf}   
+  \includegraphics[width=0.49\textwidth]{img/k3/tlr-3-success.pdf} 
+  \includegraphics[width=0.49\textwidth]{img/k3/tlr-3-epoch.pdf}   
   Hidden size = 4 \\
-  \includegraphics[width=0.45\textwidth]{img/k3/tlr-4-success.pdf} 
-  \includegraphics[width=0.45\textwidth]{img/k3/tlr-4-epoch.pdf}   
+  \includegraphics[width=0.49\textwidth]{img/k3/tlr-4-success.pdf} 
+  \includegraphics[width=0.49\textwidth]{img/k3/tlr-4-epoch.pdf}   
   Hidden size = 5 \\
-  \includegraphics[width=0.45\textwidth]{img/k3/tlr-5-success.pdf} 
-  \includegraphics[width=0.45\textwidth]{img/k3/tlr-5-epoch.pdf}  
+  \includegraphics[width=0.49\textwidth]{img/k3/tlr-5-success.pdf}   
+  \includegraphics[width=0.49\textwidth]{img/k3/tlr-5-epoch.pdf}  
   Hidden size = 7 \\
-  \includegraphics[width=0.45\textwidth]{img/k3/tlr-7-success.pdf} 
-  \includegraphics[width=0.45\textwidth]{img/k3/tlr-7-epoch.pdf}    
+  \includegraphics[width=0.49\textwidth]{img/k3/tlr-7-success.pdf} 
+  \includegraphics[width=0.49\textwidth]{img/k3/tlr-7-epoch.pdf}    
   \caption{TLR performance on the \emph{CBVA} task with different hidden sizes.}
   \label{fig:results-tlr-k3-success}
 \end{figure}
@@ -40,9 +42,9 @@ TODO Explain / Make up hypotheses why it behaves as measured (Future work). \\
 %======== (3D) best TLR on ALL_SUCC x epoch (std-dev) x hidden size ==========
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.48\textwidth]{img/tlr-k3-3-best-perf.pdf}   
-  \includegraphics[width=0.48\textwidth]{img/tlr-k3-3-best-can.pdf}      
-  \caption{TLR success evolution for the \emph{4-2-4 Encoder} task. Left without candidate selection and right with candidates selection. }
+  \includegraphics[width=0.8\textwidth]{img/tlr-k3-3-best-perf.pdf}   
+  \includegraphics[width=0.8\textwidth]{img/tlr-k3-3-best-can.pdf}      
+  \caption{TLR success timeline for the \emph{CBVA} task with $\lambda_h=0.1$ and $\lambda_v=100$. Top without candidate selection and bottom with candidates selection. }
   \label{fig:results-tlr-k3-epoch} 
 \end{figure}
 
@@ -64,23 +66,23 @@ TODO Explain / Make up hypotheses why it behaves as measured (Future work). \\
 
 
 \subsubsection{GeneRec} 
-%TODO check if good epoch count 
+TODO write here sth
 
 \begin{figure}[H]
   \centering
   Hidden size = 3 \\
-  %TODO \includegraphics[width=0.45\textwidth]{img/k3/tlr-3-success.pdf} 
-  %TODO \includegraphics[width=0.45\textwidth]{img/k3/tlr-3-epoch.pdf}   
-  Hidden size = 4 \\
-  \includegraphics[width=0.45\textwidth]{img/k3/generec-4-success.pdf} 
-  \includegraphics[width=0.45\textwidth]{img/k3/generec-4-epoch.pdf}   
+  \includegraphics[width=0.49\textwidth]{img/k3/generec-3-success.pdf} 
+  \includegraphics[width=0.49\textwidth]{img/k3/generec-3-epoch.pdf}   
+%  Hidden size = 4 \\
+%  \includegraphics[width=0.49\textwidth]{img/k3/generec-4-success.pdf} 
+%  \includegraphics[width=0.49\textwidth]{img/k3/generec-4-epoch.pdf}   
   Hidden size = 5 \\
-  \includegraphics[width=0.45\textwidth]{img/k3/generec-5-success.pdf} 
-  \includegraphics[width=0.45\textwidth]{img/k3/generec-5-epoch.pdf}  
-  Hidden size = 7 \\
-  \includegraphics[width=0.45\textwidth]{img/k3/generec-7-success.pdf} 
-  \includegraphics[width=0.45\textwidth]{img/k3/generec-7-epoch.pdf}    
-  \caption{\emph{GeneRec} performance on the \emph{CBVA} task with different hidden sizes.}
+  \includegraphics[width=0.49\textwidth]{img/k3/generec-5-success.pdf} 
+  \includegraphics[width=0.49\textwidth]{img/k3/generec-5-epoch.pdf}  
+%  Hidden size = 7 \\
+%  \includegraphics[width=0.49\textwidth]{img/k3/generec-7-success.pdf} 
+%  \includegraphics[width=0.49\textwidth]{img/k3/generec-7-epoch.pdf}    
+  \caption{\emph{GeneRec} performance on the \emph{CBVA} task with different hidden sizes. For greater hidden sizes the results were very similar to the results with hidden size 5.}
   \label{fig:results-generec-k3-success}
 \end{figure}
 

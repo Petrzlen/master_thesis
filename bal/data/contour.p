@@ -47,7 +47,8 @@ set xtics ("0.1^9" -9, "0.1^8" -8, "0.1^7" -7, "0.1^6" -6, "0.1^5" -5, "0.1^4" -
 set ytics ("0.1^9" -9, "0.1^8" -8, "0.1^7" -7, "0.1^6" -6, "0.1^5" -5, "0.1^4" -4, "0.001" -3, "0.01" -2, "0.1" -1, "1" 0, "10" 1, "100" 2, "1000" 3, "10^4" 4, "10^5" 5, "10^6" 6, "10^7" 7, "10^8" 8, "10^9" 9) 
 
 #set key font "Times-Roman, 15" 
-set terminal pdf font "arial,8" #size 500, 350 
+set terminal pdf font "arial,8" size 4, 3 crop
+set size 1.02, 1.00 
 set output outpath
 
 #http://stackoverflow.com/questions/19294342/heatmap-with-gnuplot-on-a-non-uniform-gridless
@@ -58,6 +59,6 @@ set palette rgbformulae rgb_a,rgb_b,rgb_c
 l '<./contour.sh cont-line.dat 8 16 7'
 p inpath u 1:2:3 with image, 'cont-line.dat' w l lt -1 lw 1.5
 
-#set terminal pngcairo enhanced font "arial,10" size 800, 800 
+#set terminal pngcairo enhanced font "arial,10" size 800, 800 crop
 #set output "motac.png" 
 #replot

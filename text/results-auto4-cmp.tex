@@ -2,9 +2,9 @@
 \subsubsection{Comparison} 
 \label{sec:tlr-auto4-cmp} 
 
-In the following table\ref{tab:results-cmp-auto4} we can see the comparison of the most important models which we analysed on the \emph{4-2-4 encoder} task. We achieved an improvement of BAL $patSucc^F$ from $62.7\%$ to $93.1\%$ by using two different learning rates~(\ref{sec:our-tlr}). This result was improved further to $99.86\%$ by preselecting networks based on initial weights~(\ref{sec:sim-exp-candidates}). This proved that hidden distance and representation convexity are important attributes of BAL~(\ref{sec:results-candidates}). 
+In the following table~(\ref{tab:results-cmp-auto4}) we can see the comparison of the most important models which we analysed on the \emph{4-2-4 encoder} task. We achieved an improvement of BAL $patSucc^F$ from $62.7\%$ to $93.1\%$ by using two different learning rates~(\ref{sec:our-tlr}). This result was improved further to $99.86\%$ by preselecting networks based on initial weights~(\ref{sec:sim-exp-candidates}). This proved that hidden distance and representation convexity are important attributes of BAL~(\ref{sec:results-candidates}). 
 
-On the other hand, many of the analysed models achieved poorly. Notably we tried modified GeneRec learning rules~(\ref{sec:models-generec-modifications}) on BAL, calling this model \emph{BAL GeneRec Learning Rules (BAL GLR)}. This lead to no results. Also \emph{BAL-recirc}~(\ref{sec:our-bal-recirc}) being the combination of BAL and GeneRec achieved worse than BAL. We experimented with \emph{momentum} in section~(\ref{sec:results-momentum}), symmetric version of BAL in section~(\ref{sec:our-bal-sym}) and other but with no significant improvement. 
+On the other hand, many of the analysed models achieved poorly. Notably we tried modified GeneRec learning rules~(\ref{sec:models-generec-modifications}) on BAL, calling this model \emph{BAL GeneRec Learning Rules (BAL GLR)}. This led to no good results. Also, \emph{BAL-recirc}~(\ref{sec:our-bal-recirc}) achieved worse than BAL. We experimented with \emph{momentum} in section~(\ref{sec:results-momentum}), symmetric version of BAL in section~(\ref{sec:our-bal-sym}) and other but with no significant improvement. 
 
 \begin{table}[H] 
   \centering
@@ -38,4 +38,4 @@ On the other hand, many of the analysed models achieved poorly. Notably we tried
   \label{tab:results-cmp-auto4}
 \end{table}
 
-Note that when comparing runtime in table~\ref{tab:results-cmp-auto4} based on \emph{epochs} we must be aware of that GeneRec and BAL-recirc epochs take longer than others. That's because the recirculation step~(\ref{sec:models-generec-activation}) where usually about 5-15 iterations are necessary for activation to settle~(\ref{sec:generec-fluctuation}). Thus the 418 epochs of GeneRec are comparable to the 5845 epochs of TLR in terms of compuration time. 
+Note that when comparing runtime in table~\ref{tab:results-cmp-auto4} based on \emph{epochs} we must be aware of that GeneRec and BAL-recirc epochs take longer than others. That is because the recirculation step~(\ref{sec:models-generec-activation}) where usually about 5--15 iterations are necessary for activation to settle~(\ref{sec:generec-fluctuation}). Thus the 418 epochs of GeneRec are comparable to the 5845 epochs of TLR in terms of compuration time. 

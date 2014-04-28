@@ -11,28 +11,18 @@ TODO Hidden distance (over 70\%); in triangle (68.3 \%). \\
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.45\textwidth]{img/placeholder.png}  %TODO   
-  \includegraphics[width=0.45\textwidth]{img/placeholder.png}  %TODO    
+  \includegraphics[width=0.49\textwidth]{img/placeholder.png}  %TODO   
+  \includegraphics[width=0.49\textwidth]{img/placeholder.png}  %TODO    
   \caption{Candidate selection. Selecting highest \emph{hidden distance} among 1000 randomly generated networks leads to $\approx 10\%$ success increase.}
   \label{fig:results-candidates-tlr}
 \end{figure}
 
-%======== (2D) best TLR on ALL_SUCC x epoch (std-dev) : TLR vs. CS-TLR ==========
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.45\textwidth]{img/placeholder.png}  %TODO   
-  \includegraphics[width=0.45\textwidth]{img/placeholder.png}  %TODO    
-  \caption{Comparing candidate selection to standard BAL.}
-  \label{fig:results-candidates-epoch}
-\end{figure}
-
 \paragraph{Linear regression model.} 
 
-Following our best feature selection process~(\ref{sec:sim-exp-candidates}) we trained a linear regression model over the network measures with label being $1-\mbox{bitSucc}^F = \mbox{bitErr}^F$. TODO explain more 
+Following our best feature selection process~(\ref{sec:sim-exp-candidates}) we trained a linear regression model over the network measures with label being $1-bitSucc^F = bitErr^F$. TODO explain more 
 \begin{align} 
 \label{eq:results-candidates-linear-regression} 
-\mbox{bitErr}^F &= 
+bitErr^F &= 
 - 0.328 \times dist_{H}
 + 0.140 \times dist_{H}^{FB}
 - 0.100 \times dist_{O}^{FB} \nonumber \\
@@ -41,15 +31,15 @@ Following our best feature selection process~(\ref{sec:sim-exp-candidates}) we t
 + 3.610
 \end{align} 
 
-\paragraph{Comparing feature evolution of TLR to BAL.} 
+%\paragraph{Comparing feature evolution of TLR to BAL.} 
 
-TODO add plots of feature / epoch for the best TLR and BAL. 
+%TODO add plots of feature / epoch for the best TLR and BAL. 
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.45\textwidth]{img/placeholder.png}  %TODO   
-  \includegraphics[width=0.45\textwidth]{img/placeholder.png}  %TODO    
-  \caption{Evolution of the distance between forward and backward hidden activations $\mbox{dist}_{H}^{FB}$~(\ref{sec:our-dist-h-fb}). Further discussion in~(\ref{sec:our-hidden-activation}). }
-  \label{fig:results-candidates-dist-h-fb}
-\end{figure}
+%\begin{figure}[H]
+%  \centering
+%  \includegraphics[width=0.45\textwidth]{img/placeholder.png}  %TODO   
+%  \includegraphics[width=0.45\textwidth]{img/placeholder.png}  %TODO    
+%  \caption{Evolution of the distance between forward and backward hidden activations $dist_{H}^{FB}$~(\ref{sec:our-dist-h-fb}). Further discussion in~(\ref{sec:our-hidden-activation}). }
+%  \label{fig:results-candidates-dist-h-fb}
+%\end{figure}
 

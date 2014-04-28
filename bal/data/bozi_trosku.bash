@@ -79,7 +79,7 @@ do
   suf=`echo $mom | sed 's/\./-/g'`
   echo "tlr-mom-auto4-success-$suf.pdf"
   less "stats/auto4_tlr_mom/lls_0.dat" | awk "{if(\$3==$mom) print \$1,\$2,\$4;}" | bash to_log_grid.bash > buf.dat
-gnuplot -e "inpath='buf.dat';outpath='../../text/img/tlr-mom-auto4-success-$suf.pdf';val_from=0;val_d=5;val_to=100;rxf=-3;rxt=8;ryf=-9;ryt=2;rgb_a=33;rgb_b=13;rgb_c=10" contour.p
+gnuplot -e "inpath='buf.dat';outpath='../../text/img/tlr-mom-auto4-success-$suf.pdf';val_from=30;val_d=5;val_to=100;rxf=-3;rxt=8;ryf=-9;ryt=2;rgb_a=33;rgb_b=13;rgb_c=10" contour.p
 
   echo "tlr-mom-auto4-epoch-$suf.pdf"
   less "stats/auto4_tlr_mom/lle_0.dat" | awk "{if(\$3==$mom) print \$1,\$2,\$4;}" | bash to_log_grid.bash | bash post_epochs.bash 20000 > "buf.dat"
@@ -95,7 +95,7 @@ done
 #=================== TLR ====================
   #=================== auto4 ====================
   echo "tlr-auto4-success.pdf"
-gnuplot -e "inpath='stats/auto4_bal_orig/log_lls_0.dat';outpath='../../text/img/tlr-auto4-success.pdf';val_from=0;val_d=5;val_to=100;rxf=-4;rxt=9;ryf=-9;ryt=1;rgb_a=33;rgb_b=13;rgb_c=10" contour.p
+gnuplot -e "inpath='stats/auto4_bal_orig/log_lls_0.dat';outpath='../../text/img/tlr-auto4-success.pdf';val_from=40;val_d=5;val_to=100;rxf=-4;rxt=9;ryf=-9;ryt=1;rgb_a=33;rgb_b=13;rgb_c=10" contour.p
 
   echo "tlr-auto4-epoch.pdf"
   less stats/auto4_bal_orig/log_lle_0.dat | bash post_epochs.bash 20000 > buf.dat
@@ -118,7 +118,7 @@ gnuplot -e "inpath='stats/auto4_bal_recirc/log_lls_0.dat';outpath='../../text/im
 
   echo "bal-recirc-auto4-epoch.pdf"
   less stats/auto4_bal_recirc/log_lle_0.dat | bash post_epochs.bash 20000 > buf.dat
-gnuplot -e "inpath='buf.dat';outpath='../../text/img/bal-recirc-auto4-epoch.pdf';val_from=0;val_d=1000;val_to=50000;rxf=-4;rxt=2;ryf=-9;ryt=2;rgb_a=10;rgb_b=13;rgb_c=33" contour.p
+gnuplot -e "inpath='buf.dat';outpath='../../text/img/bal-recirc-auto4-epoch.pdf';val_from=0;val_d=1000;val_to=5000;rxf=-4;rxt=2;ryf=-9;ryt=2;rgb_a=10;rgb_b=13;rgb_c=33" contour.p
 
 #=================== BAL RECIRC ====================
   #=================== auto4 ====================
@@ -129,7 +129,7 @@ gnuplot -e "inpath='stats/auto4_generec/log_lls_0.dat';outpath='../../text/img/g
 
   echo "generec-auto4-epoch.pdf"
 less stats/auto4_generec/log_lle_0.dat | bash post_epochs.bash 20000 > buf.dat
-gnuplot -e "inpath='buf.dat';outpath='../../text/img/generec-auto4-epoch.pdf';val_from=0;val_d=1000;val_to=50000;rxf=-4;rxt=2;ryf=-7;ryt=2;rgb_a=10;rgb_b=13;rgb_c=33" contour.p
+gnuplot -e "inpath='buf.dat';outpath='../../text/img/generec-auto4-epoch.pdf';val_from=0;val_d=1000;val_to=8000;rxf=-4;rxt=2;ryf=-7;ryt=2;rgb_a=10;rgb_b=13;rgb_c=33" contour.p
 
 #==================== HISTORY =====================
   #=================== auto4 ====================
@@ -162,5 +162,5 @@ do
 
   echo "  generec-k3-$num-epoch.pdf"
   less stats/$filename/log_lle_0.dat | bash post_epochs.bash 5000 > buf.dat
-  gnuplot -e "inpath='buf.dat';outpath='../../text/img/k3/generec-$num-epoch.pdf';val_from=0;val_d=300;val_to=3000;rxf=-4;rxt=4;ryf=-7;ryt=1;rgb_a=10;rgb_b=13;rgb_c=33" contour.p
+  gnuplot -e "inpath='buf.dat';outpath='../../text/img/k3/generec-$num-epoch.pdf';val_from=0;val_d=300;val_to=2500;rxf=-4;rxt=4;ryf=-7;ryt=1;rgb_a=10;rgb_b=13;rgb_c=33" contour.p
 done

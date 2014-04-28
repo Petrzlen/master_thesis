@@ -53,7 +53,7 @@ where $\lambda$ is the \emph{learning rate}.
 Using the learning rule~\ref{eq:perceptron-learning-rule} and the following \emph{training} process the perceptron is able to \emph{learn}: 
 \begin{algorithm}[H]
   \begin{algorithmic}
-    \For{$epoch = 1$ to $MAX\_EPOCH$} 
+    \For{$epoch = 1$ to $Epoch_{\rm max}$} 
       \ForAll{$(X^j, t_j)$ in $T$} 
         \State $y_j \gets \phi(\sum_{i=0}^N x_iw_{ik}) > \theta_k$
         \For{$i=0$ to $N$} 
