@@ -10,8 +10,8 @@
 %==================================================================
 \paragraph{Introduction.} 
 \label{sec:results-auto4-introduction} 
-In this section, we inspect TLR~(\ref{sec:our-tlr}) performance for a broad range of parameters $\lambda_h$ and $\lambda_v$. The network architecture is only 4-2-4~
-(\ref{sec:datasets-auto4}) what allows us to run plethora of simulations. There were two kinds of simulations. First were \emph{two dimensional maps (TDM)} where we plotted $\lambda_v$ on the $x$ axis, $\lambda_h$ on the $y$ axis and used color for the $z$ axis. Second were \emph{timelines} (TL) where a best configuration found by TDM was inspected. For TDM we ran about 200-500 networks for each ($\lambda_v$, $\lambda_h$) and for timelines about 5000-10000 runs. After the simulation ended we took the average for each parameter setting. The networks were trained while $patSucc^F \neq 0$ or $epoch < Epoch_{\rm max}$ where $Epoch_{\rm max}$ was set to 100,000 in TDM and 1,000,000 in TL. Note that most of the plots are in \emph{logarithmic} scale. 
+In this section, we analyse TLR~(\ref{sec:our-tlr}) performance for a broad range of parameters $\lambda_h$ and $\lambda_v$. The network architecture is only 4-2-4~
+(\ref{sec:datasets-auto4}) what allows us to run plethora of simulations. There were two kinds of simulations. First were \emph{two dimensional maps (TDM)} where we plotted $\lambda_v$ on the $x$ axis, $\lambda_h$ on the $y$ axis and used color for the $z$ axis. Second were \emph{timelines} (TL) where a best configuration found by TDM was analysed. For TDM we ran about 200-500 networks for each ($\lambda_v$, $\lambda_h$) and for timelines about 5000-10000 runs. After the simulation ended we took the average for each parameter setting. The networks were trained while $patSucc^F \neq 0$ or $epoch < Epoch_{\rm max}$ where $Epoch_{\rm max}$ was set to 100,000 in TDM and 1,000,000 in TL. Note that most of the plots are in \emph{logarithmic} scale. 
 
 %============================================================
 \input{results-auto4-cmp} 
@@ -34,7 +34,7 @@ On figure~\ref{fig:results-tlr-auto4-performance} we compare success rate for di
 
 Note the inconsistency between table~\ref{tab:results-cmp-auto4} where 93.12\% success was stated for TLR and in figure~\ref{fig:results-tlr-auto4-performance} it was 96.5\%. We can explain this by the \emph{law of big numbers}. In the first case we run 10,000 networks and therefore, the result is likely to mirror the reality. In the second case only 200 networks were run for each$(\lambda_v,\,\lambda_h)$ pairs with having about 50 candidates for best achievers. Thus if we do little amount of runs for these 50 candidates it~is likely that some them will achieve better than in reality. 
 
-On figure~\ref{fig:results-tlr-auto4-epoch} the success timeline for TLR with best $\lambda_h$ and $\lambda_v$ is inspected. We see that the success rate increases even after $10^5$ epochs and our intuition tells us that it will continue even after $10^6$ epoch. Also interesting is that $patSucc^B$ first follows $patSucc^F$ for about 100 epochs but then it stagnates at rate $\approx0.8$ and even it starts to drop a little. TODO explain, maybe an implementation error? It~is so symmetric and weight update is independent on activation cimputation. 
+On figure~\ref{fig:results-tlr-auto4-epoch} the success timeline for TLR with best $\lambda_h$ and $\lambda_v$ is analysed. We see that the success rate increases even after $10^5$ epochs and our intuition tells us that it will continue even after $10^6$ epoch. Also interesting is that $patSucc^B$ first follows $patSucc^F$ for about 100 epochs but then it stagnates at rate $\approx0.8$ and even it starts to drop a little. TODO explain, maybe an implementation error? It~is so symmetric and weight update is independent on activation cimputation. 
 
 %======== (2D) best TLR on ALL_SUCC x epoch (std-dev) ==========
 \begin{figure}[H]
