@@ -135,13 +135,39 @@ momentum & avg(success) \\
 
 
 %============================================================
-%\subsubsection{Features}
+\subsubsection{Features}
+TODO explain 
 
-\label{sec:results-auto4-bal-matrix-sim}
-\label{fig:results-candidates-dist-h-fb} 
-%TODO[opt] feature to epoch of best (in worst we will throw away) 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/feature-cmp-h-fb-d.pdf}  
+   \caption{Comparing $dist_{H}^{FB}$~(\ref{sec:our-dist-h-fb}) evolution on the {4-2-4 encoder} task.}
+  \label{fig:results-candidates-h-fb-d}
+\end{figure}
 
-\subsubsection{Other} 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/feature-cmp-o-fb-d.pdf}  
+   \caption{Comparing $dist_{O}^{FB}$~(\ref{sec:our-dist-o-fb}) evolution on the {4-2-4 encoder} task.}
+  \label{fig:results-candidates-o-fb-d}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/feature-cmp-h-dist.pdf}  
+   \caption{Comparing $dist_{H}$~(\ref{sec:our-h-dist}) evolution on the {4-2-4 encoder} task.}
+  \label{fig:results-candidates-h-dist}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{img/feature-cmp-m-wei.pdf}  
+   \caption{Comparing $matrix\_weight$~(\ref{sec:our-m-wei}) evolution on the {4-2-4 encoder} task.}
+  \label{fig:results-candidates-m-wei}
+\end{figure}
+
+
+\subsubsection{Other}
 
 \paragraph{Recirculation BAL.} 
 On figure~\ref{fig:results-bal-recirc-auto4-performance} we see that \emph{BAL-recirc}~(\ref{sec:our-bal-recirc}) achieved lower success rate than BAL on the \emph{4-2-4 encoder} task. In comparison with TLR we see that there is a global maxima at point $\lambda_h = 0.0001$ and $\lambda_v=1.0$. We can therefore conclude that the space of possible improvement by parameters $\lambda_h$ and $\lambda_v$ is bounded. Similar results were achieved for GeneRec as shown on figure~\ref{fig:results-generec-auto4-performance}.

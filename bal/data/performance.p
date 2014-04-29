@@ -26,13 +26,13 @@ set grid xtics lw 5 lc rgb "#dddddd"
 
 #lc rgb "#880088"
 set terminal unknown
-plot 'tpsb.dat' u 1:5:($5-$6):($5+$6) with errorlines \
+plot 'ps_b.dat' u 1:5:($5-$6):($5+$6) with errorlines \
         lt 3 lw 3 pt 5 ps 0.5 title 'patSuccB', \
-     'tpsf.dat' u 1:5:($5-$6):($5+$6) with errorlines \
+     'ps_f.dat' u 1:5:($5-$6):($5+$6) with errorlines \
         lt 1 lw 3 pt 5 ps 0.5 title 'patSuccF', \
-     'tbsb.dat' u 1:(1-$5):(1-$5-$6):(1-$5+$6) with errorlines \
+     'bs_b.dat' u 1:(1-$5):(1-$5-$6):(1-$5+$6) with errorlines \
         lt 4 lw 2 pt 5 ps 0.5 title 'bitErrB', \
-     'tbsf.dat' u 1:(1-$5):(1-$5-$6):(1-$5+$6) with errorlines \
+     'bs_f.dat' u 1:(1-$5):(1-$5-$6):(1-$5+$6) with errorlines \
         lt 7 lw 2 pt 5 ps 0.5 title 'bitErrF'
 
 set terminal pdf font "arial,8" size 7, 3

@@ -6,8 +6,7 @@ p="{if(NR>1&&\$2>=$2)print \$0;}"
 s="BEGIN{ls=0;}{if(log(\$1+1)>=ls) {ls = log(\$1+1)+$3; print \$1,\$2,\$3,\$4,\$5,\$6,\$7;}}END{print}" 
 #echo $s 
 
-#could make +- 2 promile
-awk "$p" stats/$1/epoch_bs_f.dat | awk "$s" > tbsf.dat
-awk "$p" stats/$1/epoch_bs_b.dat | awk "$s" > tbsb.dat
-awk "$p" stats/$1/epoch_ps_f.dat | awk "$s" > tpsf.dat
-awk "$p" stats/$1/epoch_ps_b.dat | awk "$s" > tpsb.dat
+less stats/$1/cols.txt | while read col
+do
+  awk "$p" stats/$1/epoch_$col.dat | awk "$s" > $col.dat
+done 

@@ -77,7 +77,7 @@ do
   else
     lv="lam"
     lh="lam_v" #not so old times 
-    if sqlite3 measure.sqlite <<< ".schema" | grep -q 'lam_v'; then
+    if sqlite3 measure.sqlite <<< ".schema" | grep -q 'lam_h'; then
       lv="lam_v" 
       lh="lam_h" 
     fi 

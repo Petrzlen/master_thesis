@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#===================== feature comparison ==========================
+bash epoch_cmp.sh h_fb_d "distance between HF and HB" ../../text/img/feature-cmp-h-fb-d.pdf
+bash epoch_cmp.sh o_fb_d "distance between HF and HB" ../../text/img/feature-cmp-o-fb-d.pdf
+bash epoch_cmp.sh h_dist "hidden distance" ../../text/img/feature-cmp-h-dist.pdf
+bash epoch_cmp.sh m_wei "matrix weight" ../../text/img/feature-cmp-m-wei.pdf
 
 #===================== hidden activations ==========================
 
