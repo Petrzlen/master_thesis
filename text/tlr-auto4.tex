@@ -129,7 +129,7 @@ momentum & avg(success) \\
   \includegraphics[width=0.49\textwidth]{img/tlr-mom-auto4-epoch-0-001.pdf}  \\
   \includegraphics[width=0.49\textwidth]{img/tlr-mom-auto4-success-0-3.pdf}  
   \includegraphics[width=0.49\textwidth]{img/tlr-mom-auto4-epoch-0-3.pdf}  
-  \caption{Comparing momentums $\mu=0.01$ (top) and $\mu=0.3$ (bottom) for TLR on the \emph{4-2-4 encoder} task.}
+   \caption{Comparing momentums $\mu=0.01$ (top) and $\mu=0.3$ (bottom) for TLR on the \emph{4-2-4 encoder} task.}
   \label{fig:results-tlr-auto4-momentum}
 \end{figure}
 
@@ -144,30 +144,40 @@ TODO[opt] feature to epoch of best (in worst we will throw away)
 \subsubsection{Other} 
 
 \paragraph{Recirculation BAL.} 
-TODO replot, rewite explanation 
-%Although, \emph{BAL-recirc}~(\ref{sec:our-bal-recirc}) was not successful on the \emph{4-2-4 encoder} task as shown on figure~\ref{fig:results-bal-recirc-auto4-performance} it~is interesting that the success depends on $\lambda_v$ and not $\lambda_h$ as in the case of TLR~\ref{fig:results-tlr-auto4-performance}. This observation is also true for GeneRec as shown on figure~\ref{fig:results-generec-auto4-performance}. Thus we can conclude that for the recirculation type networks this could hold. 
+On figure~\ref{fig:results-bal-recirc-auto4-performance} we see that \emph{BAL-recirc}~(\ref{sec:our-bal-recirc}) achieved lower success rate than BAL on the \emph{4-2-4 encoder} task. In comparison with TLR we see that there is a global maxima at point $\lambda_h = 0.0001$ and $\lambda_v=1.0$. We can therefore conclude that the space of possible improvement by parameters $\lambda_h$ and $\lambda_v$ is bounded. Similar results were achieved for GeneRec as shown on figure~\ref{fig:results-generec-auto4-performance}.
 %======== (3D) L1 x L2 x epochs =========
 %======== (3D) L1 x L2 x patSuccF =========
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.49\textwidth]{img/bal-recirc-auto4-success.pdf}   
   \includegraphics[width=0.49\textwidth]{img/bal-recirc-auto4-epoch.pdf}     
-  \caption{BAL-recirc~(\ref{sec:our-bal-recirc}) success and epochs on the \emph{4-2-4 encoder}. Best result $43.9\%$ achieved with $\lambda_h=5$ and $\lambda_v=1.2$.}
+  \caption{BAL-recirc~(\ref{sec:our-bal-recirc}) success and epochs on the \emph{4-2-4 encoder}. Best result $36\%$ achieved with $\lambda_h = 0.0001$ and $\lambda_v=1.0$.}
   \label{fig:results-bal-recirc-auto4-performance}
 \end{figure}
+%success lambda_h lambda_v
+%33.0 0.0003 1.0
+%33.0 0.001 3.0
+%34.0 0.01 1.0
+%36.0 0.0001 1.0
+%36.0 3.0e-05 0.3
+
 
 \paragraph{GeneRec.} 
-TODO replot, rewrite explanation 
-As with generalizing of BAL to TLR we tried also generalizing GeneRec with the two learning rates approach. Although, the performance was not increased it showed that the success depends mostly on $\lambda_v$ as shown on figure~\ref{fig:results-generec-auto4-performance}. 
-%======== (3D) L1 x L2 x epochs =========
+As with generalizing of BAL to TLR we tried also generalizing GeneRec with the two learning rates approach. The results shown on figure~\ref{fig:results-generec-auto4-performance} shows no increase in success rate in comparison with setting $\lambda_v = \lambda_h$, i.e. original GeneRec. It is also similar with the result of BAL-recirc show on figure~\ref{fig:results-bal-recirc-auto4-performance} that the success space is bounded.  
+%======== (3D) L1 x L2 x epochs =========the
 %======== (3D) L1 x L2 x patSuccF =========
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.49\textwidth]{img/generec-auto4-success.pdf}   
   \includegraphics[width=0.49\textwidth]{img/generec-auto4-epoch.pdf}     
-  \caption{GeneRec~(\ref{sec:models-generec}) success and epochs on the \emph{4-2-4 encoder} task with $\sigma = 2.3$ and $\mu = 0.0$.}
+  \caption{GeneRec~(\ref{sec:models-generec}) success and epochs on the \emph{4-2-4 encoder} task with $\sigma = 2.3$ and $\mu = 0.0$. Best result $83\%$ achieved with $\lambda_h = 0.3$ and $\lambda_v=1.0$.}
   \label{fig:results-generec-auto4-performance}
 \end{figure}
+
+%77.0 1.0 0.1
+%78.0 1.0 0.3
+%81.0 0.3 0.3
+%83.0 0.3 1.0
 
 %TODO[opt] 
 %\paragraph{Symmetric BAL.} 
