@@ -2,6 +2,10 @@
 
 In this section,  we describe other models, model modifications and experiments we used in our work. We also introduce notation used in the results section~(\ref{sec:results}) and discuss related work. 
 
+\paragraph{Weight initialization classification.} 
+\label{sec:our-weight-init-class}
+As candidate selection suggested~\ref{sec:sim-exp-candidates}, weight initialization could be crucial for the success rate of BAL. Building on this fact we propose an experiment. First we generate $n$ networks $N_i$ with random weights $W_i$, train them and label them $s_i$ depending if they were successful. Then we get a dataset $D=(W_i, s_i)$ on which we could train some model $M$ used for prediction of $s_i$. Then by analysis of $M$ we could derive hypothesis for weight distributions which are successful. And then we could modify the weight initialization process so that it will reinforce those more successful networks. Note that this experiment was not implemented and we recommend it for future work. 
+
 %==========================================================
 \paragraph{Dynamic learning rate.} 
 \label{sec:our-dynamic-lambda} 

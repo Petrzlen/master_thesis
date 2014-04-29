@@ -53,14 +53,16 @@ For comparison of TLR on the \emph{digits} task we have chosen from \citet{digit
     \hline
     Algorithm (section)&$\lambda_h$&$\lambda_v$&$patSucc^F$ &Epochs\\ %&SEM(success) \\
     \hline
-    Linear classifier & -- & -- & 88 & -- \\ %&1.52e+08\\
+    Linear classifier & -- & -- & 88 & -- \\ 
     \hline
-    BP 784-300-10~(\ref{sec:models-bp})& -- & -- & 95.3 & -- \\ %&1.52e+08\\
+    BP 784-300-10~(\ref{sec:models-bp})& -- & -- & 95.3 & -- \\ 
     \hline 
-    TLR 784-300-10~(\ref{sec:models-bp})& $10^{-8}$ & 0.1 & 88.47 & -- \\ %&1.52e+08\\
+    BAL 784-300-10~(\ref{sec:models-bal})& & & & -- \\
+    \hline 
+    TLR 784-300-10~(\ref{sec:models-bp})& $10^{-8}$ & 0.1 & 88.47 & -- \\
     \hline 
     \end{tabular}
-  \caption{Comparing performance of different models on the \emph{digits} task with 300 hidden neurons. Data from \citet{lecun1998gradient} and \citet{digits2014mnist}.} 
+  \caption{Comparing performance of different models on the \emph{digits} task. Data from \citet{lecun1998gradient} and \citet{digits2014mnist}.} 
   \label{tab:results-cmp-digits}
 \end{table}
 

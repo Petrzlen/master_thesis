@@ -1,39 +1,22 @@
+% ==================== 16. Conclusion ========================
+% This chapter should conclude on your contribution. It should highlight the key results from the research work. In this section, you should avoid mentioning new terms and statements not discussed throughout the main text. Also general aspects of the research work shouldn’t be repeated here. Conclusion shouldn’t be the abstract written in past tense. The conclusion should derive the important facts out of your work and results that you obtained.
+%=== ZAVER ====
+%\begin{itemize} 
+%\item   toto je otvorene
+%\item   toto vyzera tazko
+%\item   tymto by sme sa zaoberali dalej (Future work) 
+%\end{itemize} 
+
 \section*{Conclusion}
 \markboth{CONCLUSION}{}
 \addcontentsline{toc}{section}{Conclusion}
 \label{sec:conclusion} 
 
-Still, many work should be done. 
+We derived TLR, a modification of BAL, which increased the success rate of BAL from 62.7\% to 93.1\% on the 4-2-4 encoder task. We observed that BAL converges rapidly to the state, when the backward and forward activations become the same. This become our primary hypothesis explaining why BAL had problems learning the 4-2-4 task. Our hypothesis was proven by candidate selection, which preselected a network with more distant hidden activations, and increased the success rate from 93.1\% to 99.84\% and reduced the needed epochs from 5845 to 150. We then applied TLR on the hand written digit recognition task with architecture 784-300-10. Although TLR has still a performance gap on backpropagation, it achieved far better success rate than original BAL. %(TODO sim) 
 
+We experimented with many different modifications of BAL, notably BAL-recirc which achieved 43.2\% success rate, other GeneRec learning rules and dynamic learning rules which achieved 0\% success rate, dropout which achieved 0\% success rate and multilayer GeneRec which achieved 42\% success rate. We also tried standard modifications such as batch training mode or adding momentum but they showed no tendency in increasing the success rate of TLR. We admit that there is a space for improvement on these approaches.
 
-==ZAVER 
-\begin{itemize} 
-\item   spravili sme toto toto \\ 
-hidden activations, tlr \ref{sec:tlr-auto4-hypothesis} 
-We could introduce a hypothesis why TLR outperforms BAL on the \emph{4-2-4 encoder task}. The hypothesis is suggested by sections on hidden distances~(\ref{sec:tlr-auto4-hidden}) and~(\ref{sec:our-hidden-activation}) and on candidate selection~(\ref{fig:results-tlr-auto4-epoch}). The reason is that the hidden activations settle to fast. This is explained by the fact that forward and backward hidden activations become same to fast and moreove, the weight initialization could help this. These issues are solved by $\lambda_h \ll \lambda_h$ which adds epochs to the training phase and by candidate selection which prevents initializing hidden activations close to each other. \\
-\\
-half line hypothesis 
-\item   toto je otvorene
-\item   toto vyzera tazko
-\item   tymto by sme sa zaoberali dalej (Future work) 
-
-\end{itemize} 
-
-%What left unfinished from your work? What are you future plans to develop better your work?
-
-\subsection*{Future Work} 
 \label{sec:future-work}
-Weight initialization: train on the dataset (initial weights + success)~(\ref{sec:results-sigma}) 
-i.e. ako rozlisit uspesne a neuspesne od inicializacie (v batch mode), t.j. binarny klasifikator na good/bad vah . 
-
-Try TLR also with BP.  \\ 
-
-\label{sec:future-dlr} 
-Dynamic learning rate~(\ref{sec:our-dynamic-lambda}). 
-
-Tricks with BP~\citep{lecun2012efficient}. 
-
-Try using also backward activations.
-
-That introduces the hypothesis that the bigger set of samples, the lower the values of $(\lambda_v,\, \lambda_h)$
+%What left unfinished from your work? What are you future plans to develop better your work?
+Our work opened several ways to continue on analysis of BAL. For instance it is possible to make up a dataset where the initial weights would be used the training features for successful networks as discussed in section~\ref{sec:our-weight-init-class}. Other way could be using four learning rates, one for each matrix, or dynamic learning rates for each connection as outlined in section~\ref{sec:our-dynamic-lambda}. We also recommend looking on backward activations which showed counter intuitive behaviour in figure~\ref{fig:results-tlr-auto4-epoch}. As TLR introduced one more parameter to set up it could be practical to develop a method for finding the best pair of $\lambda_v$ and $\lambda_h$. 
 

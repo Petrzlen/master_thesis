@@ -65,7 +65,7 @@ ls . | grep 'post.csv' | while read f
 do
   echo "$f : lambdah_lambdav_success.dat" 
   
-  #OLD TIMES ^^ 
+  #OLDEST TIMES ^^ 
   if sqlite3 measure.sqlite <<< ".schema" | grep -q 'lambda'; then
      
     sqlite3 measure.sqlite <<< "SELECT lambda, lambda_ih, 100*AVG(success) AS 'success' FROM data WHERE epoch <> 0 GROUP BY lambda,lambda_ih;" | sed 's/|/\t/g' > lls_$fi.dat 
@@ -75,14 +75,21 @@ do
     sqlite3 measure.sqlite <<< "SELECT D1.lambda, D1.lambda_ih, (SELECT AVG(D2.epoch) FROM data D2 WHERE D2.epoch <> 0 AND D2.success = 1 AND D1.lambda=D2.lambda AND D1.lambda_ih=D2.lambda_ih) as 'epoch' FROM data D1 GROUP BY lambda,lambda_ih;" | sed 's/|/\t/g' > lle_$fi.dat 
   #NEW TIMES 
   else
-    sqlite3 measure.sqlite <<< "SELECT lam, lam_v, 100*AVG(success) AS 'success' FROM data WHERE epoch <> 0 GROUP BY lam,lam_v;" | sed 's/|/\t/g' > lls_$fi.dat 
+    lv="lam"
+    lh="lam_v" #not so old times 
+    if sqlite3 measure.sqlite <<< ".schema" | grep -q 'lam_v'; then
+      lv="lam_v" 
+      lh="lam_h" 
+    fi 
+    
+    sqlite3 measure.sqlite <<< "SELECT $lv as 'lambda_v', $lh as 'lambda_h', 100*AVG(success) AS 'success' FROM data WHERE epoch <> 0 GROUP BY $lm,$lh;" | sed 's/|/\t/g' > lls_$fi.dat 
     #sqlite3 measure.sqlite <<< "SELECT lam, lam_v, mom, 100*AVG(success) AS 'success' FROM data WHERE epoch <> 0 GROUP BY lam,lam_v,mom;" | sed 's/|/\t/g' > lls_$fi.dat 
 
     #SELECT lambda, lambda_ih, 100*AVG(success) AS 'suc', AVG(epoch) AS 'epc' FROM data WHERE epoch <> 0 GROUP BY lambda,lambda_ih ORDER BY suc ASC, epc DESC;
 
     echo "$f : lambdah_lambdav_error.dat" 
 
-    sqlite3 measure.sqlite <<< "SELECT lam, lam_v, MIN(ps_f) AS 'ps_f' FROM data GROUP BY lam,lam_v;" | sed 's/|/\t/g' > llp_$fi.dat 
+    sqlite3 measure.sqlite <<< "SELECT $lv as 'lambda_v', $lh as 'lambda_h', MIN(ps_f) AS 'ps_f' FROM data GROUP BY $lm,$lh;" | sed 's/|/\t/g' > llp_$fi.dat 
 
     echo "$f : lambdah_lambdav_ps_f.dat" 
     #wasted work :/ 
@@ -93,7 +100,10 @@ do
     
     #sqlite3 measure.sqlite <<< "SELECT D1.lam, D1.lam_v, D1.mom, (SELECT AVG(D2.epoch) FROM data D2 WHERE D2.epoch <> 0 AND D2.success = 1 AND D1.lam=D2.lam AND D1.lam_v=D2.lam_v AND D1.mom=D2.mom) as 'epoch' FROM data D1 GROUP BY lam,lam_v,mom;" | sed 's/|/\t/g' > lle_$fi.dat
     
-    sqlite3 measure.sqlite <<< "SELECT D1.lam, D1.lam_v, MAX(D1.epoch) AS 'epoch' FROM data D1 GROUP BY lam,lam_v;" | sed 's/|/\t/g' > lle_$fi.dat  
+    #TODO 
+    echo "SELECT D1.$lv as 'lambda_v', D1.$lh as 'lambda_h', MAX(D1.epoch) AS 'epoch' FROM data D1 GROUP BY $lm,$lh;"
+    
+    sqlite3 measure.sqlite <<< "SELECT D1.$lv as 'lambda_v', D1.$lh as 'lambda_h', MAX(D1.epoch) AS 'epoch' FROM data D1 GROUP BY $lm,$lh;" | sed 's/|/\t/g' > lle_$fi.dat  
   fi
   
   awk 'BEGIN{last=-42;}{if(NR==1 || $1==0 || $2==0) next; if(last!=-42 && last!=$1) {printf "\n";} last=$1; print(log($1)/log(10), log($2)/log(10), $3);}' lls_$fi.dat > log_lls_$fi.dat 
