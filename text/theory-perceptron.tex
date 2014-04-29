@@ -29,7 +29,7 @@ Equation~\ref{eq:perceptron} describes a simple \emph{binary treshold perceptron
 We put additional constraints for the activation function $\phi : \mathbb{R} \mapsto (0,1)$ that $\phi$ is differentiable, monotonously increasing and satisfying two asymptotic conditions $t(-\infty)=0$ and $t(\infty)=1$.  Usually, the activation function is realized by the logistic function $\frac{1}{1 + \exp{-\eta}}$. To allow real numbered results from the range $(0,1)$, we drop the treshold function and simply output $\phi(\eta_k)$. 
 
 \paragraph{Learning.} 
-The goal of a perceptron is to \emph{learn} the mapping given by the set $T = \{(X^j, t_j)\}$ of pairs, where $X^j$ is the input vector $(x_{j0},x_{j1}, \ldots, x_{jN})$ and $t_j$ is the corresponding target. Ideally, we want from the perceptron to be able generalize for novel inputs. The goal is formalized by minimizing an error function: 
+The goal of a perceptron is to \emph{learn} the mapping given by the set $T = \{(X^j, t_j)\}$ of pairs, where $X^j$ is the input vector $(x_{j0},x_{j1}, \ldots, x_{jN})$ and $t_j$ is the corresponding target. It could be formalized as minimizing the error function: 
 
 \begin{equation}
 \label{eq:perceptron-error} 
@@ -51,6 +51,7 @@ which gives us the \emph{update rule} written as:
 where $\lambda$ is the \emph{learning rate}. 
 
 Using the learning rule~(\ref{eq:perceptron-learning-rule}) and the following \emph{training} process the perceptron is able to \emph{learn}: 
+%TODO check algorithm 
 \begin{algorithm}[H]
   \begin{algorithmic}
     \For{$epoch = 1$ to $Epoch_{\rm max}$} 

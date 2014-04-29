@@ -7,7 +7,7 @@
 \subsection{Handwritten Digits} 
 \label{sec:results-digits} 
 
-In this section we wanted to test TLR on high dimensional graphical task and compare it to other known models. Therefore we have chosen the \emph{hand written digits} dataset (\ref{sec:datasets-digits}). As in the previous simulations, we trained the networks for range of $\lambda_v$ and $\lambda_h$ values and found best parameters. Then we analysed that particular network more closely. 
+In this section we wanted to test TLR on high dimensional graphical task and compare it to other known models. Therefore we have chosen the \emph{handwritten digits} dataset (\ref{sec:datasets-digits}). As in the previous simulations, we trained the networks for range of $\lambda_v$ and $\lambda_h$ values and found best parameters. Then we analysed that particular network more closely. 
 
 For this task we splitted the dataset to \emph{train} set with 38,000 samples and \emph{test} set with 4,000 samples. First we trained the networks on the train set and then evaluted them on the test set. Also the convergence criteria were different. The $Epoch_{\rm max}$ value was set to 20 and if no $patSucc^F$ increase occured in the previous 3 epoch, then the training was stopped. Note that the final classification method was chosen from treshold perceptron to classifying the output value with greatest activation. 
 
@@ -72,7 +72,7 @@ For comparison of TLR on the \emph{digits} task we have chosen from \citet{digit
 \subsubsection{Backward representations} 
 \label{sec:our-backward-repre}
 
-The method of \emph{backward representations} for \emph{hetero--associative} tasks, i.e.~tasks which have multiple inputs for the same output, is to \emph{depict} the backward activation of an output. In case of BAL~(\ref{sec:models-bal}), the backward representations are all possible values of $x^{\rm B}$ for each possible output value, i.e.~target. For example the backward representation of digit "8" in TLR~(\ref{sec:our-tlr}) is show on figure~\ref{fig:our-backward-repre-8}. 
+The method of \emph{backward representations} for \emph{heteroassociative} tasks, i.e.~tasks which have multiple inputs for the same output, is to \emph{depict} the backward activation of an output. In case of BAL~(\ref{sec:models-bal}), the backward representations are all possible values of $x^{\rm B}$ for each possible output value, i.e.~target. For example the backward representation of digit "8" in TLR~(\ref{sec:our-tlr}) is show on figure~\ref{fig:our-backward-repre-8}. 
 
 \begin{figure}[H]
   \centering
