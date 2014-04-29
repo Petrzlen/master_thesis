@@ -15,7 +15,7 @@ In this section, we discuss how we implemented some of the details which are not
 
 \subsubsection*{Bias} 
 
-Most of artificial neural networks come with \emph{bias}es~(\ref{sec:models-perceptron}) which allow arbitrary \emph{separating hyperplane}s. To our knowledge~\citet{o1996bio} talks nothing about biases and therefore, we had to try several setting, namely \emph{no bias}, \emph{only--input bias}, \emph{only--forward bias} and \emph{full bias}. TODO reformulate the itemize, maybe a table. 
+Most of artificial neural networks come with \emph{bias}es~(\ref{sec:models-perceptron}) which allow arbitrary \emph{separating hyperplane}s. To our knowledge~\citet{o1996bio} talks nothing about biases and therefore, we had to try several setting, namely \emph{no bias}, \emph{only--input bias}, \emph{only--forward bias} and \emph{full bias}. %TODO reformulate the itemize, maybe a table. 
 
 \begin{itemize} 
 \item No bias - two patterns for 4-2-4, three patterns for 4-3-4, all four patterns for 4-4-4
@@ -35,7 +35,7 @@ Most of artificial neural networks come with \emph{bias}es~(\ref{sec:models-perc
 \label{sec:generec-fluctuation}
 
 %Asymmetric BIA~(\ref{sec:our-bal-recirc}).
-TODO rewrite \\ 
+%TODO rewrite \\ 
 
 %\paragraph{Recirculation step} %====================
 If no stationary point solution is found after MAX\_ITERATION then we set the result to average of the last two activations. This lead to 80\% less fluctuation. But still occured: 

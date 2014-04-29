@@ -1,5 +1,6 @@
 \subsubsection{Other experiments}
 
+%TODO 
 In this section,  we describe other models, model modifications and experiments we used in our work. We also introduce notation used in the results section~(\ref{sec:results}) and discuss related work. 
 
 \paragraph{Weight initialization classification.} 
@@ -9,10 +10,12 @@ As candidate selection suggested~\ref{sec:sim-exp-candidates}, weight initializa
 %==========================================================
 \paragraph{Dynamic learning rate.} 
 \label{sec:our-dynamic-lambda} 
-The idea of \emph{dynamic learning rate (DLR)}~\citep{jacobs1988increased} is to have different \emph{learning rate} $\lambda_{ij}(t)$ for each weight $w_{ij}$ which could change in time $t$, i.e. \emph{epoch}. There are several approaches how to set $\lambda_{ij}(t)$. We briefly introduced them in related work with TLR~(\ref{sec:our-tlr-related-work}). We tried to develop our own DLR model which would be dependendent on error of the previous epoch. We set the learning rate to be smaller with smaller error so that BAL will settle the hidden activations later. We were not able to increase performance with this approach but we admit there is lot of space for further experiments~(\ref{sec:future-dlr}). This model was an inspiration for TLR~(\ref{sec:our-tlr}). 
+The idea of \emph{dynamic learning rate (DLR)}~\citep{jacobs1988increased} is to have different \emph{learning rate} $\lambda_{ij}(t)$ for each weight $w_{ij}$ which could change in time $t$, i.e. \emph{epoch}. There are several approaches how to set $\lambda_{ij}(t)$. We briefly introduced them in related work with TLR~(\ref{sec:our-tlr-related-work}). We tried to develop our own DLR model which would be dependendent on error of the previous epoch. We set the learning rate to be smaller with smaller error so that BAL will settle the hidden activations later. We were not able to increase performance with this approach but we admit there is space for further experiments~(\ref{sec:future-work}). This model was an inspiration for TLR~(\ref{sec:our-tlr}). 
 
 %==========================================================
-\paragraph{Batch mode.} Instead of updating weights after each training sample, weight changes are accumulated for the whole epoch. With other words, we sum up all weight changes for each sample and then weights are updated in \emph{batch}. One can observe that shuffling of samples has no effect to \emph{batch} training at all. Therefore, after the weights are initialized, the learning algorithm becomes deterministic. This approach could be used to prove or disprove the importance of weight initialization. Running several simulations on BAL with \emph{batch} weight update had no significant impact on performance. 
+\paragraph{Batch mode.} 
+\label{sec:our-batch-mode}
+Instead of updating weights after each training sample, weight changes are accumulated for the whole epoch. With other words, we sum up all weight changes for each sample and then weights are updated in \emph{batch}. One can observe that shuffling of samples has no effect to \emph{batch} training at all. Therefore, after the weights are initialized, the learning algorithm becomes deterministic. This approach could be used to prove or disprove the importance of weight initialization. Running several simulations on BAL with \emph{batch} weight update had no significant impact on performance. 
 
 %==========================================================
 %\paragraph{Rerun.} This experiment was designed to test if shuffling of samples and weight initialization has effect to network performance. First, $N$ networks are created with random weights~(\ref{sec:our-sigma}) while having same parameters and then saved and trained. Second, the networks are loaded and each network is re--trained $k$-times, thus the name \emph{rerun}. At the end we measure the difference between performance of the $k$ networks and the original network. 
@@ -35,14 +38,17 @@ The idea of \emph{dynamic learning rate (DLR)}~\citep{jacobs1988increased} is to
 
 %==========================================================
 \paragraph{Dropout.}
+\label{sec:sim-our-dropout}
 Based on the work of~\citet{hinton2012improving}, we implemented the \emph{dropout} method of learning. The main ideas is that in each epoch we randomly choose half of the hidden layer neurons which will be ignored for this epoch. In other words in each epoch a random subset of hidden neurons is chosen to use while the others are ignored. The motivation behind is to prevent co--adaptation of the hidden layer neurons~\citep{hinton2012improving}. We were not able to train any successful BAL~(\ref{sec:models-bal}) network with dropout on the 4-2-4 encoder~(\ref{sec:datasets-auto4}) and CBVA~(\ref{sec:datasets-k3}) task. We dropped the idea soon but we admit that setting other probability of dropout $p$ or applying it on high--dimensional tasks could have a positive impact. 
 
 %==========================================================
 \paragraph{Noise.} 
+\label{sec:sim-our-noise} 
 
 Motivated by the \emph{chaotic} behaviour of nature itself we tried adding \emph{random noise} to each weight update. We hoped that the possible noise could prevent settling of hidden activations to fast~(\ref{sec:our-hidden-activation}). Our simulation of BAL~(\ref{sec:models-bal}) with added random noise showed no performance increase. This result was backed up by the candidate selection experiment~(\ref{sec:sim-exp-candidates}) wehre the resulting linear regression model \ref{eq:results-candidates-linear-regression} showed no impact on the error. 
 
 %==========================================================
 \paragraph{Multilayer GeneRec.}
+\label{sec:sim-our-generec-multi} 
 
 We implemented a multilayer version of GeneRec~(\ref{sec:models-generec}). The recirculation step in the minus phase was extended. First it goes two times forward and next it goes two times backward while the activation from input is constant. Our implementation of multilayer Generec achieved 42\% success rate with 784-300-50-10 architecture on the handwritten digit recognition task~(\ref{sec:datasets-digits}). 

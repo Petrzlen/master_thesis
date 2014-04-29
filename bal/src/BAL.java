@@ -60,9 +60,9 @@ public class BAL {
 		DECIMAL_FORMAT.setMaximumFractionDigits(9);
 
 		//experiment_Default();
-		//experiment_DifferentHiddenSizes("k3");
+		experiment_DifferentHiddenSizes("k3");
 		//experiment_RerunGoodBad();
-		experiment_TestImplementation();
+		//experiment_TestImplementation();
 		//experiment_Digits(); 
 	}
 
@@ -1837,50 +1837,53 @@ public class BAL {
 	public static void experiment_DifferentHiddenSizes(String input_prefix) throws IOException{
 		MEASURE_IS = true; 
 		MEASURE_SAVE_AFTER_EACH_RUN = true; 
-		MEASURE_RECORD_EACH = 10000;
 
 		INPUT_FILEPATH = input_prefix + ".in"; 
-		OUTPUT_FILEPATH = input_prefix + ".out"; 
+		OUTPUT_FILEPATH = input_prefix + ".out";
 		POSTPROCESS_INPUT = true; 
 		POSTPROCESS_OUTPUT = true; 
-
-		INIT_MAX_EPOCHS = 5000;
-		INIT_RUNS = 20000; 
-		INIT_CANDIDATES_COUNT = 0;
+		POSTPROCESS_TYPE = POSTPROCESS_SIMPLE; 
+		
 		INIT_SHUFFLE_IS = true;
 		INIT_BATCH_IS = false;
 		INIT_TRAIN_ONLY_ON_ERROR = false; 
 
 		LAMBDA_ERROR_MOMENTUM_IS = false; 
+		
+		TRY_SIGMA = new double[]{2.3}; 
 
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 		RECIRCULATION_ITERATIONS_MAX = 50; //maximum number of iterations to approximate the underlying dynamic system  
 		RECIRCULATION_USE_AVERAGE_WHEN_OSCILATING = true;
 
-		DROPOUT_IS = false; 
 		CONVERGENCE_NO_CHANGE_FOR = -1; 
 		STOP_IF_NO_ERROR = true;
 		STOP_IF_NO_IMPROVE_FOR = -1; 
 
-		INIT_MOMENTUM_IS = false;
-
-		HIDDEN_REPRESENTATION_IS = false;
-		HIDDEN_REPRESENTATION_DIRECTORY = "data/" + input_prefix; 
-		HIDDEN_REPRESENTATION_EACH = 1; 
-		HIDDEN_REPRESENTATION_MIN_DIST = 0.02; 
-
 		PRINT_NETWORK_IS = false;  
 		PRINT_NETWORK_TO_FILE_IS = false;
 
-		TRY_LAMBDA_V = new double[]{0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
+		MEASURE_COUNT = MEASURE_FLUCTUATION;
 
-		TRY_LAMBDA_H = new double[]{0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 0.00002, 0.00005, 0.0001, 
-				0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 
-				0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
-				100.0};
+		TRY_LAMBDA_V = new double[]{
+				0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 
+				1.0, 3.0, 10.0, 30.0, 100.0, 
+		};  
+		TRY_LAMBDA_H = new double[]{
+				0.0000001, 0.0000003, 0.000001, 0.000003,
+				0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 
+				1.0, 3.0, 10.0, 30.0, 100.0
+		};  
+		
+		//!!!NOTE: DON'T FORGET SYMMETRY SETTING!!!
+		INIT_CANDIDATES_COUNT = 0;
+		MEASURE_RECORD_LOG = false; 
+		MEASURE_RECORD_EACH = 5425897;
+		INIT_MAX_EPOCHS = 2000;
+		INIT_RUNS = 50 * TRY_LAMBDA_V.length * TRY_LAMBDA_H.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
 
 		//for(int h=3; h<=144; h += h/8 + 1){
-		for(int h=4; h<=20 ; h++){
+		for(int h=3; h<=7 ; h++){
 			INIT_HIDDEN_LAYER_SIZE = h; 
 			experiment_Default();
 		} 
