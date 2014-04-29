@@ -45,7 +45,7 @@ We denote $X_I$, $H_I$ and $Y_I$ as the front, hidden and back activation \emph{
 \label{sec:our-in-triangle}
 \item $in\_triangle$ (bool) -- check if hidden activations of inputs  $H_I^{+}$ form a convex polygon, i.e.~if the hidden activation are lineary separable~(\ref{sec:models-perceptron}). Consult figure~\ref{fig:results-hidden-activations-bal} for examples of convex and non--convex hidden activations. Note that this was implemented only for hidden size equal to two. %TODO add stats on the implication 
 
-\label{eq:our-fluctuation}
+\label{sec:our-fluctuation}
 \item $fluctuation$ (real) -- the maximal difference between the last two unit activations when using the \emph{iterative method} for activation computation \ref{eq:models-generec-activation}. With other words, let $a_i(t)$ be the activation of unit $i$ in iteration $t$ and $T$ be number of iterations. Then $fluctuation$ is i.e.~$w_IH$ to $w_HI$ and $w_HO$ to $w_OH$, as in GeneRec activation computation \ref{eq:models-generec-activation} then $fluctuation$ measures $max_i|a_i(T-1) - a_i(T)|$. So if $fluctuation \approx 0$ then the iterative method was successful and all activations settled.
 \end{itemize} 
 

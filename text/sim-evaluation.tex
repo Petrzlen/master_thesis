@@ -31,4 +31,4 @@ By having a set of given vectors $G^I$ and the target vectors $T^I$ for inputs $
     \end{equation} 
 \end{itemize} 
 
-\paragraph{Convergence time.} The are several possibilities when to stop the learning algorithm. \emph{Converge time} is the number of epochs before the stop. Usually, training could be stopped for two reasons. The network could either reach the stopping criterion~(\ref{sec:our-stopping-criteria}) or the maximum epoch is reached. We see that lower convergence time makes the model more convenient for training.  
+\paragraph{Convergence time.} The are several possibilities when to stop the learning algorithm. \emph{Converge time} is the number of epochs before the stop. Usually, training could be stopped for two reasons. The network could either reach the \emph{stopping criteria} or the maximum epoch is reached. Given by nature of used datasets we trained the neural networks while $patSucc^F \neq 1$. In case of the \emph{digits}~(\ref{sec:datasets-digits}) dataset we decided to stop the training if $patSucc^F$ was not increased for 3 epochs. Note that we are motivated to decrease the convergence time as it makes the training process faster.  

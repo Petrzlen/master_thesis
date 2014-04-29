@@ -35,7 +35,7 @@ The main difference between CHL and GeneRec is that GeneRec has layers and it~is
   \caption{Equilibrium network variables in GeneRec model~\citet{o1996bio}.}
   \label{tab:models-generec}
 \end{table}
-In case of the \emph{plus} phase only the hidden activations are necessary to compute what could be achieved by computing $\phi(\eta_i)$. In case of the \emph{minus} phase where only inputs are clamped it~is necessary to find an \emph{equilibrium} activation state for which the equations~\ref{tab:models-generec} hold. As dicussed in recurrent networks~(\ref{sec:theory-recurrent}) there are several approaches. In our implementation~(\ref{sec:appendix-impl-generec}) we choose the \emph{iterative method} with following rules for computing activations $a_i$: 
+In case of the \emph{plus} phase only the hidden activations are necessary to compute what could be achieved by computing $\phi(\eta_i)$. In case of the \emph{minus} phase where only inputs are clamped it~is necessary to find an \emph{equilibrium} activation state for which the equations~\ref{tab:models-generec} hold. As dicussed in recurrent networks~(\ref{sec:theory-recurrent}) there are several approaches. In our implementation we choose the \emph{iterative method} with following rules for computing activations $a_i$: 
 \begin{align}
   \label{eq:models-generec-activation}
   a_i(t+1) &= \left\{
@@ -51,7 +51,8 @@ In case of the \emph{plus} phase only the hidden activations are necessary to co
 	\end{array}
 \right. \\
 \end{align} 
-where $a_i(t)$ is the activation of $i$--th unit in discrete time $t$. The rules~\ref{eq:models-generec-activation} while are iterated while $|a_i(t+1) a_i(t)| > \epsilon$ for some unit $i$. This method is further discussed in~(\ref{sec:generec-fluctuation}) and~\citet{orru2008sabio}.
+\label{sec:generec-fluctuation}
+where $a_i(t)$ is the activation of $i$--th unit in discrete time $t$. The rules~\ref{eq:models-generec-activation} while are iterated while $|a_i(t+1) a_i(t)| > \epsilon$ for some unit $i$. For the successful networks it was enough to have about 3--33 iterations. On the contrary, especially for BAL-recirc~(\ref{sec:our-bal-recirc}), the process was not able to converge. In such case we took the average of last two activations, which reduced the ratio of diverging networks. But still we encountered \emph{fluctuation}~(\ref{sec:our-fluctuation}) with arbitrary size. This method is further discussed in~\citet{orru2008sabio}.
 
 \begin{figure}[H]
   \centering
@@ -80,4 +81,4 @@ where~\ref{eq:models-generec-learning-rule-mid} is called the \emph{midpoint lea
 \end{equation}
 which is indeed the CHL learning rule~\ref{eq:models-chl-learning-rule}. Thus we see that GeneRec is closely related to CHL. 
 
-Note that we encountered some missing details in~\citet{o1996bio} about how to implement the GeneRec algorithm which are further discussed in~(\ref{sec:appendix-impl-generec}).
+%Note that we encountered some missing details in~\citet{o1996bio} about how to implement the GeneRec algorithm which are further discussed in~(\ref{sec:appendix-impl-generec}).
