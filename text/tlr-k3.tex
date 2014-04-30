@@ -14,7 +14,7 @@ In this section, we analyse TLR~(\ref{sec:our-tlr}) and GeneRec~(\ref{sec:models
 \subsubsection{Two learning rates} 
 \label{sec:tlr-k3}
 
-On figure~(\ref{fig:results-tlr-k3-performance}) we compare success rate of TLR for different settings of $\lambda_v$ and $\lambda_h$ and different hidden sizes. We see that even for the 16-3-16 architecture TLR was able to learn the for ($\lambda_v, \lambda_h$) on the half line from  $(1, 0.1)$ to $(10^4, 0.1)$. This behaviour of TLR is similar to the behaviour of TLR on the \emph{4-2-4 encoder} task shown on figure~(\ref{fig:results-bal-recirc-auto4-performance}). Again, the performance mostly depends on $\lambda_h$ and it is bounded by a value of $\lambda_v$. Also, It is interesting how the success space expanded from top to down when increasing the hidden size.
+In figure~(\ref{fig:results-tlr-k3-performance}) we compare success rate of TLR for different settings of $\lambda_v$ and $\lambda_h$ and different hidden sizes. We see that even for the 16-3-16 architecture TLR was able to learn the for ($\lambda_v, \lambda_h$) on the half line from  $(1, 0.1)$ to $(10^4, 0.1)$. This behaviour of TLR is similar to the behaviour of TLR on the \emph{4-2-4 encoder} task shown in figure~(\ref{fig:results-bal-recirc-auto4-performance}). Again, the performance mostly depends on $\lambda_h$ and it is bounded by a value of $\lambda_v$. Also, It is interesting how the success space expanded from top to down when increasing the hidden size.
 
 %Main purpose of this dataset is to test different hidden sizes 
 %======== (4D) L1 x L2 x patSuccF x hidden size =========
@@ -38,7 +38,7 @@ On figure~(\ref{fig:results-tlr-k3-performance}) we compare success rate of TLR 
   \label{fig:results-tlr-k3-performance}
 \end{figure}
 
-On figure~\ref{fig:results-tlr-auto4-epoch} the success timeline for TLR with best $\lambda_h$ and $\lambda_v$ is analysed. We can observe that TLR is increasing its success in time steadily. Moreover, we see that the candidate preselection~(\ref{sec:sim-exp-candidates}) has an positive impact on the network performance.
+In figure~\ref{fig:results-tlr-auto4-epoch} the success timeline for TLR with best $\lambda_h$ and $\lambda_v$ is analysed. We can observe that TLR is increasing its success in time steadily. Moreover, we see that the candidate preselection~(\ref{sec:sim-exp-candidates}) has an positive impact on the network performance.
 Note that as the CBVA task is non bijective, i.e. one output has several inputs, it is impossible to achieve 100\% $patSucc^B$ or $bitSucc^B$. 
 
 %======== (3D) best TLR on ALL_SUCC x epoch (std-dev) x hidden size ==========
@@ -95,7 +95,7 @@ In table~(\ref{tab:results-cmp-k3}) the comparison of TLR and Generec on the \em
 
 \subsubsection{GeneRec} 
 
-On figure~\ref{fig:results-tlr-k3-performance} we compare success rate of TLR for different settings of $\lambda_v$ and $\lambda_h$ and different hidden sizes. TODO rerun bugfix and explain 
+In figure~\ref{fig:results-tlr-k3-performance} we compare success rate of TLR for different settings of $\lambda_v$ and $\lambda_h$ and different hidden sizes. TODO rerun bugfix and explain 
 
 \begin{figure}[H]
   \centering

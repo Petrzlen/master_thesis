@@ -161,7 +161,7 @@ do
   num=$(echo $filename | grep -o 'k3_4_[0-9]' | grep -o '[0-9]$')
   echo "motam $filename with num=$num"
   
-  bash zmotaj_stats.bash $filename $filename
+  #bash zmotaj_stats.bash $filename $filename
   #bash zmotaj_stats.bash w $filename w 
   
   echo "  generec-k3-$num-success.pdf"

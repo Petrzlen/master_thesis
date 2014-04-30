@@ -16,7 +16,7 @@ For this task we splitted the dataset to \emph{train} set with 38,000 samples an
 %===============================================================
 \subsubsection{Two learning rates} 
 \label{sec:tlr-digits} 
-On figure~(\ref{fig:results-tlr-digits-epoch}) $patSucc^F$, i.e. ratio of correctly classified test samples, is plotted for $(\lambda_v,\, \lambda_h)$ pairs. In comparison to TLR performances on tasks 4-2-4 encoder~(\ref{fig:results-tlr-auto4-performance}) and CBVA~(\ref{fig:results-tlr-k3-performance}) the successful values of $(\lambda_v,\, \lambda_h)$ were smaller. That introduces the hypothesis that the bigger set of samples, the lower the values of $(\lambda_v,\, \lambda_h)$. We suggest it as a possible future work in section~\ref{sec:future-work}. 
+In figure~(\ref{fig:results-tlr-digits-epoch}) $patSucc^F$, i.e. ratio of correctly classified test samples, is plotted for $(\lambda_v,\, \lambda_h)$ pairs. In comparison to TLR performances on tasks 4-2-4 encoder~(\ref{fig:results-tlr-auto4-performance}) and CBVA~(\ref{fig:results-tlr-k3-performance}) the successful values of $(\lambda_v,\, \lambda_h)$ were smaller. That introduces the hypothesis that the bigger set of samples, the lower the values of $(\lambda_v,\, \lambda_h)$. We suggest it as a possible future work in section~\ref{sec:future-work}. 
 
 %Purpose: 
 %======== (3D) L1 x L2 x patSuccF =========
@@ -72,7 +72,7 @@ For comparison of TLR on the \emph{digits} task we have chosen from \citet{digit
 \subsubsection{Backward representations} 
 \label{sec:our-backward-repre}
 
-The method of \emph{backward representations} for \emph{heteroassociative} tasks, i.e.~tasks which have multiple inputs for the same output, is to \emph{depict} the backward activation of an output. In case of BAL~(\ref{sec:models-bal}), the backward representations are all possible values of $x^{\rm B}$ for each possible output value, i.e.~target. For example the backward representation of digit "8" in TLR~(\ref{sec:our-tlr}) is show on figure~\ref{fig:our-backward-repre-8}. 
+The method of \emph{backward representations} for \emph{heteroassociative} tasks, i.e.~tasks which have multiple inputs for the same output, is to \emph{depict} the backward activation of an output. In case of BAL~(\ref{sec:models-bal}), the backward representations are all possible values of $x^{\rm B}$ for each possible output value, i.e.~target. For example the backward representation of digit "8" in TLR~(\ref{sec:our-tlr}) is show in figure~\ref{fig:our-backward-repre-8}. 
 
 \begin{figure}[H]
   \centering
@@ -81,7 +81,7 @@ The method of \emph{backward representations} for \emph{heteroassociative} tasks
   \label{fig:our-backward-repre-8}
 \end{figure}
 
-As we can see on figure~\ref{fig:results-tlr-digits-backward}, TLR gives us readable backward activations. This intuitively proves that the model is capable of bidirectional training. The shapes could be best seen on digit ``0'', ``1'' and ``8''. But using a little creativity we could see other shapes too. 
+As we can see in figure~\ref{fig:results-tlr-digits-backward}, TLR gives us readable backward activations. This intuitively proves that the model is capable of bidirectional training. The shapes could be best seen on digit ``0'', ``1'' and ``8''. But using a little creativity we could see other shapes too. 
 
 %======== (2D) for best network vs. sample digits
 \begin{figure}[H]

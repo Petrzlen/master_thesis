@@ -60,9 +60,9 @@ public class BAL {
 		DECIMAL_FORMAT.setMaximumFractionDigits(9);
 
 		//experiment_Default();
-		experiment_DifferentHiddenSizes("k3");
+		//experiment_DifferentHiddenSizes("k3");
 		//experiment_RerunGoodBad();
-		//experiment_TestImplementation();
+		experiment_TestImplementation();
 		//experiment_Digits(); 
 	}
 
@@ -79,7 +79,7 @@ public class BAL {
 	private static int WU_BAL_SYM = 7; // non of BAL other learning rule works 
 	private static int WU_BAL_MID = 8; 
 	private static int WU_BAL_CHL = 9; 
-	private static final int WU_TYPE = WU_GENEREC;
+	private static final int WU_TYPE = WU_BAL_ORIG;
 
 	public static final boolean INIT_SYMMETRIC_IS = WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_CHL || WU_TYPE == WU_GENEREC_MID || WU_TYPE == WU_GENEREC_SYM;	
 	// ========= RECIRCULATION -- iterative activation ==============
@@ -1906,31 +1906,31 @@ public class BAL {
 
 		LAMBDA_ERROR_MOMENTUM_IS = false; 
 
-		//TRY_LAMBDA_V = new double[]{100};
+		TRY_LAMBDA_V = new double[]{0.9};
 		/*TRY_LAMBDA_V = new double[]{
 				0.00001, 0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 
 				0.02, 0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 
 				50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0, 20000.0, 50000.0, 
 				100000.0, 200000.0, 500000.0, 1000000.0, 2000000.0, 5000000.0, 10000000.0};*/  
-		TRY_LAMBDA_V = new double[]{
+		/*TRY_LAMBDA_V = new double[]{
 				0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 
 				1.0, 3.0, 10.0, 30.0, 100.0, //300.0, 1000.0, 3000.0, 10000.0//, 30000.0, 
 				//100000.0, 300000.0, 1000000.0, 3000000.0, 10000000.0, 30000000.0, 100000000.0, 300000000.0, 1000000000.0
-		}; 
+		};*/  
 		
-		//TRY_LAMBDA_H = new double[]{0.1}; 
+		TRY_LAMBDA_H = new double[]{0.9}; 
 		//TRY_LAMBDA_H = new double[]{0.0002};  
 		/*TRY_LAMBDA_H = new double[]{
 				0.00000001, 0.00000002, 0.00000005, 0.0000001, 0.0000002, 0.0000005, 0.000001, 0.000002, 0.000005, 0.00001, 
 				0.00002, 0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 
 				0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10.0, 20.0, 50.0, 
 				100.0};*/  
-		TRY_LAMBDA_H = new double[]{
+		/*TRY_LAMBDA_H = new double[]{
 				//0.0000000001, 0.0000000003, 0.000000001, 0.000000003, 0.00000001, 0.00000003, 
 				0.0000001, 0.0000003, 0.000001, 0.000003,
 				0.00001, 0.00003, 0.0001, 0.0003, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 
 				1.0, 3.0, 10.0, 30.0, 100.0
-		};    
+		};*/     
 		
 		TRY_SIGMA = new double[]{2.3};
 		//TRY_SIGMA = new double[]{1.0, 2.3, 10.0};
@@ -1941,10 +1941,10 @@ public class BAL {
 
 		//!!!NOTE: DON'T FORGET SYMMETRY SETTING!!!
 		INIT_CANDIDATES_COUNT = 0;
-		MEASURE_RECORD_LOG = false; 
-		MEASURE_RECORD_EACH = 5425897;
-		INIT_MAX_EPOCHS = 5000;
-		INIT_RUNS = 100 * TRY_LAMBDA_V.length * TRY_LAMBDA_H.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
+		MEASURE_RECORD_LOG = true; 
+		MEASURE_RECORD_EACH = 10;
+		INIT_MAX_EPOCHS = 100000;
+		INIT_RUNS = 10000 * TRY_LAMBDA_V.length * TRY_LAMBDA_H.length * TRY_SIGMA.length * TRY_MOMENTUM.length;
 
 		RECIRCULATION_EPSILON = 0.001; //if the max unit activation change is less the RECIRCULATION_EPSILON, it will stop 
 		RECIRCULATION_ITERATIONS_MAX = 50; //maximum number of iterations to approximate the underlying dynamic system  
