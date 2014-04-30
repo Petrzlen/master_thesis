@@ -54,14 +54,27 @@
 \usepackage[authoryear]{natbib}
 
 %\newcommand{\quotes}[1]{``#1''}
-                                  
-\hypersetup{%  http://www.tug.org/applications/hyperref/
-    bookmarksnumbered,
-    pdfstartview={FitH},
-    %linkcolor=black,
-    %citecolor=black,
-    colorlinks=true
+    
+%========== PRINT                            
+\hypersetup{
+    colorlinks=true,       % false: boxed links; true: colored links
+    linkcolor=black,          % color of internal links
+    citecolor=black,        % color of links to bibliography
+    urlcolor=black,           % color of external links
+%    linkbordercolor=black, % 	color of frame around internal links (if colorlinks=false)
+%    citebordercolor=black, %	color of frame around citations
+%    urlbordercolor=black, %	color of frame around URL links
 }
+           
+%========== ELECTRONIC                           
+%\hypersetup{%  http://www.tug.org/applications/hyperref/
+%    bookmarksnumbered,
+%    pdfstartview={FitH},
+    %citecolor=black,
+%    colorlinks=true,       % false: boxed links; true: colored links
+%    linkcolor=black,          % color of internal links
+%    citecolor=blue,        % color of links to bibliography
+%}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%% CUSTOMIZACIA BEGIN %%%%%%%%%%%%%%%
@@ -74,15 +87,6 @@
 \setlength{\headheight}{16pt}
 \linespread{1.5}
 
-\hypersetup{
-    colorlinks=true,       % false: boxed links; true: colored links
-%    linkcolor=black,          % color of internal links
-    citecolor=blue,        % color of links to bibliography
-%    urlcolor=black,           % color of external links
-%    linkbordercolor=black, % 	color of frame around internal links (if colorlinks=false)
-%    citebordercolor=black, %	color of frame around citations
-%    urlbordercolor=black, %	color of frame around URL links
-}
 
 %\setlength{\topmargin}{-10mm}
 %\setlength{\textwidth}{16truecm}
