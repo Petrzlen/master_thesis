@@ -4,15 +4,6 @@
 \paragraph{Introduction.} 
 The \emph{Generalized recirculation algorithm}, or \emph{GeneRec}, was developed by~\citet{o1996bio}. It~is a supervised algorithm which in comparison with backpropagation~(\ref{sec:models-bp}) is argued to be a more biologically plausible model as error is computed locally as a difference between activations~\citep{o1998six, o2001generalization, da2011advances, schneider2009application}. It extends the recirculation algorithm~(\ref{sec:models-recirc}) by a hidden layer and uses pahses as CHL~(\ref{sec:models-chl}) for weight update. This allows GeneRec to learn arbitrary mappings and not only conntent-based memories as the recirculation algorithm. For the error computation a backward weight matrix from output layer to hidden layer is used and the learning rule is derived from the CHL learning rule~(\ref{eq:models-chl-learning-rule}). It could be proven that GeneRec, as Backpropagation, could learn arbitrary input--output mappings~\citep{o1996bio}. 
 
-\paragraph{Learning rule.} 
-\label{sec:models-generec-learning-rule} 
-GeneRec uses three weight matrices $W^{IH}$, $W^{HO}$ and $W^{OH}$ for the input--hidden, hidden--output and output--hidden weights. It also has the ``$-$'' and ``$+$'' phases as CHL with same meaning, i.e. in the \emph{minus} phase only the input vector is clamped and in the \emph{plus} phase both input and target vectors are clamped as seen in Table~\ref{tab:models-generec}. Generec uses the non symmetric version of the CHL rule for all three weight matrices: 
-\begin{equation}
-  \label{eq:models-generec-learning-rule}
-  \Delta w_{ij} = \lambda a^{-}_i(a^{+}_j - a^{-}_j)
-\end{equation}
-where $a^{-}_p$ denotes the presynaptic and $a^{-}_q$ denotes the postsynaptic unit activation in minus phase, $a^{+}_p$ is the presynaptic activation from plus phase and $\lambda$ denotes the learning rate. So for example when updating $W^{HI}$ then $a^{-}_i = h^{-}_i$, $a^{-}_j = o^{-}_j$ and $a^{+}_j = t_k$. 
-
 \paragraph{Activation.} 
 \label{sec:models-generec-activation} 
 The main difference between CHL and GeneRec is that GeneRec has layers and it~is based more on recurrent neural networks than on the Hopfield networks. Therefore, as shown in Table~\ref{tab:models-generec}, we can compute the activations sequentially. We can see the inspiration from the recirculation algorithm~(\ref{sec:models-recirc}) and a correspondence between $T$ and GeneRec phases. In particular $s^{-} \approx T=0$, $h^{-} \approx T=1$, $o^{-} \approx T=2$ and $h^{+}$ corresponds to $T=3$. The activation flow is depicted in Figure~\ref{fig:models-generec-phase}.
@@ -63,6 +54,16 @@ where $a_i(t)$ is the activation of $i$--th unit in discrete time $t$. The rules
   \caption{Depicting the minus (left) and plus (right) phases of GeneRec defined in Table~\ref{tab:models-generec}. Taken from~\citet{orru2008sabio}.} 
   \label{fig:models-generec-phase}
 \end{figure}
+
+\paragraph{Learning rule.} 
+\label{sec:models-generec-learning-rule} 
+GeneRec uses three weight matrices $W^{IH}$, $W^{HO}$ and $W^{OH}$ for the input--hidden, hidden--output and output--hidden weights. It also has the ``$-$'' and ``$+$'' phases as CHL with same meaning, i.e. in the \emph{minus} phase only the input vector is clamped and in the \emph{plus} phase both input and target vectors are clamped as seen in Table~\ref{tab:models-generec}. Generec uses the non symmetric version of the CHL rule for all three weight matrices: 
+\begin{equation}
+  \label{eq:models-generec-learning-rule}
+  \Delta w_{ij} = \lambda a^{-}_i(a^{+}_j - a^{-}_j)
+\end{equation}
+where $a^{-}_p$ denotes the presynaptic and $a^{-}_q$ denotes the postsynaptic unit activation in minus phase, $a^{+}_p$ is the presynaptic activation from plus phase and $\lambda$ denotes the learning rate. So for example when updating $W^{HI}$ then $a^{-}_i = h^{-}_i$, $a^{-}_j = o^{-}_j$ and $a^{+}_j = t_k$. 
+
 
 \paragraph{Modifications.}
 \label{sec:our-learning-rules}

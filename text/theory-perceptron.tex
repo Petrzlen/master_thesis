@@ -25,9 +25,6 @@ y_k =
 
 Equation~(\ref{eq:perceptron}) describes a simple \emph{binary treshold perceptron}. One could observe that the binary perceptron divides the vector space $\mathbb{R}^N$ by a $(n-1)$--dimensional hyperplane. This behaviour was studied by~\citet{rosenblatt1958perceptron}. Now we see the importance of bias which is the absolute term in the equation of the hyperplane. \label{sec:linear-sep} This leads to the fact that for one perceptron is impossible to classify non--\emph{linearly separable} vectors. 
 
-\paragraph{Continuous perceptron.}
-We put additional constraints for the activation function $\phi : \mathbb{R} \mapsto (0,1)$ that $\phi$ is differentiable, monotonously increasing and satisfying two asymptotic conditions $t(-\infty)=0$ and $t(\infty)=1$.  Usually, the activation function is realized by the logistic function $1 / (1 + \exp{-\eta})$. To allow real numbered results from the range $(0,1)$, we drop the treshold function and simply output $\phi(\eta_k)$. 
-
 \paragraph{Learning.} 
 The goal of a perceptron is to \emph{learn} the mapping given by the set $T = \{(X_j, t_j)\}$ of pairs, where $X_j$ is the input vector $(x_{j0},x_{j1}, \ldots, x_{jN})$ and $t_j$ is the corresponding target. It could be formalized as minimizing the error function: 
 \begin{equation}
@@ -44,10 +41,9 @@ which gives us the \emph{update rule} going opposite the gradient:
 \label{eq:perceptron-learning-rule} 
 \Delta w_{ik} = \lambda (t_k - y_k)y_k(1 - y_k)x_i,
 \end{equation} 
-where $\lambda$ is the \emph{learning rate}. 
+where $\lambda$ is the \emph{learning rate}. Using the learning rule~(\ref{eq:perceptron-learning-rule}) we can design the Algorithm~\ref{alg:perceptron-learning} called \emph{training phase}. It applies the \emph{weight update rule}~(\ref{eq:perceptron-learning-rule}) in loop for each sample in $T$. One main loop is called \emph{epoch}.
 
-Using the learning rule~(\ref{eq:perceptron-learning-rule}) and the following \emph{training} process the perceptron is able to \emph{learn}: 
-\begin{algorithm}[H]
+\begin{algorithm}[h]
   \begin{algorithmic}
     \For{$epoch = 1$ to $Epoch_{\rm max}$} 
       \ForAll{$(X_j, t_j)$ in $T$} 
@@ -58,7 +54,9 @@ Using the learning rule~(\ref{eq:perceptron-learning-rule}) and the following \e
       \EndFor
     \EndFor
   \end{algorithmic}
-  \caption{Perceptron learning. Applying the \emph{weight update rule}~(\ref{eq:perceptron-learning-rule}) in loop for each sample in $T$. One main loop is called \emph{epoch}.}  
+  \caption{Perceptron training.}  
   \label{alg:perceptron-learning}
 \end{algorithm} 
 
+\paragraph{Continuous perceptron.}
+We put additional constraints for the activation function $\phi : \mathbb{R} \mapsto (0,1)$ that $\phi$ is differentiable, monotonously increasing and satisfying two asymptotic conditions $t(-\infty)=0$ and $t(\infty)=1$.  Usually, the activation function is realized by the logistic function $1 / (1 + \exp{-\eta})$. To allow real numbered results from the range $(0,1)$, we drop the treshold function and simply output $\phi(\eta_k)$. 
