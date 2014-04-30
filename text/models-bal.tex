@@ -24,17 +24,17 @@ Design of Bidirectional Activation-based Learning algorithm (BAL) by~\citet{fark
   \label{tab:models-bal-activation}
 \end{table}
 
-In the first phase called \emph{forward pass} the \emph{forward stimulus} is clamped and forward activations are computed. In the same way, in the second phase called \emph{backward pass} the \emph{backward stimulus} is clamped and backward activations are computed. We can imagine the backward pass as a reconstruction of the target pattern for the forward pass. For the learning rule the \emph{difference} between the forward pass and the backward pass is used
+In the first phase called \emph{forward pass} the \emph{forward stimulus} is clamped and forward activations are computed. In the same way, in the second phase called \emph{backward pass} the \emph{backward stimulus} is clamped and backward activations are computed. We can imagine the backward pass as a reconstruction of the target pattern for the forward pass. For the \emph{forward} learning rule the \emph{difference} between the forward pass and the backward pass is used as shown in equation~(\ref{eq:models-bal-learning-rule-forward}). 
 \begin{equation}
   \label{eq:models-bal-learning-rule-forward}
   \Delta w_{ij}^{\rm F} = \lambda \ a_i^{\rm F}(a_j^{\rm B} - a_j^{\rm F}),
 \end{equation}
-and for completeness we also provide the backward learning rule which is same as the forward learning rule~\ref{eq:models-bal-learning-rule-forward} 
+The \emph{backward} learning rule is same as the forward learning rule~(\ref{eq:models-bal-learning-rule-forward}). We will reference them together as BAL \emph{learning rule}. 
 \begin{equation}
   \label{eq:models-bal-learning-rule-backward}
   \Delta w_{ij}^{\rm B} = \lambda \ a_i^{\rm B}(a_j^{\rm F} - a_j^{\rm B}). 
 \end{equation}
-Note that we can treat the differences $(a_j^{\rm B} - a_j^{\rm F})$ and $(a_j^{\rm F} - a_j^{\rm B})$ as \emph{error terms} which push the forward and backward activation to settle. Both forward~\ref{eq:models-bal-learning-rule-forward} and backward~\ref{eq:models-bal-learning-rule-backward} learning rules are same as the basic GeneRec learning rule~\ref{eq:models-generec-learning-rule}. We experimented with different learning rules~(\ref{sec:our-learning-rules}). 
+Note that we can treat the differences $(a_j^{\rm B} - a_j^{\rm F})$ and $(a_j^{\rm F} - a_j^{\rm B})$ as \emph{error terms} which push the forward and backward activation to settle. Both forward~(\ref{eq:models-bal-learning-rule-forward}) and backward~(\ref{eq:models-bal-learning-rule-backward}) learning rules are same as the basic GeneRec learning rule~(\ref{eq:models-generec-learning-rule}). We experimented with different learning rules~(\ref{sec:our-learning-rules}). 
 
  
 

@@ -29,7 +29,7 @@ The main difference between CHL and GeneRec is that GeneRec has layers and it~is
           &  +  & $\eta^{+}_j = \sum_{i}w_{ij}^{IH}s_i + \sum_k w_{kj}^{OH}o^{+}_k$ & $h^{+}_{j} = \sigma(\eta^{+}_j)$ \\
     \hline
     Output (o) & $-$ & $\eta^{-}_k = \sum_j w_{jk}^{HO}h_j$ & $o^{-}_k = \sigma(\eta^{-}_k)$\\
-           &  +  & - & $o^{+}_k$ = \mbox{target output} \\
+           &  +  & - & $o^{+}_k$ = \mbox{target output} \\ %TODO label one line up 
     \hline
   \end{tabular}
   \caption{Equilibrium network variables in GeneRec model~\citet{o1996bio}.}
@@ -47,7 +47,7 @@ In case of the \emph{plus} phase only the hidden activations are necessary to co
   a_i(0) &= \left\{
 	\begin{array}{ll}
 		s_i & \mbox{if } i \in \mbox{input} \nonumber \\
-		0 & \mbox{otherwise} \nonumber 
+		0 & \mbox{otherwise} \nonumber
 	\end{array}
 \right. \\
 \end{align} 
@@ -72,12 +72,12 @@ It~is important to note that~\citet{o1996bio} proved that GeneRec converges if t
   \label{eq:models-generec-learning-rule-mid}
   \frac{1}{\lambda} \Delta w_{ij} &=  \frac{1}{2}(a^{-}_i + a^{+}_i)(a^{+}_j - a^{-}_j) \\
   \label{eq:models-generec-learning-rule-sym}
-  \frac{1}{\lambda} \Delta w_{ij} &=  (a^{+}_j a^{-}_i - a^{-}_j a^{+}_i) - 2a^{-}_j a^{-}_i \\
+  \frac{1}{\lambda} \Delta w_{ij} &=  (a^{+}_j a^{-}_i - a^{-}_j a^{+}_i) - 2a^{-}_j a^{-}_i
 \end{align}
 where~\ref{eq:models-generec-learning-rule-mid} is called the \emph{midpoint learning rule} and~\ref{eq:models-generec-learning-rule-sym} is called the \emph{symmetric learning rule} which aims to preserve the weight symmetry. By combining rules \ref{eq:models-generec-learning-rule-mid} and \ref{eq:models-generec-learning-rule-sym} we get the following rule: 
 \begin{equation}
   \label{eq:models-generec-learning-rule-chl}
-  \frac{1}{\lambda} \Delta w_{ij} =  (a^{+}_i a^{+}_j) - (a^{-}_i a^{-}_j)
+  \frac{1}{\lambda} \Delta w_{ij} = (a^{+}_i a^{+}_j) - (a^{-}_i a^{-}_j)
 \end{equation}
 which is indeed the CHL learning rule~\ref{eq:models-chl-learning-rule}. Thus we see that GeneRec is closely related to CHL. 
 
