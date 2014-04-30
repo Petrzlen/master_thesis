@@ -3,9 +3,9 @@
 \subsubsection{Hidden activations}
 \label{sec:our-hidden-activation} 
 
-We observed that hidden activations in BAL~(\ref{sec:models-bal}) tend to settle fast as shown in figure~\ref{fig:results-candidates-h-fb-d}, i.e.~the weight changes become close to zero because $|H^F - H^B| \approx 0$. Therefore, the network is de facto reduced to two--layer network between the constant hidden activations and the target values. Thus at least all cases when the hidden activations are not linearly separable \ref{sec:linear-sep} it is impossible for $w_{HI}$ and $w_{HO}$ to learn targets. This behaviour is demonstrated by the \emph{in\_triangle} measure~(\ref{sec:our-in-triangle}). 
+We observed that hidden activations in BAL~(\ref{sec:models-bal}) tend to settle fast as shown in Figure~\ref{fig:results-candidates-h-fb-d}, i.e.~the weight changes become close to zero because $|H^F - H^B| \approx 0$. Therefore, the network is de facto reduced to two--layer network between the constant hidden activations and the target values. Thus for the cases when the hidden activations are not \emph{linearly separable} (\ref{sec:linear-sep}), it is impossible for $w_{HI}$ and $w_{HO}$ to learn targets. This behaviour is demonstrated by the \emph{in\_triangle} measure~(\ref{sec:our-in-triangle}). 
 
-A more formal explaination why the hidden activations tend to settle fast could be given by the GeneRec learning rule \ref{eq:models-generec-learning-rule}: 
+A more formal explaination why the hidden activations tend to settle fast could be given by the GeneRec learning rule (\ref{eq:models-generec-learning-rule}): 
 \begin{equation} 
   \Delta w_{ij} = a_i(b_j - a_j),
 \end{equation} \nonumber 

@@ -2,7 +2,7 @@
 \label{sec:our-bal-recirc} 
 
 %\paragraph{Introduction} %====================
-The aim of \emph{Recirculation BAL} is to combine the ideas of BAL~(\ref{sec:models-bal}) and iterative activation from GeneRec~(\ref{sec:models-generec-activation}). In other words, instead of computing the forward pass using only $W^{IH}$ and $W^{HO}$ we add a recirculation step between matrices $W^{HO}$ and $W^{OH}$, and similary for the backward pass and $W^{HI}$ and $W^{IH}$. We tried two approaches of such a combination. The first one is \emph{Bidirectional Iterative Activation (BIA)} which is a straightforward implementation of the idea. Activation computation of BIA is shown in table~\ref{tab:our-bia-activation}.  
+The aim of \emph{Recirculation BAL} is to combine the ideas of BAL~(\ref{sec:models-bal}) and iterative activation from GeneRec~(\ref{sec:models-generec-activation}). In other words, instead of computing the forward pass using only $W^{IH}$ and $W^{HO}$ we add a recirculation step between matrices $W^{HO}$ and $W^{OH}$, and similary for the backward pass and $W^{HI}$ and $W^{IH}$. We tried two approaches of such a combination. The first one is \emph{Bidirectional Iterative Activation (BIA)} which is a straightforward implementation of the idea. Activation computation of BIA is shown in Table~\ref{tab:our-bia-activation}.  
 
 \begin{table}[H] 
   \centering
@@ -19,7 +19,7 @@ The aim of \emph{Recirculation BAL} is to combine the ideas of BAL~(\ref{sec:mod
     \Bx & B  & $\eta^{\rm B}_i = \sum_j w_{ji}^{HI}h^{\rm B}_j$ & $x^{\rm B}_i = \sigma(\eta^{\rm B}_i)$\\
     \hline
   \end{tabular}
-  \caption{Activation for BIA. The only difference with BAL \ref{tab:models-bal-activation} are the recurrent terms $\sum_k w_{kj}^{OH}y^{F}_k$ and $\sum_i w_{ij}^{IH}x^{\rm B}_i$.}
+  \caption{Activation for BIA. The only difference with BAL~(\ref{tab:models-bal-activation}) are the recurrent terms $\sum_k w_{kj}^{OH}y^{F}_k$ and $\sum_i w_{ij}^{IH}x^{\rm B}_i$.}
   \label{tab:our-bia-activation}
 \end{table} 
 
@@ -38,5 +38,5 @@ The second one is \emph{Bidirectional GeneRec (BiGeneRec)} which has three phase
   \label{tab:our-bigenerec-activation}
 \end{table} 
 
-For both BIA and BiGeneRec we experimented with both asymmetric and symmetric versions. For the asymmetric version a lot of problems with \emph{fluctuation} arose. This is briefly discussed in sections \ref{sec:generec-fluctuation} and \ref{sec:our-fluctuation}.  
+For both BIA and BiGeneRec we experimented with both asymmetric and symmetric versions. For the asymmetric version a lot of problems with \emph{fluctuation} arose. This is briefly discussed in Section~\ref{sec:generec-fluctuation} and in Section~\ref{sec:our-fluctuation}.  
 

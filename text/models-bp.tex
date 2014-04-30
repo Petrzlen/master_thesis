@@ -1,7 +1,7 @@
 \subsubsection{Backpropagation}
 \label{sec:models-bp} 
 
-Backpropagation is multilayer feedforward network~(\ref{sec:theory-multilayer}) which differes from our definition only with its learning rule. The aim is to find a powerful synaptic modification rule that will allow an arbitrarily connected neural network to develop an internal structure that is appropriate for a particular task domain~\citep{rumelhart1986learning}. A criticism of backpropagation is that it is neurally implausible (and hard to implement in hardware) because it requires all the connections to be used backward and it requires the units to use different input--output functions for the forward and backward passes~\citep{hinton1988learning}.
+Backpropagation is a multi-layer feedforward network~(\ref{sec:theory-multilayer}) which differes from our definition only with its learning rule. The aim is to find a powerful synaptic modification rule that will allow an arbitrarily connected neural network to develop an internal structure that is appropriate for a particular task domain~\citep{rumelhart1986learning}. A criticism of backpropagation is that it is neurally implausible (and hard to implement in hardware) because it requires all the connections to be used backward and it requires the units to use different input--output functions for the forward and backward passes~\citep{hinton1988learning}.
 
 We computed $\partial E / \partial y_j$ for any unit when $\partial E / \partial y_j$ given in the last layer. Repeating this procedure we get $\partial E / \partial y_j$ for all weights, 
 \begin{equation} 

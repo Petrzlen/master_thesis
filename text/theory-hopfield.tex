@@ -11,5 +11,5 @@ where $a_i$ is the activation of the $i$-th unit. The aim of the network is to s
   \label{eq:theory-hopfield-activation}
   \frac{\partial a_i}{\partial t} = \alpha(-a_i + f_i(\eta_i)).
 \end{equation} 
-where $a^T = [a_1,\ldots,a_n]$ is the activation vector, $f_i$ is bounded, monotically increasing, differentiable activation function. It could be proven for equation~\ref{eq:theory-hopfield-activation} that if the weights are symmetric, i.e. $w_{ij} = w_{ji}$, the activations will settle in the minimal error state defined by~\ref{eq:theory-hopfield-activation}~\citep{hopfield1984neurons}. This learning rule is typically used in \emph{interactive activation networks} studied by~\citet{grossberg1978theory} and~\citet{mcclelland1981interactive}. 
+where $a^T = [a_1,\ldots,a_n]$ is the activation vector, $f_i$ is bounded, monotically increasing, differentiable activation function. It could be proven for equation~\ref{eq:theory-hopfield-activation} that if the weights are symmetric, i.e. $w_{ij} = w_{ji}$, the activations will settle in the minimal error state defined in equation~(\ref{eq:theory-hopfield-activation}) as proved by~\citet{hopfield1984neurons}. This learning rule is typically used in \emph{interactive activation networks} studied by~\citet{grossberg1978theory} and~\citet{mcclelland1981interactive}. 
 

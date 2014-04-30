@@ -18,7 +18,7 @@ where $\sigma$, i.e.~\emph{weight initialization constant}, is one of the networ
 %==========================================================
 \paragraph{Dynamic learning rate.} 
 \label{sec:our-dynamic-lambda} 
-The idea of \emph{dynamic learning rate (DLR)}~\citep{jacobs1988increased} is to have a separate \emph{learning rate} for each weight $w_{ij}$ which could change in time $t$ denoted as $\lambda_{ij}(t)$. There are several possibilities how to set $\lambda_{ij}(t)$ which are briefly described in Section ~\ref{sec:our-tlr-related-work}. We further tried to develop our own DLR model which would depend on error of the previous epoch. In one of our trials, we set the learning rate to be smaller with smaller error to make BAL settle hidden activations later. Although we were not able to increase the success rate, we admit there is space for further improvement~(\ref{sec:future-work}). This modification was an inspiration for TLR~(\ref{sec:our-tlr}). 
+The idea of \emph{dynamic learning rate (DLR)} was introduced by \citet{jacobs1988increased}. DLR uses separate \emph{learning rate}s for each weight $w_{ij}$ which could change in time $t$ and are denoted $\lambda_{ij}(t)$. There are several possibilities how to set $\lambda_{ij}(t)$ which are briefly described in Section ~\ref{sec:our-tlr-related-work}. We further tried to develop our own DLR model which would depend on error of the previous epoch. In one of our trials, we set the learning rate to be smaller with smaller error to make BAL settle hidden activations later. Although we were not able to increase the success rate, we admit there is space for further improvement~(\ref{sec:future-work}). This modification was an inspiration for TLR~(\ref{sec:our-tlr}). 
 
 %==========================================================
 \paragraph{Batch mode.} 
@@ -53,10 +53,16 @@ Based on the work of~\citet{hinton2012improving}, we implemented the \emph{dropo
 \paragraph{Noise.} 
 \label{sec:sim-our-noise} 
 
-Motivated by the \emph{chaotic} behaviour of nature itself we tried adding \emph{random noise} to each weight update. We hoped, that the possible noise could prevent settling of hidden activations to fast~(\ref{sec:our-hidden-activation}). Our simulations of BAL using random noise showed no increase in performance. %This result was backed up by the candidate selection experiment~(\ref{sec:sim-exp-candidates}) wehre the resulting linear regression model \ref{eq:results-candidates-linear-regression} showed no impact on the error. 
+Motivated by the \emph{chaotic} behaviour of nature itself we tried adding \emph{random noise} to each weight update. We hoped, that the possible noise could prevent settling of hidden activations to fast~(\ref{sec:our-hidden-activation}). Our simulations of BAL and BAL-recirc using random noise showed no significant increase in performance. %This result was backed up by the candidate selection experiment~(\ref{sec:sim-exp-candidates}) wehre the resulting linear regression model \ref{eq:results-candidates-linear-regression} showed no impact on the error. 
 
 %==========================================================
-\paragraph{Multilayer GeneRec.}
+\paragraph{Multi-layer GeneRec.}
 \label{sec:sim-our-generec-multi} 
 
 We implemented a multi-layer version of GeneRec~(\ref{sec:models-generec}). The recirculation step in the minus phase was extended to $2L-3$ steps, where $L$ is the number of layers. First the propagation of neuron activations goes $L-1$ times forward and next it goes $L-2$ times backward. Then the recirculation step~(\ref{sec:models-generec-activation}) between layers $2,\,3,\,\ldots,\,L$ is executed. Our implementation of multi-layer GeneRec using the 784--300--50--10 architecture achieved 43.22\% success rate on the handwritten digits recognition task~(\ref{sec:datasets-digits}). 
+
+
+%==========================================================
+\paragraph{Symmetric BAL.} 
+%\label{sec:our-bal-sym} 
+Inspired by the necessary condition for convergence of GeneRec stated by~\citet{o1996bio} we introduced \emph{Symmetric BAL (SymBAL)}. SymBAL is a modification of BAL with symmetric weights $W^{IH} = (W^{HI})^T$ and $W^{HO} = (W^{OH})^T$. We found no significant improvement when using this approach with 
