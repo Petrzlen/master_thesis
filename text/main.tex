@@ -10,7 +10,6 @@
 %TODO spellcheck 
 
 %Stylistika: 
-%TODO obojstranne 
 %TODO check figures, tables, equations, algorithms 
 %TODO check bibliography 
 %TODO testing preprint (my version) 
@@ -21,7 +20,7 @@
 
 %TODO resolve TODO 
 
-\documentclass[12pt,a4paper]{article}
+\documentclass[12pt,a4paper,twoside,openany]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage{a4wide}
@@ -66,8 +65,6 @@
     colorlinks=true
 }
 
-\let\stdsection\section{}
-\renewcommand\section{\newpage\stdsection}
 
 %%%%%%%%%%%%%%%%%%%%%%%%% CUSTOMIZACIA BEGIN %%%%%%%%%%%%%%%
 \setlength{\textheight}{24cm}
@@ -107,31 +104,31 @@
     
 % ==================== 1. Title ========================
 %You should be very careful choosing a title for your thesis. It should exactly describe what your thesis is about. You should avoid long title because it is difficult to remember. Also the title shouldn’t be too short and mention just about a general problem or a field. Example title might be “Dynamic Thread Scheduling in Heterogeneous Multi Processors” or “Static Analysis for Unprotected Concurrent Memory Accesses” or “Detecting and Executing Parallel Code in GPUs”.
-%\newpage
+\cleardoublepage
 %\thispagestyle{empty}
 %\addtolength{\hoffset}{4mm}
-%\setlength{\oddsidemargin}{-5mm}
-%\setlength{\evensidemargin}{5mm}
+\setlength{\oddsidemargin}{5mm}
+\setlength{\evensidemargin}{-5mm}
 
 %    \input{title}
 
     
 % ==================== 1+. Assignment ========================
-\newpage
+%\newpage
 
     \input{assignment}
 
 % ==================== 2. Dedication ========================
 % Write to whom you dedicate you thesis if any. For example “I would like to dedicate this thesis to my mother and father…”
-\newpage
+%\cleardoublepage
 %\thispagestyle{empty}
-\thispagestyle{plain}
+%\thispagestyle{plain}
 
-    \input{dedication}
+%    \input{dedication}
 
 % ==================== 3. Acknowledgements ========================
 %It’s good to acknowledge the people who helped or participated in direct or indirect way to your thesis. Here is the place to thank to your supervisor and colleagues.
-\newpage
+\cleardoublepage
 %\thispagestyle{empty}
 \thispagestyle{plain}
 
@@ -140,18 +137,18 @@
 % ==================== 4. Abstract  ========================
 %Abstract is very important part of the thesis. It will be most read by people and should be written with a great care. The abstract should mention:
 
-\newpage
+\cleardoublepage
 %\thispagestyle{empty}
 
     \input{abstract}
     
-\newpage
+\cleardoublepage
 %\thispagestyle{empty}
 
     \input{abstrakt}
     
 % ==================== 5. Table of Contents ========================
-\newpage
+\cleardoublepage
 \setcounter{page}{1}
 \pagenumbering{arabic}
 \pagestyle{fancy}
@@ -161,12 +158,10 @@
 % ==================== 6. Table of Figures ========================
 \newpage
     \listoffigures
-    %TODO no page break 
 % ==================== 7. Table of Tables ========================
     \listoftables
-    
-    %TODO no page break 
     \listofalgorithms
+    
     
 % ==================== 8. Table of Abbrevations ========================
 %    \input{nomenclature} 
@@ -177,6 +172,9 @@
 \newpage
     \input{introduction}
     
+\let\stdsection\section{}
+\renewcommand\section{\cleardoublepage\stdsection}
+
 % ==================== 10. Motivation (or Problem Definition and Proposed Solution) =====
 % In this chapter you have to concisely explain the problem that you want to solve and the goal of your solution. 
 %    \input{motivation}
