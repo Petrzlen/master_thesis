@@ -79,7 +79,7 @@ public class BAL {
 	private static int WU_BAL_SYM = 7; // non of BAL other learning rule works 
 	private static int WU_BAL_MID = 8; 
 	private static int WU_BAL_CHL = 9; 
-	private static final int WU_TYPE = WU_BAL_ORIG;
+	private static final int WU_TYPE = WU_GENEREC;
 
 	public static final boolean INIT_SYMMETRIC_IS = WU_TYPE == WU_GENEREC || WU_TYPE == WU_GENEREC_CHL || WU_TYPE == WU_GENEREC_MID || WU_TYPE == WU_GENEREC_SYM;	
 	// ========= RECIRCULATION -- iterative activation ==============

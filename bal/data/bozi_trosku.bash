@@ -155,8 +155,7 @@ done
   
 
 #=================== k3 ====================
-#TODO . -> stats 
-ls '.' | grep -o 'k3_4_[3-9]_1398[0-9]\+' | sort | uniq | while read filename
+ls 'stats' | grep -o 'k3_4_[3-9]_1398[0-9]\+' | sort | uniq | while read filename
 do
   num=$(echo $filename | grep -o 'k3_4_[0-9]' | grep -o '[0-9]$')
   echo "motam $filename with num=$num"
@@ -165,9 +164,9 @@ do
   #bash zmotaj_stats.bash w $filename w 
   
   echo "  generec-k3-$num-success.pdf"
-  gnuplot -e "inpath='stats/$filename/log_lls_0.dat';outpath='../../text/img/k3/generec-$num-success.pdf';val_from=0;val_d=10;val_to=100;rxf=-4;rxt=4;ryf=-7;ryt=1;rgb_a=33;rgb_b=13;rgb_c=10" contour.p
+  gnuplot -e "inpath='stats/$filename/log_lls_0.dat';outpath='../../text/img/k3/generec-$num-success.pdf';val_from=0;val_d=10;val_to=100;rxf=-4;rxt=2;ryf=-7;ryt=1;rgb_a=33;rgb_b=13;rgb_c=10" contour.p
 
   echo "  generec-k3-$num-epoch.pdf"
   less stats/$filename/log_lle_0.dat | bash post_epochs.bash 5000 > buf.dat
-  gnuplot -e "inpath='buf.dat';outpath='../../text/img/k3/generec-$num-epoch.pdf';val_from=0;val_d=300;val_to=2500;rxf=-4;rxt=4;ryf=-7;ryt=1;rgb_a=10;rgb_b=13;rgb_c=33" contour.p
+  gnuplot -e "inpath='buf.dat';outpath='../../text/img/k3/generec-$num-epoch.pdf';val_from=0;val_d=300;val_to=2500;rxf=-4;rxt=2;ryf=-7;ryt=1;rgb_a=10;rgb_b=13;rgb_c=33" contour.p
 done

@@ -5,7 +5,7 @@
 #params outpath 
 
 set bars 1.0 
-set xrange [:] noreverse nowriteback
+set xrange [1:100001] noreverse nowriteback
 set yrange [:] noreverse nowriteback
 
 set key outside;
@@ -22,10 +22,10 @@ set grid xtics lw 5 lc rgb "#dddddd"
 
 set terminal pdf font "arial,8" size 6, 3
 set output outpath
-plot 'sim1.dat' u 1:5:($5-$6):($5+$6) with errorlines \
+plot 'sim1.dat' u ($1+1):5:($5-$6):($5+$6) with errorlines \
         lt 3 lw 3 pt 5 ps 0.5 title 'BAL', \
-     'sim2.dat' u 1:5:($5-$6):($5+$6) with errorlines \
+     'sim2.dat' u ($1+1):5:($5-$6):($5+$6) with errorlines \
         lt 1 lw 3 pt 5 ps 0.5 title 'TLR', \
-     'sim3.dat' u 1:5:($5-$6):($5+$6) with errorlines \
-        lt 4 lw 3 pt 5 ps 0.5 title 'TLR can' 
+     'sim3.dat' u ($1+1):5:($5-$6):($5+$6) with errorlines \
+        lt 4 lw 3 pt 5 ps 0.5 title 'TLR-can' 
 

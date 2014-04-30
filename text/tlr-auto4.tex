@@ -36,7 +36,8 @@ Note that the success space is robust and therefore it is possible to find it by
 
 Note the inconsistency between table~\ref{tab:results-cmp-auto4}, where 93.12\% success was stated for TLR, and in figure~\ref{fig:results-tlr-auto4-performance} where it was 96.5\%. This is explained by the \emph{law of big numbers}. In the first case the average performance of 10000 networks were used, thus the result is likely to mirror the reality. In the second case only 200 networks were used for a particular $(\lambda_v,\,\lambda_h)$ pair. As there were about 50 candidates for best achievers, it was likely that some of them will achieve better than in the long run. 
 
-In figure~\ref{fig:results-tlr-auto4-epoch} the success timeline for TLR with best $\lambda_h$ and $\lambda_v$ is analysed. We see that the success rate increases even after $10^5$ epochs and our intuition tells us that it will continue even after $10^6$ epochs. Another observation is that $patSucc^B$ first follows $patSucc^F$ for about 100 epochs, but then it stagnates at rate $\approx0.8$. We find this hard to explain as both the architecture and data are symmetric. 
+\label{sec:our-o-fb-dist-diff}
+In figure~\ref{fig:results-tlr-auto4-epoch} the success timeline for TLR with best $\lambda_h$ and $\lambda_v$ is analysed. We see that the success rate increases even after $10^5$ epochs and our intuition tells us that it will continue even after $10^6$ epochs. Another observation is that $patSucc^B$ first follows $patSucc^F$ for about 100 epochs, but then it stagnates at rate $\approx0.8$. We find this hard to explain as both the architecture and data are symmetric. %TODO sequential weight update 
 
 %======== (2D) best TLR on ALL_SUCC x epoch (std-dev) ==========
 \begin{figure}[h]
@@ -134,7 +135,9 @@ momentum & avg(success) \\
 
 %============================================================
 \subsubsection{Features}
-TODO explain 
+In this section, we analyse the timelines for features $dist_{H}^{FB}$, $dist_{O}^{FB}$, $dist_{H}$ and $matrix\_weight$ introduced in section~\ref{sec:our-candidates-features}. We compare the values for BAL, TLR and TLR with candidates selection (TLR-can). 
+
+The importance of the distance between forward and hidden activations $dist_{H}^{FB}$ is shown in figure~\ref{fig:results-candidates-h-fb-d}. We observe that $dist_{H}^{FB}$ settles fast for BAL. This means the network stops learning as the difference $(h^B_j - h^F_j) \approx 0$ renders the weight update in BAL update rule to zero. On the other hand, we see that $dist_{H}^{FB}$ of TLR is not affected in time. This could be contributed to lower magnitude of updates $W^{IH}$ and $W^{OH}$. TLR-can is stationary as it converges in 150 epochs. 
 
 \begin{figure}[H]
   \centering
@@ -143,6 +146,8 @@ TODO explain
   \label{fig:results-candidates-h-fb-d}
 \end{figure}
 
+Difference between forward and backward outputs $dist_{O}^{FB}$ is shown in figure~\ref{fig:results-candidates-o-fb-d}. We see that BAL decreases the difference monotonously and converges to zero. That means the mappings learned by forward and backward weight are same. This is not true for TLR. We observe a \emph{rebound} around epoch 4. This could be contributed to $\lambda_h \ll \lambda_v$ as it could greatly increase $|W^{HI}_{ij}|$ and $|W^{HO}_{ij}|$ and therefore activations on output layers change rapidly. After the rebound a convergence phase start which could be explained by settling of $|y^{F} - y^{B}| \approx 0$. This could explain the difference between $y^{F}$ and $x^B$ discussed in section~\ref{sec:our-o-fb-dist-diff}. 
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{img/feature-cmp-o-fb-d.pdf}  
@@ -150,12 +155,16 @@ TODO explain
   \label{fig:results-candidates-o-fb-d}
 \end{figure}
 
+Candidate selection showed that $dist_{H}$ is the primary feature contributing to networks success rate~(\ref{eq:results-candidates-linear-regression}). In figure~\ref{fig:results-candidates-h-dist} we see that candide selection indeed picks networks with greater $dist_{H}$. We can observe that $dist_{H}$ stagnates through the training phase. This reinforces the importance of proper weight initialization. 
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{img/feature-cmp-h-dist.pdf}  
    \caption{Comparing $dist_{H}$~(\ref{sec:our-h-dist}) timeline for the {4-2-4 encoder} task.}
   \label{fig:results-candidates-h-dist}
 \end{figure}
+
+Analysis of the average weight of matrices $matrix\_weight$ in figure~\ref{fig:results-candidates-m-wei} shows that setting $1 \ll \lambda_v$ leads to greater $matrix\_weight$. We can observe that $matrix\_weight$ is not bounded for TLR and therefore a convenient stopping criteria should be picked. 
 
 \begin{figure}[H]
   \centering

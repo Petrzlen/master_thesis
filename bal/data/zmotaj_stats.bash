@@ -25,9 +25,10 @@ then
   head -1 $measure | sed 's/\t/,\n/g' | tail -n +2 | sed 's/\(^[^,]*\)/  \1 DOUBLE/g' >> create_table.sql 
   echo ");" >> create_table.sql 
 
-  #less $measure | grep '\.' | sed 's/\t/","/g' | sed 's/\(.*\)/INSERT INTO data VALUES ("\1");/g' > insert_table.sql
+  rm insert_table.sql 
+  less $measure | grep '\.' | sed 's/\t/","/g' | sed 's/\(.*\)/INSERT INTO data VALUES ("\1");/g' >> insert_table.sql
   #fix no measure at end 
-  less $post | grep '\.' | sed 's/\t/","/g' | sed 's/\(.*\)/INSERT INTO data VALUES ("NA","\1");/g' > insert_table.sql
+  less $post | grep '\.' | sed 's/\t/","/g' | sed 's/\(.*\)/INSERT INTO data VALUES ("NA","\1");/g' >> insert_table.sql
 
   echo "ALTER TABLE data ADD success INT; UPDATE data SET success = (CASE WHEN err = 0.0 THEN 1 ELSE 0 END); CREATE INDEX index_err ON data (err); CREATE INDEX index_success ON data (success); CREATE INDEX index_epoch ON data (epoch); ALTER TABLE data ADD buf DOUBLE;" > update_table.sql
 
