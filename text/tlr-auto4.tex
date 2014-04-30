@@ -11,7 +11,7 @@
 \paragraph{Introduction.} 
 \label{sec:results-auto4-introduction} 
 In this section, we analyse performance of TLR for a broad range of parameters $\lambda_h$ and $\lambda_v$. The network architecture is only 4-2-4~
-(\ref{sec:datasets-auto4}) what allows us to run plethora of simulations. There were two kinds of simulations. First are \emph{two dimensional maps (TDM)}, where $\lambda_v$ is plotted on the $x$ axis, $\lambda_h$ on the $y$ axis and color is used for the $z$ axis. Second are \emph{timelines}  on which success per epoch was plotted for best configuration found by TDM. For creating TDM we ran 500 networks for each pair ($\lambda_v$, $\lambda_h$) and for timelines we ran 10000 networks. After the simulations ended, the average for each configuration was plotted. The networks were trained while $patSucc^F \neq 1$ or $epoch < Epoch_{\rm max}$ where $Epoch_{\rm max}$ was set to 100,000 in TDM and 1,000,000 in timelines. Note that most of the plots are in \emph{logarithmic} scale. 
+(\ref{sec:datasets-auto4}) what allows us to run plethora of simulations. There were two kinds of simulations. First are \emph{two dimensional maps (TDM)}, where $\lambda_v$ is plotted on the $x$ axis, $\lambda_h$ on the $y$ axis and color is used for the $z$ axis. Second are \emph{timelines}  on which success rate per epoch was plotted for best configuration found by TDM. For creating TDM we ran 500 networks for each pair ($\lambda_v$, $\lambda_h$) and for timelines we ran 10000 networks. After the simulations ended, the average for each configuration was plotted. The networks were trained while $patSucc^F \neq 1$ or $epoch < Epoch_{\rm max}$ where $Epoch_{\rm max}$ was set to 100,000 in TDM and 1,000,000 in timelines. Note that most of the plots are in \emph{logarithmic} scale. 
 
 %============================================================
 \input{results-auto4-cmp} 
@@ -139,28 +139,28 @@ TODO explain
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{img/feature-cmp-h-fb-d.pdf}  
-   \caption{Comparing $dist_{H}^{FB}$~(\ref{sec:our-dist-h-fb}) evolution on the {4-2-4 encoder} task.}
+   \caption{Comparing $dist_{H}^{FB}$~(\ref{sec:our-dist-h-fb}) timeline for the {4-2-4 encoder} task.}
   \label{fig:results-candidates-h-fb-d}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{img/feature-cmp-o-fb-d.pdf}  
-   \caption{Comparing $dist_{O}^{FB}$~(\ref{sec:our-dist-o-fb}) evolution on the {4-2-4 encoder} task.}
+   \caption{Comparing $dist_{O}^{FB}$~(\ref{sec:our-dist-o-fb}) timeline for the {4-2-4 encoder} task.}
   \label{fig:results-candidates-o-fb-d}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{img/feature-cmp-h-dist.pdf}  
-   \caption{Comparing $dist_{H}$~(\ref{sec:our-h-dist}) evolution on the {4-2-4 encoder} task.}
+   \caption{Comparing $dist_{H}$~(\ref{sec:our-h-dist}) timeline for the {4-2-4 encoder} task.}
   \label{fig:results-candidates-h-dist}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{img/feature-cmp-m-wei.pdf}  
-   \caption{Comparing $matrix\_weight$~(\ref{sec:our-m-wei}) evolution on the {4-2-4 encoder} task.}
+   \caption{Comparing $matrix\_weight$~(\ref{sec:our-m-wei}) timeline for the {4-2-4 encoder} task.}
   \label{fig:results-candidates-m-wei}
 \end{figure}
 
@@ -175,7 +175,7 @@ In figure~\ref{fig:results-bal-recirc-auto4-performance} we see that \emph{BAL-r
   \centering
   \includegraphics[width=0.49\textwidth]{img/bal-recirc-auto4-success.pdf}   
   \includegraphics[width=0.49\textwidth]{img/bal-recirc-auto4-epoch.pdf}     
-  \caption{BAL-recirc~(\ref{sec:our-bal-recirc}) success and epochs on the \emph{4-2-4 encoder}. Best result $36\%$ achieved with $\lambda_h = 0.0001$ and $\lambda_v=1.0$.}
+  \caption{BAL-recirc~(\ref{sec:our-bal-recirc}) success rate and convergence time on the \emph{4-2-4 encoder}. Best result $36\%$ achieved with $\lambda_h = 0.0001$ and $\lambda_v=1.0$.}
   \label{fig:results-bal-recirc-auto4-performance}
 \end{figure}
 %success lambda_h lambda_v
