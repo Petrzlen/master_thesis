@@ -26,10 +26,10 @@ y_k =
 Equation~\ref{eq:perceptron} describes a simple \emph{binary treshold perceptron}. One could observe that the binary perceptron divides the vector space $\mathbb{R}^N$ by a $(n-1)$--dimensional hyperplane. This behaviour was studied by~\citet{rosenblatt1958perceptron}. Now we see the importance of bias which is the absolute term in the equation of the hyperplane. \label{sec:linear-sep} This leads to the fact that for one perceptron is impossible to classify non--\emph{linearly separable} vectors. 
 
 \paragraph{Continuous perceptron.}
-We put additional constraints for the activation function $\phi : \mathbb{R} \mapsto (0,1)$ that $\phi$ is differentiable, monotonously increasing and satisfying two asymptotic conditions $t(-\infty)=0$ and $t(\infty)=1$.  Usually, the activation function is realized by the logistic function $\frac{1}{1 + \exp{-\eta}}$. To allow real numbered results from the range $(0,1)$, we drop the treshold function and simply output $\phi(\eta_k)$. 
+We put additional constraints for the activation function $\phi : \mathbb{R} \mapsto (0,1)$ that $\phi$ is differentiable, monotonously increasing and satisfying two asymptotic conditions $t(-\infty)=0$ and $t(\infty)=1$.  Usually, the activation function is realized by the logistic function $1 / (1 + \exp{-\eta})$. To allow real numbered results from the range $(0,1)$, we drop the treshold function and simply output $\phi(\eta_k)$. 
 
 \paragraph{Learning.} 
-The goal of a perceptron is to \emph{learn} the mapping given by the set $T = \{(X^j, t_j)\}$ of pairs, where $X^j$ is the input vector $(x_{j0},x_{j1}, \ldots, x_{jN})$ and $t_j$ is the corresponding target. It could be formalized as minimizing the error function: 
+The goal of a perceptron is to \emph{learn} the mapping given by the set $T = \{(X_j, t_j)\}$ of pairs, where $X_j$ is the input vector $(x_{j0},x_{j1}, \ldots, x_{jN})$ and $t_j$ is the corresponding target. It could be formalized as minimizing the error function: 
 
 \begin{equation}
 \label{eq:perceptron-error} 
@@ -40,9 +40,9 @@ A straightforward method for the network to minimize the error function \ref{eq:
 
 \begin{equation}
 \label{eq:perceptron-learning} 
-\frac{\partial E}{\partial w_{ik}} = (t_k - y_k)\phi'(\eta_k)x_i = (y_k - t_k)y_k(1 - y_k)x_i,
+\frac{\partial E}{\partial w_{ik}} = (t_k - y_k)\phi'(\eta_k)x_i = (t_k - y_k)y_k(1 - y_k)x_i,
 \end{equation} 
-which gives us the \emph{update rule} written as: 
+which gives us the \emph{update rule} going opposite the gradietn: 
 \
 \begin{equation} 
 \label{eq:perceptron-learning-rule} 

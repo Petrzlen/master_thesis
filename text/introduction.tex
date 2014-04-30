@@ -8,7 +8,7 @@
 % 1) Information/introduction about the topic of your research (e.g. what you will talk about in your thesis – Compilers, CPUs, optimizations etc.)
 
 % 2) The practical and theoretical value of the topic (how and why this topic is important) 
-The field of artificial neural networks (ANN) gets lots of attention nowadays. The field is interesting for both psychologists and computer scientists. For psychologists they provide a simulation environment of the human brain which could be used to prove their hypotheses. For computer scientists ANN are a general model which could be used to solve a broad range of practical problems. 
+The field of artificial neural networks (ANN) gets lots of attention nowadays. ANNs are interesting for both psychologists and computer scientists. For psychologists they provide a simulation environment of the human brain which could be used to prove their hypotheses. For computer scientists ANNs are a general model which could be used to solve a broad range of practical problems. 
 
 % ==================== 10. Motivation (or Problem Definition and Proposed Solution) =====
 % In this chapter you have to concisely explain the problem that you want to solve and the goal of your solution. 
@@ -16,7 +16,7 @@ The field of artificial neural networks (ANN) gets lots of attention nowadays. T
 % 3) The motivation for your thesis (State with at least one sentence the problem you attack in your research work, why did you choose this problem and how it is interesting.  State with at least one sentence your solution for the problem).
 
 % 4) If you are basing your work on currently existing work, mention it here.
-% ==================== 10. Motivation (or Problem Definition and Proposed Solution) =====
+% ==================== 10. Motivation (or tProblem Definition and Proposed Solution) =====
 %In this chapter you have to concisely explain the problem that you want to solve and the goal of your solution. This part should contain:
 
 % 1) Detailed analysis of the problem and its limitations (e.g. what is the bottleneck and difficulties).
@@ -24,7 +24,7 @@ The field of artificial neural networks (ANN) gets lots of attention nowadays. T
 %\subsection*{Motivation}
 \label{sec:motivation} 
 % 1) Detailed analysis of the problem and its limitations (e.g. what is the bottleneck and difficulties).
-We choose to analyse the Bidirectional Activation-based Learning algorithm (BAL) designed by~\citet{farkas2013bal}. The main reasons why we have chosen BAL over standard models are its simplicity, \emph{bidirectionality} and \emph{biological plausibility}. The term biological plausibility is stated by six principles by~\citet{hinton1988learning}. Two of principles are \emph{bidirectional activation propagation} and \emph{distributed representations} which are present in most of ANN models. The bidirectionality of BAL is achieved by using backward representations for learning the forward representations and vice versa. 
+We choose to analyse the Bidirectional Activation-based Learning algorithm (BAL) recently introduced by~\citet{farkas2013bal}. The main reasons why we have chosen BAL over standard models are its simplicity, \emph{bidirectionality} and \emph{biological plausibility}. The term biological plausibility is stated by six principles by~\citet{hinton1988learning}. Two of principles are \emph{bidirectional activation propagation} and \emph{distributed representations} which are present in most of ANN models. The bidirectionality of BAL is achieved by using backward representations for learning the forward representations and vice versa. 
 %\enquote{  A distributed representation uses multiple active neuron like processing units to encode information (as opposed to a single unit, localist representation), and the same unit can participate in multiple representations. Each unit in a distributed representation can be thought of as representing a single feature, with information being encoded by particular combinations of such features~\citep[pp.~ 456]{o1998six}}. 
 %Therefore, we aim to have as little global information as possible. Biologically plausible models are used to simulate BioAnt by~\citet{schneider2009application} and cells by~\citet{nawrocki2012monitoring}. 
 
@@ -39,13 +39,16 @@ We choose to analyse the Bidirectional Activation-based Learning algorithm (BAL)
 % 6) Include information about your key results – e.g. we improve the performance with 70% in the general keys.
 
 %\subsection*{Goals and Results}
-Although BAL performs well on high dimensional tasks, it has problems to learn low dimensional tasks with 100\% reliability, while BP is able to learn them. Therefore, our primary goal is to find reasons for this performance gap and derive a modification of BAL which will perform comparably to BP. In our work we were able to follow this process and find reasons which were used for deriving the Two learning rate model (TLR). TLR uses different learning rates for different weight matrices and shows counter intuitive behaviour. If it is initialized correctly it performs comparable to BP, but it is needs more effort to set up as it needs one more parameter to be fitted. 
+Although BAL performs well on high dimensional tasks, it has problems to learn low dimensional tasks with 100\% reliability, while BP is able to learn them. Therefore, our primary goal was to find reasons for this performance gap and use them to derive a modification of BAL which will perform comparably to BP. In our work, we were able to follow this process and find reasons which were used for deriving the Two learning rate model (TLR). TLR uses different learning rates for different weight matrices and shows counter intuitive behaviour. If it is initialized correctly it performs comparable to BP, but it is needs more effort to set up as it needs one more parameter to be fitted. 
 
 %In our work we were able to significantly increase the performance of BAL on a small problem and use the idea for a bigger problem. We also introduced several hypotheses explaining why it works. 
 
 % 7) Finish the chapter with an overview about the contents of your thesis.la, ktory temu trocha chape, zavedenie zakladnej notacie 
 %\subsection*{Overview of contents}
-Our work is organised as follows. Chapter~\ref{sec:overview} starts with an overview of basic ANN concepts and models~(\ref{sec:theory}). Its continued with models which are directly related to our work~(\ref{sec:overview-models}). The overview chapter is ended with explaining BAL~(\ref{sec:models-bal}), which is the baseline model of our work. In chapter~\ref{sec:simulations} we describe the necessary background for our simulations~(\ref{sec:sim-our}), experiments~(\ref{sec:sim-exp}) and datasets~(\ref{sec:sim-data}) used through our work. We finish our work with chapter~\ref{sec:results} which contains simulation results aimed to TLR, which proved to be the most successful modification of BAL. The chapter consists of comparisons~(\ref{sec:tlr-auto4-cmp},\ref{tab:results-cmp-digits}), best parameter fitting~(\ref{fig:results-tlr-auto4-performance}) and explanations~(\ref{sec:tlr-auto4-hypothesis}). %Some additional results and implementation decisions could be found in the appendix~(\ref{sec:appendix-impl}).  
+
+Our work starts with an overview of ANNs in chapter~\ref{sec:overview}. It consists of necessary preliminaries and related models. 
+In chapter~\ref{sec:simulations} we describe our simulations, experiments and datasets used through our work. 
+We finish our work with chapter~\ref{sec:results} which contains simulation results aimed at TLR, which proved to be the most successful modification of BAL. Finally we conclude our results and outline future experiments in section~\ref{sec:conclusion}. %The chapter consists of comparisons~(\ref{sec:tlr-auto4-cmp},\ref{tab:results-cmp-digits}), best parameter fitting~(\ref{fig:results-tlr-auto4-performance}) and explanations~(\ref{sec:tlr-auto4-hypothesis}). %Some additional results and implementation decisions could be found in the appendix~(\ref{sec:appendix-impl}).  
 
 %UVOD - pre citate
 

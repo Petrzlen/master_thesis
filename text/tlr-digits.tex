@@ -4,7 +4,7 @@
 %Vyhýbajte sa používaniu žargónu.
 %Používajte starú múdrosť: 1 obrázok je viac než 1000 slov.
 
-\subsection{Handwritten Digits} 
+\subsection{Handwritten digits} 
 \label{sec:results-digits} 
 
 In this section, we wanted to test TLR on a high dimensional graphical task and compare it to other known models. For this we chose the \emph{handwritten digits} dataset (\ref{sec:datasets-digits}). As in the previous simulations, we trained the networks for range of $\lambda_v$ and $\lambda_h$ values to find best parameters. Then we analysed the network with best parameters individually. 
@@ -57,14 +57,14 @@ For comparison of TLR on the \emph{digits} task we chose neural network models w
     \hline
     Linear classifier & -- & -- & 88 & -- \\ 
     \hline
-    BP 784-300-10~(\ref{sec:models-bp})& -- & -- & 95.3 & -- \\ 
+    BP 784--300--10~(\ref{sec:models-bp})& -- & -- & 95.3 & -- \\ 
     \hline 
-    BAL 784-300-10~(\ref{sec:models-bal})& 0.01 & 0.01 & 9.8 & 20 \\
+    BAL 784--300--10~(\ref{sec:models-bal})& 0.01 & 0.01 & 9.8 & 20 \\
     \hline 
-    TLR 784-300-10~(\ref{sec:models-bp})& $10^{-8}$ & 0.1 & 88.47 & 20 \\
+    TLR 784--300--10~(\ref{sec:models-bp})& $10^{-8}$ & 0.1 & 88.47 & 20 \\
     \hline 
     \end{tabular}
-  \caption{Comparing performance of different models on the \emph{digits} task. Data from \citet{lecun1998gradient} and \citet{digits2014mnist}.} 
+  \caption{Comparison of different models on the \emph{digits} task. Data from \citet{lecun1998gradient} and \citet{digits2014mnist}.} 
   \label{tab:results-cmp-digits}
 \end{table}
 

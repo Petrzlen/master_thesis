@@ -7,12 +7,11 @@ In this section,  we describe other models, model modifications and experiments 
 \label{sec:our-weight-init-class}
 As candidate selection suggested~\ref{sec:sim-exp-candidates}, weight initialization could be crucial for the success rate of BAL. Building on this fact we propose an experiment. First we generate $n$ networks $N_i$ with random weights $W_i$, train them and label them $s_i$ depending if they were successful. Then we get a dataset $D=(W_i, s_i)$ on which we could train some model $M$ used for prediction of $s_i$. Then by analysis of $M$ we could derive hypothesis for weight distributions which are successful. And then we could modify the weight initialization process so that it will reinforce those more successful networks. Note that this experiment was not implemented and we recommend it for future work. 
 
-
 \label{sec:our-sigma} 
 
-Based on~\citet{o1996bio} we used the following probability distribution for weight initialization: 
+Inspired by~\citet{o1996bio} we used for weight initialization the normal probability distribution:
 \begin{equation} 
-  \frac{1}{\sqrt{2\pi \sigma^2} e^{-\frac{(x-\mu)^2}{2\sigma^2}}},
+  \frac{1}{\sqrt{2\pi \sigma^2}} \exp{-\frac{(x-\mu)^2}{2\sigma^2}},
   \label{eq:our-sigma} 
 \end{equation} 
 where $\sigma$, i.e.~\emph{weight initialization constant}, is one of the network parameters and $\mu = 0$ is the expected value of the normal distribution. We showed that $\sigma$ influences the success rate~(\ref{eq:results-candidates-linear-regression}). It is recommended by~\citet{o1996bio} to set $\sigma=\frac{1}{\sqrt{N + 1}}$ where $N$ is the number of units on the input layer including bias.

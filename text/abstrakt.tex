@@ -5,7 +5,7 @@
 % 4) Possible impacts of your work into the field (e.g. “The proposed solution can be used to offload the CPU by executing data parallel computation intensive code on GPUs and thus obtaining additional Speedup for no cost”).
 
 \section*{Abstrakt}
-
+%TODO 
 Táto práca analyzuje umelé neurónové siete (UNS), ktoré sú založené na Generalized recirculation algorithm (GeneRec)~\citep{o1996bio} a Bidirectional Activation-based Learning algorithm (BAL)~\citep{farkas2013bal}. Od štandardných sietí, akými sú napríklad siete spätne šíriace chybu (BP), sa líšia tým, že zmena váh je založená na rozdiely dopredných a spätných aktivácií. Takéto siete sa považujú za prirodzené pre ich obojsmernosť a preto, lebo šíria iba aktiváciu a nie chybu. Je známe, že tieto siete majú problémy s naučením aj jednoduchých úloh, ktoré sa BP vie naučiť. Cieľom práce je preto zvýšenie úspešnosti BALu. 
 
 Analyzujeme viacero modifikácií BALu. Na základe pozorovaní navrhujeme model Two learning rates (TLR), ktorý využíva rozdielne rýchlosti učenia pre rôzne matice. Pomocou simulácií dokážeme, že TLR zvyšuje úspešnosť BALu. Navyše pozorujeme jasné závislosti medzi rýchlosťami učenia a úspešnosťou siete. Zaujímavosťou je, že pre najlepšie siete môže byť rozdiel medzi dvoma rýchlosťami učenia až $10^6$. Myšlienku TLR aplikujeme aj na GeneRec. Navyše skúšame viacero štandardných modifikácií UNS, ako sú napríklad moment, dávkové učenie, dynamická rýchlosť učenia alebo inicializácia váh. 
@@ -13,7 +13,7 @@ Analyzujeme viacero modifikácií BALu. Na základe pozorovaní navrhujeme model
 Veríme, že aplikácia myšlienky TLR má potenciál zvýšiť úspešnosť aj iných modelov UNS. Myšlienka sa dá zovšeobecniť aj na iné parametre, ako sú napríklad moment alebo inicializácia váh. 
 
 \begin{flushleft}
-  {\bf Kľúčové slová}: učenie s učiteľom, neurónová sieť, heteroasociatívne zobrazenie, dynamická rýchlosť učenia, učenie na základe aktivácií, rukopis čísel
+  {\bf Kľúčové slová}: učenie s učiteľom, neurónová sieť, heteroasociatívne zobrazenie, dynamická rýchlosť učenia, učenie na základe aktivácií
 \end{flushleft}
 
 %keywords={ Internet; TCP streams; Tor network;}
