@@ -15,11 +15,10 @@ Before comparing \emph{given} outputs on both visible layers the activations $Y^
 	  \end{array}
   \right.  
 \end{equation} 
-By having a set of given vectors $G^I$ and the target vectors $T^I$ for inputs $I \in \mathbb{S}$, we distinguish two main success measures: 
+For an input $I$ from the sample set $\mathbb{S}$ we denote vector \emph{given} by propagation of neuron activations $G^I$ and the \emph{target} vector we denote $T^I$. We distinguish two main success measures: 
 
-%TODO remove itemize
 \begin{itemize}
-  \item \emph{Bit success (bitSucc)} defined as $bitSucc = avg_{I \in \mathbb{S}} \sum_i |T_i^I - G^I_i|$ and 
+  \item \emph{Bit success (bitSucc)} defined as $bitSucc = avg_{I \in \mathbb{S}} \sum_i^{|T^I|} |T_i^I - G^I_i|$ and 
   \item \emph{Pattern success (patSucc)} defined as 
     \begin{equation}
       patSucc = avg_{I \in \mathbb{S}} \left\{
