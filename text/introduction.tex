@@ -24,7 +24,7 @@ The field of artificial neural networks (ANN) gets lots of attention nowadays. A
 %\subsection*{Motivation}
 \label{sec:motivation} 
 % 1) Detailed analysis of the problem and its limitations (e.g. what is the bottleneck and difficulties).
-We choose to analyse the Bidirectional Activation-based Learning algorithm (BAL) recently introduced by~\citet{farkas2013bal}. The main reasons why we have chosen BAL over standard models are its simplicity, \emph{bidirectionality} and \emph{biological plausibility}. The term biological plausibility is stated by six principles by~\citet{hinton1988learning}. Two of principles are \emph{bidirectional activation propagation} and \emph{distributed representations} which are present in most of ANN models. The bidirectionality of BAL is achieved by using backward representations for learning the forward representations and vice versa. 
+We choose to analyse the Bidirectional Activation-based Learning algorithm (BAL) recently introduced by~\citet{farkas2013bal}. The main reasons why we have chosen BAL over standard models are its simplicity, \emph{bidirectionality} and \emph{biological plausibility}. The term biological plausibility is stated by six principles by~\citet{hinton1988learning}. One of these principles is the \emph{bidirectional activation propagation} is achieved in BAL by using backward representations for learning the forward representations and vice versa. 
 
 % motivation.3) You should clearly state and explain your goal and objectives. You should provide analytical study (mathematical model) of your solution (What is the upper and lower bound of your performance or improvements). You should also mention about the qualitative benefit of your solution such as easy programming etc..
 
@@ -33,12 +33,12 @@ We choose to analyse the Bidirectional Activation-based Learning algorithm (BAL)
 % 6) Include information about your key results – e.g. we improve the performance with 70% in the general keys.
 
 %\subsection*{Goals and Results}
-Although BAL performs well on high dimensional tasks, it has problems to learn low dimensional tasks with 100\% reliability, while BP is able to learn them. Therefore, our primary goal was to find reasons for this performance gap and use them to derive a modification of BAL which will perform comparably to BP. In our work, we were able to follow this process and find reasons which were used for deriving the Two learning rate model (TLR). TLR uses different learning rates for different weight matrices and shows counter intuitive behaviour. If it is initialized correctly it performs comparable to BP, but it is needs more effort to set up as it needs one more parameter to be fitted. 
+Although BAL performs well on high dimensional tasks, it has problems to learn low dimensional tasks with 100\% reliability, while BP is able to learn them. Therefore, our primary goal was to find reasons for this performance gap and use them to derive a modification of BAL which will perform comparably to BP. In our work, we were able to follow this process and find reasons which were then used for deriving the Two learning rate model (TLR). TLR uses different learning rates for different weight matrices and shows some counter intuitive behaviour. It performs comparable to BP if it is initialized correctly. 
 
 % 7) Finish the chapter with an overview about the contents of your thesis.la, ktory temu trocha chape, zavedenie zakladnej notacie 
 %\subsection*{Overview of contents}
 
-Our work starts with an overview of ANNs in Chapter~\ref{sec:overview}. It consists of necessary preliminaries and related models. 
+Our work starts with an overview of ANNs in Chapter~\ref{sec:overview} which consists of necessary preliminaries and related models. 
 In Chapter~\ref{sec:simulations} we describe our simulations, experiments and datasets used through our work. 
 We finish our work with Chapter~\ref{sec:results} which contains simulation results aimed at TLR, which proved to be the most successful modification of BAL. Finally we conclude our results and outline future experiments in Section~\ref{sec:conclusion}.  
 

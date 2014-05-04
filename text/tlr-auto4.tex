@@ -8,9 +8,8 @@
 \label{sec:results-auto4} 
 
 %==================================================================
-\paragraph{Introduction.} 
 \label{sec:results-auto4-introduction} 
-In this section, we analyse performance of TLR~(\ref{sec:our-tlr}) for a broad range of parameters $\lambda_h$ and $\lambda_v$. The network architecture is only 4-2-4~(\ref{sec:datasets-auto4}) what allows us to run plethora of simulations. There were two kinds of simulations. First are \emph{two dimensional maps (TDM)}, where $\lambda_v$ is plotted on the $x$ axis, $\lambda_h$ on the $y$ axis and color is used for the $z$ axis. Second are \emph{timelines}  on which success rate per epoch was plotted for best configuration found by TDM. For creating TDM we ran 500 networks for each pair ($\lambda_v$, $\lambda_h$) and for timelines we ran 10000 networks. After the simulations ended, the average for each configuration was plotted. The networks were trained while $patSucc^F \neq 1$ or $epoch < Epoch_{\rm max}$ where $Epoch_{\rm max}$ was set to 100,000 in TDM and 1,000,000 in timelines. Note that most of the plots are in \emph{logarithmic} scale. 
+In this section, we analyse performance of TLR~(\ref{sec:our-tlr}) for a broad range of parameters $\lambda_h$ and $\lambda_v$. The network architecture is only 4-2-4~(\ref{sec:datasets-auto4}) what allows us to run plethora of simulations. There were two kinds of simulations. First are \emph{two dimensional maps (TDM)}, where $\lambda_v$ is plotted on the $x$ axis, $\lambda_h$ on the $y$ axis and color is used for the $z$ axis. Second are \emph{timelines} which plot success rate to epoch for the best configuration found by TDM. To create TDM we ran 500 networks for each pair ($\lambda_v$, $\lambda_h$) and for timelines we ran 10000 networks. After the simulations ended, the average for each configuration was plotted. The networks were trained while $patSucc^F \neq 1$ or $epoch < Epoch_{\rm max}$. The $Epoch_{\rm max}$ was set to 100,000 in TDM and 1,000,000 in timelines. Note that most of the plots are in \emph{logarithmic} scale. 
 
 %============================================================
 \input{results-auto4-cmp} 
@@ -19,9 +18,9 @@ In this section, we analyse performance of TLR~(\ref{sec:our-tlr}) for a broad r
 \subsubsection{Two learning rates} 
 \label{sec:tlr-auto4}
 
-In Figure~\ref{fig:results-tlr-auto4-performance} we compare success rate for range of $\lambda_v$ and $\lambda_h$. It~is interesting that the subspace with best achieving networks is around the half line $[(10, 0.001),\,(10^9, 0.001)]$. That means the performance mainly depends on $\lambda_h$ while a constraint on $\lambda_v$ is added. See the plot for epochs, where a \emph{ridge} occurred around line $[(0.01, 0.0002),\,(10^9, 0.0002)]$. Unfortunatelly, we can only guess what is the reason behind this ridge. Maybe it~is related to $Epoch_{\rm max}$ and the fact that we are calculating epochs only from successful networks. Therefore, successful networks having $\lambda_h > 10^{-6}$ need to converge using $\lambda_v$, because otherwise they would fail to converge because of $\lambda_h \cdot Epoch_{\rm max} < 1$. 
+In Figure~\ref{fig:results-tlr-auto4-performance} we compare success rate for range of $\lambda_v$ and $\lambda_h$. It~is interesting that the subspace with best achieving networks is around the half line $[(10, 0.001),\,(10^9, 0.001)]$. That means the performance mainly depends on $\lambda_h$ while a constraint on $\lambda_v$ is added. Also see the plot for epochs, where a \emph{ridge} occurred around line $[(0.01, 0.0002),\,(10^9, 0.0002)]$. Unfortunatelly, we can only guess what is the reason behind this ridge. Maybe it~is related to $Epoch_{\rm max}$ and the fact that we are calculating epochs only from successful networks. Therefore, successful networks having $\lambda_h < 10^{-6}$ need to converge using $\lambda_v$, because otherwise they would fail to converge because of $\lambda_h \cdot Epoch_{\rm max} < 1$. 
 
-Note that the success space is robust and therefore it is possible to find it by stochastic methods such as Monte Carlo. This approach is needed as finding the optimal values of $\lambda_v$ and $\lambda_h$ could take long using the trivial exhaustive search. 
+Note that the success space is robust and therefore it is possible to find it by stochastic methods such as Monte Carlo as an additional parameters is introduced. This approach is needed as finding the optimal values of $\lambda_v$ and $\lambda_h$ could take long using the trivial exhaustive search. 
 
 %======== (3D) L1 x L2 x epochs =========
 %======== (3D) L1 x L2 x patSuccF =========
@@ -29,11 +28,11 @@ Note that the success space is robust and therefore it is possible to find it by
   \centering
   \includegraphics[width=0.49\textwidth]{img/tlr-auto4-success.pdf}   
   \includegraphics[width=0.49\textwidth]{img/tlr-auto4-epoch.pdf}     
-  \caption{TLR success and epochs needed for successful networks on the \emph{4-2-4 encoder} task with $\sigma = 2.3$ and $\mu = 0.0$ best being $96.5\$$ with $\lambda_h=0.0003$ and $\lambda_v=1000.0$.}
+  \caption{TLR success rate and convergence time needed for successful networks on the \emph{4-2-4 encoder} task with $\sigma = 2.3$ and $\mu = 0.0$. Best network achieved $96.5\$$ with $\lambda_h=0.0003$ and $\lambda_v=1000.0$.}
   \label{fig:results-tlr-auto4-performance}
 \end{figure}
 
-Note the inconsistency between Table~\ref{tab:results-cmp-auto4}, where 93.12\% success was stated for TLR, and in Figure~\ref{fig:results-tlr-auto4-performance} where it was 96.5\%. This is explained by the \emph{law of big numbers}. In the first case the average performance of 10000 networks were used, thus the result is likely to mirror the reality. In the second case only 200 networks were used for a particular $(\lambda_v,\,\lambda_h)$ pair. As there were about 50 candidates for best achievers, it was likely that some of them will achieve better than in the long run. 
+Note the inconsistency between Table~\ref{tab:results-cmp-auto4}, where 93.12\% success rate was stated for TLR, and in Figure~\ref{fig:results-tlr-auto4-performance} where it was 96.5\%. This is explained by the \emph{law of big numbers}. In the first case the average performance of 10000 networks were used, thus the result is likely to mirror the reality. In the second case only 200 networks were used for a particular $(\lambda_v,\,\lambda_h)$ pair. As there were about 50 candidates for best success rate, it was likely that some of them will achieved better than average. 
 
 \label{sec:our-o-fb-dist-diff}
 In Figure~\ref{fig:results-tlr-auto4-epoch} the success timeline for TLR with best $\lambda_h$ and $\lambda_v$ is analysed. We see that the success rate increases even after $10^5$ epochs and our intuition tells us that it will continue even after $10^6$ epochs. Another observation is that $patSucc^B$ first follows $patSucc^F$ for about 100 epochs, but then it stagnates at rate $\approx0.8$. We find this hard to explain as both the architecture and data are symmetric. %OPT
@@ -43,7 +42,7 @@ In Figure~\ref{fig:results-tlr-auto4-epoch} the success timeline for TLR with be
   \centering
   \includegraphics[width=0.8\textwidth]{img/tlr-auto4-best-perf.pdf}\\
   \includegraphics[width=0.8\textwidth]{img/tlr-auto4-best-can.pdf}      
-  \caption{TLR success timeline for the \emph{4-2-4 encoder} task with $\lambda_h=0.0002$ and $\lambda_v=500$. Top plot without candidate selection and bottom plot with candidates selection.}
+  \caption{TLR success rate timeline for the \emph{4-2-4 encoder} task with $\lambda_h=0.0002$ and $\lambda_v=500$. The top plot without candidate selection and the bottom plot with candidates selection.}
   \label{fig:results-tlr-auto4-epoch} 
 \end{figure}
 
@@ -51,11 +50,11 @@ In Figure~\ref{fig:results-tlr-auto4-epoch} the success timeline for TLR with be
 \subsubsection{Hidden activations} 
 \label{sec:tlr-auto4-hidden}
 
-In Figure~\ref{fig:results-hidden-activations-bal} and in Figure~\ref{fig:results-hidden-activations-tlr} we show forward hidden activations. Each color represents the forward hidden representation of one of the four inputs in the \emph{4-2-4 encoder} task. As the hidden layer size is 2 the hidden activation could be mapped to two dimensional space. The plotted activations start at $epoch=0$ depicted with black squares and continue as outlined by the the lines. 
+In Figure~\ref{fig:results-hidden-activations-bal} and in Figure~\ref{fig:results-hidden-activations-tlr} we show forward hidden activations. Each color represents the forward hidden representation of one of the four inputs in the \emph{4-2-4 encoder} task. As the hidden layer size is 2 then the hidden activation can be mapped to the two dimensional space. The plotted activations start at $epoch=0$ where the starts are depicted with black squares and continue as outlined by the the lines. 
 
 The main difference between TLR and BAL seems to be the speed of activation change. For BAL, as shown in Figure~\ref{fig:results-hidden-activations-bal}, we have a step of size 0.6, which corresponds to four, one for each input, weight updates. Another observation is that after some initial steps BAL tends to stop the activation change. This could be contributed to settling $|H^F-H^B| \approx 0$ as discussed in Section~(\ref{sec:our-hidden-activation}). 
 
-Another source of error could be \emph{non--convex} hidden activation initializations. In the beginning the weight matrices are initialized by random what leads to random hidden activations. And if the hidden activations are also non--convex in the end then it~is impossible to perfectly classify on the hidden--to--visible layer due the linear separability theorem discussed in Section~\ref{sec:models-perceptron}. Therefore if the network had non--convex hidden activations in the beginning, then it must \emph{escape} the non--convex state and this could introduce problems. 
+Another source of error could be \emph{non--convex} hidden activation initializations. In the beginning, the weight matrices are initialized by random and that leads to random hidden activations. And if the hidden activations are also non--convex in the end then it~is impossible to perfectly classify on the hidden--to--visible layer due the linear separability theorem discussed in Section~\ref{sec:models-perceptron}. Therefore if the network had non--convex hidden activations in the beginning, then it must \emph{escape} the non--convex state.
 
 %===== hidden activation timelines with commentaries (for TLR, BAL, GeneRec) 
 % 2x success, 2x error (wrong settle, divergence) 
@@ -70,7 +69,7 @@ Another source of error could be \emph{non--convex} hidden activation initializa
   \includegraphics[width=0.45\textwidth]{img/hid-bal-good-convex.pdf}  \\
   \includegraphics[width=0.45\textwidth]{img/hid-bal-good-step.pdf}  
   \includegraphics[width=0.45\textwidth]{img/hid-bal-good-stagnation.pdf}  \\ 
-  \caption{\emph{BAL} hidden activations on the \emph{4-2-4 encoder}. Top $2\times2$ are {\bf un}successful networks and bottom $2\times2$ successful ones. There were about 100 epochs with change in activation.}
+  \caption{\emph{BAL} hidden activations on the \emph{4-2-4 encoder} task. The top $2\times2$ are {\bf un}successful networks and the bottom $2\times2$ successful ones. Only the first $\approx 100$ epochs had change in activation.}
   \label{fig:results-hidden-activations-bal}
 \end{figure}
 
@@ -84,7 +83,7 @@ Another source of error could be \emph{non--convex} hidden activation initializa
   \includegraphics[width=0.45\textwidth]{img/hid-tlr-good-tiny.pdf}  
   \includegraphics[width=0.45\textwidth]{img/hid-tlr-good-init.pdf}  
   \includegraphics[width=0.45\textwidth]{img/hid-tlr-good-weird.pdf}  
-  \caption{\emph{TLR} hidden activations on the \emph{4-2-4 encoder}. Top $2\times2$ are {\bf un}successful networks and bottom $2\times2$ successful ones. There were about 10000 epochs with change in activation.}
+  \caption{\emph{TLR} hidden activations on the \emph{4-2-4 encoder} task. The top $2\times2$ are {\bf un}successful networks and the bottom $2\times2$ successful ones. Only the first $\approx 10000$ epochs had change in activation.}
   \label{fig:results-hidden-activations-tlr}
 \end{figure}
 
@@ -92,7 +91,7 @@ Another source of error could be \emph{non--convex} hidden activation initializa
 \subsubsection{Momentum}
 \label{sec:results-momentum} 
 
-Adding momentum~(\ref{sec:our-momentum}) to the basic TLR simulations~(\ref{sec:tlr-auto4}) had no significant effect on network performance as shown in Table~\ref{tab:results-mom-auto4}. For each momentum the we took average from all simulations. Only a little improvement in convergence rate was achieved. We ran simulations for range of $\lambda_v$ and $\lambda_h$ values as shown in Figure~\ref{fig:results-tlr-auto4-momentum}. 
+Adding momentum~(\ref{sec:our-momentum}) to the basic TLR simulations~(\ref{sec:tlr-auto4}) had no significant effect on network performance as shown in Table~\ref{tab:results-mom-auto4} where for each momentum we take average from all simulations. Only a little improvement in convergence rate was achieved. We ran simulations for range of $\lambda_v$ and $\lambda_h$ values as shown in Figure~\ref{fig:results-tlr-auto4-momentum}. 
 \begin{table}[H] 
   \centering
   {\small
@@ -114,7 +113,7 @@ momentum & avg(success) \\
     \hline
     \end{tabular}
   }
-  \caption{Comparison for different momentums for TLR on the \emph{4-2-4 encoder} task.} 
+  \caption{Comparison of different momentums for TLR on the \emph{4-2-4 encoder} task.} 
   \label{tab:results-mom-auto4}
 \end{table}
 
@@ -134,7 +133,7 @@ momentum & avg(success) \\
 
 %============================================================
 \subsubsection{Features}
-In this section, we analyse the timelines for features $dist_{H}^{FB}$, $dist_{O}^{FB}$, $dist_{H}$ and $matrix\_weight$ introduced in Section~\ref{sec:our-candidates-features}. We compare the values for BAL, TLR and TLR with candidates selection (TLR-can). 
+In this section, we analyse the timelines for features $dist_{H}^{FB}$, $dist_{V}^{FB}$, $dist_{H}$ and $matrix\_weight$ introduced in Section~\ref{sec:our-candidates-features}. We compare the values for BAL, TLR and TLR with candidates selection (TLR-can). 
 
 The importance of the distance between forward and hidden activations $dist_{H}^{FB}$ is shown in Figure~\ref{fig:results-candidates-h-fb-d}. We observe that $dist_{H}^{FB}$ settles fast for BAL. This means the network stops learning as the difference $(h^B_j - h^F_j) \approx 0$ renders the weight update in BAL update rule to zero. On the other hand, we see that $dist_{H}^{FB}$ of TLR is not affected in time. This could be contributed to lower magnitude of updates $W^{IH}$ and $W^{OH}$. TLR-can is stationary as it converges in 150 epochs. 
 
@@ -145,12 +144,12 @@ The importance of the distance between forward and hidden activations $dist_{H}^
   \label{fig:results-candidates-h-fb-d}
 \end{figure}
 
-Difference between forward and backward outputs $dist_{O}^{FB}$ is shown in Figure~\ref{fig:results-candidates-o-fb-d}. We see that BAL decreases the difference monotonously and converges to zero. That means the mappings learned by forward and backward weight are same. This is not true for TLR. We observe a \emph{rebound} around epoch 4. This could be contributed to $\lambda_h \ll \lambda_v$ as it could greatly increase $|W^{HI}_{ij}|$ and $|W^{HO}_{ij}|$ and therefore activations on output layers change rapidly. After the rebound a convergence phase start which could be explained by settling of $|y^{F} - y^{B}| \approx 0$. This could explain the difference between $y^{F}$ and $x^B$ discussed in Section~\ref{sec:our-o-fb-dist-diff}. 
+Difference between forward and backward outputs $dist_{V}^{FB}$ is shown in Figure~\ref{fig:results-candidates-o-fb-d}. We see that BAL decreases the difference monotonously and converges to zero. That means the mappings learned by forward and backward weights are same. But, this is not true for TLR. We observe a \emph{rebound} around epoch 4. This could be contributed to $\lambda_h \ll \lambda_v$ as it could greatly increase $|W^{HI}_{ij}|$ and $|W^{HO}_{ij}|$ and therefore activations on output layers change rapidly. After the rebound a convergence phase start which could be explained by settling of $|y^{F} - y^{B}| \approx 0$. This could explain the difference between $y^{F}$ and $x^B$ discussed in Section~\ref{sec:our-o-fb-dist-diff}. 
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.6\textwidth]{img/feature-cmp-o-fb-d.pdf}  
-   \caption{Comparison of $dist_{O}^{FB}$~(\ref{sec:our-dist-o-fb}) timelines for the {4-2-4 encoder} task.}
+   \caption{Comparison of $dist_{V}^{FB}$~(\ref{sec:our-dist-o-fb}) timelines for the {4-2-4 encoder} task.}
   \label{fig:results-candidates-o-fb-d}
 \end{figure}
 
@@ -183,7 +182,7 @@ In Figure~\ref{fig:results-bal-recirc-auto4-performance} we see that \emph{BAL-r
   \centering
   \includegraphics[width=0.49\textwidth]{img/bal-recirc-auto4-success.pdf}   
   \includegraphics[width=0.49\textwidth]{img/bal-recirc-auto4-epoch.pdf}     
-  \caption{BAL-recirc~(\ref{sec:our-bal-recirc}) success rate and convergence time on the \emph{4-2-4 encoder}. Best result $36\%$ achieved with $\lambda_h = 0.0001$ and $\lambda_v=1.0$.}
+  \caption{BAL-recirc~(\ref{sec:our-bal-recirc}) on the \emph{4-2-4 encoder}. Best success rate  $36\%$ achieved with $\lambda_h = 0.0001$ and $\lambda_v=1.0$.}
   \label{fig:results-bal-recirc-auto4-performance}
 \end{figure}
 %success lambda_h lambda_v
@@ -216,5 +215,5 @@ As with generalizing of BAL to TLR we tried also generalizing GeneRec using the 
 \label{sec:tlr-auto4-conclusion} 
 
 \label{sec:tlr-auto4-hypothesis} 
-The result in this chapter suggest a hypothesis why TLR outperforms BAL on the \emph{4-2-4 encoder task}. The reason is that the hidden activations settle before $W^{HO}$ and $W^{HI}$ adapt to them. This is explained by the fact that forward and backward hidden activations become same to fast~(\ref{sec:tlr-auto4-hidden},~\ref{sec:our-hidden-activation}) and moreover, weight initialization could help this~(\ref{fig:results-tlr-auto4-epoch}). The first issue is solved by setting $\lambda_h \ll \lambda_h$ which adds epochs to the training phase. The second issue is solved by candidate selection which prevents initializing hidden activations close to each other. 
+The results in this chapter suggest a hypothesis why TLR outperforms BAL on the \emph{4-2-4 encoder task}. The reason is that the hidden activations settle before $W^{HO}$ and $W^{HI}$ adapt to them. This is explained by the fact that forward and backward hidden activations become same to fast~(\ref{sec:tlr-auto4-hidden},~\ref{sec:our-hidden-activation}) and moreover, weight initialization could help this~(\ref{fig:results-tlr-auto4-epoch}). The first issue is solved by setting $\lambda_h \ll \lambda_h$ what adds epochs to the training phase. The second issue is solved by candidate selection which prevents initializing hidden activations close to each other. 
 

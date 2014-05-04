@@ -5,7 +5,7 @@
 Following~\citet{farkas2013bal}, we measured two key properties of a BAL-like network. The more important being \emph{success rate} and second being \emph{convergence time}. 
 
 \paragraph{Success rate.}  
-Before comparing \emph{given} outputs on both visible layers the activations $Y^F$ and $X^B$ are classified by a treshold: 
+Before comparing \emph{given} outputs on both visible layers the activations $y^F$ and $x^B$ are classified by a treshold: 
 \begin{equation} 
   g_k =
   \left\{
@@ -30,4 +30,4 @@ For an input $I$ from the sample set $\mathbb{S}$ we denote vector \emph{given} 
     \end{equation} 
 \end{itemize} 
 
-\paragraph{Convergence time.} The are several possibilities when to stop the learning algorithm. \emph{Converge time} is the number of epochs before the stop. Usually, training could be stopped for two reasons. The network could either reach the \emph{stopping criteria} or the maximum epoch is reached. Given by nature of used datasets we trained the neural networks while $patSucc^F \neq 1$. In case of the \emph{digits}~(\ref{sec:datasets-digits}) dataset we decided to stop the training if $patSucc^F$ was not increased for 3 epochs. Note that we are motivated to decrease the convergence time as it makes the training process faster.  
+\paragraph{Convergence time.} We denote the number of epochs before the stop of the training algorithm as \emph{convergence time}. There are several possibilities when to stop the learning algorithm. Usually, training could be stopped for two reasons. The network could either reach the \emph{stopping criteria} or the maximum epoch is reached. Given by nature of used datasets we trained the neural networks while $patSucc^F \neq 1$. In case of the \emph{digits}~(\ref{sec:datasets-digits}) dataset we decided to stop the training if $patSucc^F$ was not increased for 3 epochs. Note that we are motivated to decrease the convergence time as it makes the training process faster.  

@@ -22,7 +22,7 @@
   %Hidden size = 8 \\
   \includegraphics[width=0.45\textwidth]{img/k3/tlr-8-success.pdf} 
   \includegraphics[width=0.45\textwidth]{img/k3/tlr-8-epoch.pdf}    
-  \caption{TLR performance on the \emph{CBVA} task with hidden sizes 3, 5 and 8 from top to bottom.}
+  \caption{TLR performance on the \emph{CBVA} task with hidden sizes 3 on top, 5 in middle and 8 at bottom.}
   \label{fig:results-tlr-k3-performance}
 \end{figure}
 
@@ -30,30 +30,30 @@
 \subsection{Complex binary vector associations} 
 \label{sec:results-k3}
 
-In this section, we analyse TLR~(\ref{sec:our-tlr}) and GeneRec~(\ref{sec:models-generec}) performance on the \emph{CBVA} task~(\ref{sec:datasets-k3}). The methodology is similar as in case of the 4-2-4 encoder task described in Section \ref{sec:results-auto4-introduction}. The main difference is that we tried several architectures of type 16-$n$-16 for $n \in \{3,\,4,\cdots,\,10\}$. Second difference is the setting of $Epoch_{\rm max}$ to 20,000 for TLR and 5,000 for GeneRec because the bigger network size. 
+In this section, we analyse TLR~(\ref{sec:our-tlr}) and GeneRec~(\ref{sec:models-generec}) performance on the \emph{CBVA} task~(\ref{sec:datasets-k3}). The methodology is similar to the case of the 4-2-4 encoder task described in Section \ref{sec:results-auto4-introduction}. The main difference is that we tried several architectures of type 16-$n$-16 for $n \in \{3,\,4,\cdots,\,10\}$. Second difference is the setting of $Epoch_{\rm max}$ to 20,000 for TLR and 5,000 for GeneRec because the bigger network size. 
 
 
 %============================================================
 \subsubsection{Two learning rates} 
 \label{sec:tlr-k3}
 
-Comparison of success rate for different hidden sizes and $(\lambda_v,\,\lambda_h)$ pairs is shown in Figure~\ref{fig:results-tlr-k3-performance}. We see that TLR was able to learn the CBVA task only with 3 hidden neurons. The successfull values of ($\lambda_v, \lambda_h$) lie on the half line $[(1, 0.1), (10^4, 0.1)]$. This behaviour of TLR is similar to the behaviour of TLR on the \emph{4-2-4 encoder} task~(\ref{fig:results-bal-recirc-auto4-performance}). Again, the performance mostly depends on $\lambda_h$ and it is bounded by a value of $\lambda_v$. We observe that the perfect success space smoothly expands from top to down as increasing the hidden size. This is not true for GeneRec as shown in Figure~\ref{fig:results-generec-k3-success}. 
+Comparison of success rates for different hidden sizes and $(\lambda_v,\,\lambda_h)$ pairs is shown in Figure~\ref{fig:results-tlr-k3-performance}. We see that TLR was able to learn the CBVA task only with 3 hidden neurons. The successfull values of ($\lambda_v, \lambda_h$) lie on the half line $[(1, 0.1), (10^4, 0.1)]$. This behaviour of TLR is similar to the behaviour of TLR on the \emph{4-2-4 encoder} task~(\ref{fig:results-bal-recirc-auto4-performance}). Again, the performance mostly depends on $\lambda_h$ and it is bounded by a value of $\lambda_v$. We observe that the perfect success space smoothly expands from top to down as increasing the hidden size. This is not true for GeneRec as shown in Figure~\ref{fig:results-generec-k3-success}. 
 
 %======== (3D) best TLR on ALL_SUCC x epoch (std-dev) x hidden size ==========
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\textwidth]{img/tlr-k3-3-best-perf.pdf}   
   \includegraphics[width=0.7\textwidth]{img/tlr-k3-3-best-can.pdf}      
-  \caption{TLR success rate timeline for the \emph{CBVA} task with $\lambda_h=0.1$ and $\lambda_v=100$. Top without candidate selection and bottom with candidate selection. }
+  \caption{TLR success rate timeline for the \emph{CBVA} task with $\lambda_h=0.1$ and $\lambda_v=100$. Without candidate selection on top and with candidate selection at bottom.}
   \label{fig:results-tlr-k3-epoch} 
 \end{figure}
 
-Next we analysed the performance of TLR for best $\lambda_h$ and $\lambda_v$ in Figure~\ref{fig:results-tlr-auto4-epoch}. We can observe that TLR is increasing its success rate in time steadily. Moreover, we see that the candidate selection~(\ref{sec:sim-exp-candidates}) has positive impact on the network performance.
+Next we analysed the performance of TLR for best $\lambda_h$ and $\lambda_v$ in Figure~\ref{fig:results-tlr-auto4-epoch}. We can observe that TLR is increasing its success rate in time steadily. Moreover, we see that candidate selection~(\ref{sec:sim-exp-candidates}) has positive impact on the network performance.
 Note that the CBVA task is non bijective, i.e.~one output has several inputs, therefore it is impossible to achieve 100\% $patSucc^B$ or $bitSucc^B$. 
 
 \subsubsection{Comparison} 
 \label{sec:results-cmp-k3} 
-Although CBVA is a higher dimensional problem than the 4-2-4 encoder problem, the networks were able to achieve perfect success rate and comparable convergence time as shown in Table~\ref{tab:results-cmp-k3}. The interesting fact is that having two learning rates has no advantage over setting $\lambda_h = \lambda_v$. This disproves our intuition that a more general model should achieve better. 
+Although CBVA is a higher dimensional task than the 4-2-4 encoder task, the networks were able to achieve perfect success rate and comparable convergence time as shown in Table~\ref{tab:results-cmp-k3}. The interesting fact is that having two learning rates has no advantage over setting $\lambda_h = \lambda_v$. This disproves our intuition that a more general model should achieve better. 
 
 %===== table: best parameter setting networks with hidden.size= constant (success, epoch, stddev) / model \\
 
@@ -100,7 +100,7 @@ Although CBVA is a higher dimensional problem than the 4-2-4 encoder problem, th
 
 \subsubsection{GeneRec} 
 
-We used the two learning rate approach also for GeneRec. In figure~\ref{fig:results-tlr-k3-performance} we compare success rate for different values of $(\lambda_v,\, \lambda_h)$ and different hidden sizes. We can observe a similar behaviour for GeneRec with the 16-3-16 architecture as for the 4-2-4 encoder task~(\ref{fig:results-generec-auto4-performance}). That is the success space is bounded and the importance of both learning rates is same. Furthermore, as the hidden size becomes bigger, the success rate expands downwards as with TLR in Figure~\ref{fig:results-tlr-k3-performance}. 
+We used the two learning rate approach also for GeneRec. In figure~\ref{fig:results-tlr-k3-performance} we compare success rate for different values of $(\lambda_v,\, \lambda_h)$ and different hidden sizes. We can observe a similar behaviour for GeneRec with the 16-3-16 architecture as for the 4-2-4 encoder task~(\ref{fig:results-generec-auto4-performance}). That is the success space is bounded and the importance of both learning rates is same. Furthermore, as the hidden size becomes bigger, the success rate expands downwards to lower $\lambda_h$ values as with TLR in Figure~\ref{fig:results-tlr-k3-performance}. 
 
 \begin{figure}[H]
   \centering
@@ -114,7 +114,7 @@ We used the two learning rate approach also for GeneRec. In figure~\ref{fig:resu
 %  Hidden size = 7 \\
 %  \includegraphics[width=0.49\textwidth]{img/k3/generec-7-success.pdf} 
 %  \includegraphics[width=0.49\textwidth]{img/k3/generec-7-epoch.pdf}    
-  \caption{\emph{GeneRec} performance on the \emph{CBVA} task with hidden sizes 3 (top) and 5 (bottom).} %For greater hidden sizes the results were very similar to the results with hidden size 5.}
+  \caption{\emph{GeneRec} success rate and convergence time on the \emph{CBVA} task with hidden sizes 3 on top and 5 at bottom.} %For greater hidden sizes the results were very similar to the results with hidden size 5.}
   \label{fig:results-generec-k3-success}
 \end{figure}
 

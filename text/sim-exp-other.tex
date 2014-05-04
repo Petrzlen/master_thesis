@@ -10,10 +10,10 @@ As candidate selection suggested in Section \ref{sec:sim-exp-candidates}, weight
 
 In our work, we used a weight initialization algorithm inspired by~\citet{o1996bio}. For each weight $w_{ij}$ we select randomly a value from the normal probability distribution:
 \begin{equation} 
-  \frac{1}{\sqrt{2\pi \sigma^2}} \exp{-\frac{(x-\mu)^2}{2\sigma^2}},
+  \frac{1}{\sqrt{2\pi \sigma^2}} \exp\left({-\frac{(x-\mu)^2}{2\sigma^2}}\right),
   \label{eq:our-sigma} 
 \end{equation} 
-where $\sigma$, i.e.~\emph{weight initialization constant}, is one of the network parameters and $\mu = 0$ is the expected value of the normal distribution. We showed that $\sigma$ influences the success rate~(\ref{eq:results-candidates-linear-regression}). It is recommended by~\citet{o1996bio} to set $\sigma=\frac{1}{\sqrt{N + 1}}$ where $N$ is the number of units on the input layer including bias.
+where weight initialization constant $\sigma$ is one of the network parameters and $\mu = 0$ is the expected value of the normal distribution. We showed that $\sigma$ influences the success rate~(\ref{eq:results-candidates-linear-regression}). It is recommended by~\citet{o1996bio} to set $\sigma=\frac{1}{\sqrt{N + 1}}$ where $N$ is the number of units on the input layer including bias.
 
 %==========================================================
 \paragraph{Dynamic learning rate.} 
@@ -23,7 +23,7 @@ The idea of \emph{dynamic learning rate (DLR)} was introduced by \citet{jacobs19
 %==========================================================
 \paragraph{Batch mode.} 
 \label{sec:our-batch-mode}
-Before each epoch the training samples are shuffled. But in \emph{batch mode} instead of updating weights after each training sample, the weight changes are accumulated for the whole epoch. With other words, all weight changes are summed for each sample in the training set and then weights are updated in \emph{batch}. One can observe, that after the weights are initialized, the learning algorithm becomes deterministic. This approach could be used to confirm or disprove the importance of weight initialization. We executed several simulations on BAL with \emph{batch} weight update, but it had no significant impact. 
+Normally, before each epoch the training samples are shuffled. But in \emph{batch mode} instead of updating weights after each training sample, the weight changes are accumulated for the whole epoch. With other words, all weight changes are summed for each sample in the training set and then weights are updated in \emph{batch}. One can observe, that after the weights are initialized, the learning algorithm becomes deterministic. Therefore, this approach could be used to confirm or disprove the importance of weight initialization. We executed several simulations on BAL with \emph{batch} weight update, but it had no significant impact. 
 
 %==========================================================
 %\paragraph{Rerun.} This experiment was designed to test if shuffling of samples and weight initialization has effect to network performance. First, $N$ networks are created with random weights~(\ref{sec:our-sigma}) while having same parameters and then saved and trained. Second, the networks are loaded and each network is re--trained $k$-times, thus the name \emph{rerun}. At the end we measure the difference between performance of the $k$ networks and the original network. 
@@ -47,7 +47,7 @@ Before each epoch the training samples are shuffled. But in \emph{batch mode} in
 %==========================================================
 \paragraph{Dropout.}
 \label{sec:sim-our-dropout}
-Based on the work of~\citet{hinton2012improving}, we implemented the \emph{dropout} method of learning. The main idea is that in each epoch, we randomly choose half of the hidden layer neurons, which will be ignored for this epoch. With other words, in each epoch a random subset of hidden neurons is chosen to be active, while the other hiddens are ignored. The motivation is to prevent co--adaptation of the hidden layer neurons~\citep{hinton2012improving}. We were not able to train any successful BAL~(\ref{sec:models-bal}) network using dropout on the 4-2-4 encoder~(\ref{sec:datasets-auto4}) and CBVA~(\ref{sec:datasets-k3}) tasks. Therefore we soon dropped the idea, but we admit, that setting other probability $p$ for dropout or applying it on higher dimensional tasks could have a positive impact on success rate. 
+Based on the work of~\citet{hinton2012improving}, we implemented the \emph{dropout} method of learning. The main idea is that in each epoch, we randomly choose half of the hidden layer neurons, which will be ignored for this epoch. With other words, in each epoch a random subset of hidden neurons is chosen to be active, while the other hidden neurons are ignored. The motivation is to prevent co--adaptation of the hidden layer neurons~\citep{hinton2012improving}. We were not able to train any successful BAL~(\ref{sec:models-bal}) network using dropout on the 4-2-4 encoder~(\ref{sec:datasets-auto4}) and CBVA~(\ref{sec:datasets-k3}) tasks. Therefore we soon dropped the idea, but we admit, that setting other probability $p$ for dropout or applying it on higher dimensional tasks could have a positive impact on success rate. 
 
 %==========================================================
 \paragraph{Noise.} 

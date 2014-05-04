@@ -1,15 +1,14 @@
 \subsubsection{Candidate selection} 
 \label{sec:sim-exp-candidates}
 
-\paragraph{Introduction.} 
-The \emph{candidate selection} model was used to test and prove if some particular network \emph{features}~(\ref{sec:our-candidates-features}) have an impact to the overall network performance. The only difference between standard BAL~(\ref{sec:models-bal}) and candidate selection is that before the training phase, $N$ networks are randomly generated from which a \emph{best candidate network} is selected. For selecting the best candidate we use \emph{feature function} defined as $F: \mbox{network} \mapsto \mathbb{R}$. 
+The \emph{candidate selection} model was used to test and confirm if some particular network \emph{features}~(\ref{sec:our-candidates-features}) have an impact to the overall network performance. The only difference between standard BAL~(\ref{sec:models-bal}) and candidate selection is that before the training phase, $N$ networks are randomly generated from which a \emph{best candidate network} is selected. For selecting the best candidate we use \emph{feature function} defined as $F: \mbox{network} \mapsto \mathbb{R}$. 
 
 \begin{algorithm}[H]
 %  \KwData{$candidates$ }
   \begin{algorithmic}
     \State $best\_candidate \gets (\infty, null)$
     \For{$i = 1$ to $N$} 
-      \State $gn \gets generate\_network$
+      \State $gn \gets generate\_network()$
       \State $candidate \gets (F(gn), gn)$
       \If{$candidate < best\_candidate$}
         \State $best\_candidate \gets candidate$
@@ -23,26 +22,26 @@ The \emph{candidate selection} model was used to test and prove if some particul
 \paragraph{Features.}
 \label{sec:our-candidates-features}
 
-We denote $X_I$, $H_I$ and $Y_I$ as the front, hidden and back activation \emph{vector}s for input $I$ (and the corresponding target). For the rest of the notation please consult section~\ref{tab:models-bal-activation}. We measured the following \emph{features}: 
+We denote $X_I$, $H_I$ and $Y_I$ as the front, hidden and back activation \emph{vector}s for input $I$ (and the corresponding target). For the rest of the notation please consult Section~\ref{tab:models-bal-activation}. We measured the following \emph{features}: 
 
 \begin{itemize} 
 \label{sec:our-h-dist} 
 \item $dist_{H}$ (real) -- the average distance between all hidden activations of the inputs, i.e.~$avg_{I \neq J}\left(dist(H_I^{+},H_J^{+})\right)$. %forward / backward! 
 
 \label{sec:our-dist-h-fb}
-\item $dist_{H}^{FB}$ (real) -- the average distance between corresponding forward and backward hidden activations, i.e.~$avg_{I}\left(dist(H_I^{-},H_I^{+})\right)$.
+\item $dist_{H}^{FB}$ (real) -- the average distance between corresponding forward and backward \emph{hidden} activations, i.e.~$avg_{I}\left(dist(H_I^{-},H_I^{+})\right)$.
 
 \label{sec:our-dist-o-fb}
-\item	$dist_{O}^{FB}$ (real)-- the average distance between corresponding forward and backward output activations, i.e.~  $avg_{I}\left(dist(Y_I^{-},X_I^{+})\right)$. Note that this feature is only relevant for auto--associative tasks such as 4-2-4 encoder~(\ref{sec:datasets-auto4}). 
+\item	$dist_{V}^{FB}$ (real)-- the average distance between corresponding forward and backward \emph{visible} activations, i.e.~  $avg_{I}\left(dist(Y_I^{-},X_I^{+})\right)$. Note that this feature is only relevant for auto--associative tasks such as 4-2-4 encoder~(\ref{sec:datasets-auto4}). 
 
 \label{sec:our-m-wei}
 \item $matrix\_weight$ (real) -- average weight of the network, i.e. average value of all weight matrices $W^{IH}$, $W^{HO}$, $W^{OH}$ and $W^{HI}$. Note that each matrix value has the same impact to \emph{matrix\_weight}. 
 
 \label{sec:our-in-triangle}
-\item $in\_triangle$ (bool) -- check if hidden activations of inputs  $H_I^{+}$ form a convex polygon, i.e.~if the hidden activation are \emph{lineary separable}~(\ref{sec:models-perceptron}). Therefore $in\_triangle=0$ is a necessary condition for perfect success rate. Consult Figure~\ref{fig:results-hidden-activations-bal} for examples of convex and non--convex hidden activations. Note that $in\_triangle$ was implemented only for hidden size equal to two, i.e. for the 4-2-4 encoder task. 
+\item $in\_triangle$ (bool) -- check if hidden activations of inputs  $H_I^{+}$ form a convex polygon, i.e.~if the hidden activation points are all \emph{lineary separable}~(\ref{sec:models-perceptron}). Therefore $in\_triangle=0$ is a necessary condition for perfect success rate. Consult Figure~\ref{fig:results-hidden-activations-bal} for examples of convex and non--convex hidden activations. Note that $in\_triangle$ was implemented only for hidden size equal to two, i.e. for the 4-2-4 encoder task. 
 
 \label{sec:our-fluctuation}
-\item $fluctuation$ (real) -- the maximal difference between the last two unit activations when using the \emph{iterative method} for activation computation~(\ref{eq:models-generec-activation}). With other words, let $a_i(t)$ be the activation of unit $i$ in iteration $t$ and $T$ be number of iterations. Then $fluctuation$ is i.e.~$W^{IH}$ to $W^{HI}$ and $W^{HO}$ to $W^{OH}$, as in GeneRec activation computation (\ref{eq:models-generec-activation}) then $fluctuation$ measures $max_i|a_i(T-1) - a_i(T)|$. Therefore if $fluctuation \approx 0$ then the iterative method was successful and all activations settled.
+\item $fluctuation$ (real) -- the maximal difference between activations in the last two iterations when using the \emph{iterative method} for activation computation~(\ref{eq:models-generec-activation}). With other words, let $a_i(t)$ be the activation of unit $i$ in iteration $t$ and $T$ be number of iterations. Then $fluctuation$ is $max_i|a_i(T-1) - a_i(T)|$. So if $fluctuation \approx 0$ then the iterative method was successful and all activations settled.
 \end{itemize} 
 
 Also all \emph{parameters} of TLR were included such as $\lambda_v$, $\lambda_h$~(\ref{sec:our-tlr}), momentum $\mu$~(\ref{sec:our-momentum}) and weight distribution $\sigma$~(\ref{sec:our-sigma}). 
@@ -54,13 +53,13 @@ To get the most important features we trained a feature function on a \emph{feat
 bitErr^F &= 
 - 0.328 \times dist_{H}
 + 0.140 \times dist_{H}^{FB}
-- 0.100 \times dist_{O}^{FB} \nonumber \\
+- 0.100 \times dist_{V}^{FB} \nonumber \\
 &+ 0.019 \times matrix\_sim
 - 0.127 \times \sigma
 + 0.000 \times matrix\_weight
 + 3.610
 \end{align}  
-From equation~(\ref{eq:results-candidates-linear-regression}) we observe that the most important feature is $dist_{H}$. This was used as a inspiration for the TLR model~(\ref{sec:our-tlr}). Furthermore, we started using the feature function in~equation~(\ref{eq:our-fitness-function}) for all candidate selection simulations. It simply choses the network with greatest $dist_{H}$. For the 4-2-4 encoder task we also add $in\_triangle$ as primary feature to ensure the convexity of hidden activations. 
+From equation~(\ref{eq:results-candidates-linear-regression}) we observe that the feature which contributed the most to $patSucc^F$ is $dist_{H}$. This was used as a inspiration for the TLR model~(\ref{sec:our-tlr}). Furthermore, we started using the feature function~(\ref{eq:our-fitness-function}) for all candidate selection simulations. It simply choses the network with greatest $dist_{H}$. For the 4-2-4 encoder task we also add $in\_triangle$ as primary feature to ensure the convexity of initial hidden activations. 
 \begin{equation} 
 \label{eq:our-fitness-function} 
   F(network) = -dist_{H}(network)

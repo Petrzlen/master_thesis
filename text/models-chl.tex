@@ -2,10 +2,10 @@
 %\newcommand{\mytilde}{\raise.17ex\hbox{$\scriptstyle\mathtt{\sim}$}}
 %\def\myequi#1{\myover{#1}{\mytilde}}
 
-\subsubsection{Contrastive Hebbian Learning}
+\subsubsection{Contrastive Hebbian learning}
 \label{sec:models-chl} 
 
-The main idea of \emph{Contrastive Hebbian Learning} developed by~\citet{movellan1990contrastive} is to have two activation phases in an aribtrary Hopfield network~\citep{hopfield1984neurons} described in~Section~\ref{sec:theory-hopfield}. In the first phase, called \emph{minus phase} and denoted ``$-$'', only the input vector is \emph{clamped}, i.e. activations of the clamped units as equal to the clamped values. In the second phase, called \emph{plus phase} and denoted ``$+$'', both the input and target are clambed to the underlying network. The learning is based on the difference of these two activations. Note that CHL makes no assumptions about the structure of the underlying network and therefore, it has no layers in general. 
+The main idea of \emph{Contrastive Hebbian Learning} developed by~\citet{movellan1990contrastive} is to have two activation phases in an aribtrary Hopfield network~\citep{hopfield1984neurons} as described in~Section~\ref{sec:theory-hopfield}. In the first phase, called \emph{minus phase} and denoted ``$-$'', only the input vector is \emph{clamped}, i.e. activations of the clamped units as equal to the clamped values. In the second phase, called \emph{plus phase} and denoted ``$+$'', both the input and target are clambed to the underlying network. The learning is based on the difference of these two activations. For an idea how it works see Table~\ref{tab:models-generec}. Note that CHL makes no assumptions about the structure of the underlying network and therefore, it has no layers in general. 
 
 \newpage
 As mentioned previously CHL is based on Hopfield networks. Therefore, it has an energy function $J$ which is based on the Helmholtz free energy function $F$~\citep{hinton1989deterministic}:
@@ -13,7 +13,7 @@ As mentioned previously CHL is based on Hopfield networks. Therefore, it has an 
   \label{eq:models-chl-helmholtz}
   F = -\frac{1}{2}\sum_i\sum_ja_iw_{ij}a_j + \sum_i \int_{f(0)}^{a_i} f_i^{-1}(a)da
 \end{equation} 
-where $-\frac{1}{2}\sum_i\sum_ja_iw_{ij}a_j$ is the Hopfield energy function~(\ref{eq:theory-hopfield-energy}). The \emph{contrastive} error function $J$ is defined as: 
+where $-\frac{1}{2}\sum_i\sum_ja_iw_{ij}a_j$ is the Hopfield energy function~(\ref{eq:theory-hopfield-energy}). Then the \emph{contrastive} error function $J$ is defined as: 
 \begin{equation}
   \label{eq:models-chl-energy}
   J = \hat{F^{+}} - \hat{F^{-}}
@@ -25,6 +25,6 @@ Based on the contrastive energy function~(\ref{eq:models-chl-energy}) a~learning
   \label{eq:models-chl-learning-rule}
   \Delta w_{ij} = \hat{a_i}^{+}\hat{a_j}^{+} - \hat{a_i}^{-}\hat{a_j}^{-}
 \end{equation}
-where $\hat{a_i}$ and $\hat{a_j}$ denote the equilibrium state activations of the $i$--th and $j$--th unit. It could be shown that the learning rule~(\ref{eq:models-chl-learning-rule}) decreases the energy function~(\ref{eq:models-chl-energy})~\citep{movellan1990contrastive}. Moreover it could be shown that the CHL learning rule is equivalent to backpropagation learning rule in terms of computability while it is biologically more plausible~\citep{o1996bio, xie2003equivalence}. 
+where $\hat{a_i}$ and $\hat{a_j}$ denote the equilibrium state activations of the $i$--th and $j$--th unit. It could be shown that the learning rule~(\ref{eq:models-chl-learning-rule}) decreases the energy function~(\ref{eq:models-chl-energy})~\citep{movellan1990contrastive}. Moreover it could be shown that the CHL learning rule is equivalent to backpropagation learning rule in terms of computability while it is biologically more plausible as it uses only activation for computing the error gradient~\citep{o1996bio, xie2003equivalence}. 
 
    

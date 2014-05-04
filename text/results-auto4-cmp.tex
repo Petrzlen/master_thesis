@@ -2,9 +2,9 @@
 \subsubsection{Comparison} 
 \label{sec:tlr-auto4-cmp} 
 
-In the Table~\ref{tab:results-cmp-auto4} we can see the comparison of the most important models which we analysed on the \emph{4-2-4 encoder} task. We achieved an improvement of BAL $patSucc^F$ from $62.7\%$ to $93.1\%$ by using two different learning rates~(\ref{sec:our-tlr}). This result was further improved to $99.86\%$ by selecting networks with candidate selection~(\ref{sec:sim-exp-candidates}). This confirmed that hidden distance and convexity of hidden representations are important attributes of BAL. 
+In Table~\ref{tab:results-cmp-auto4} we can see the comparison of the most important models which we analysed on the \emph{4-2-4 encoder} task. We achieved an improvement of BAL $patSucc^F$ from $62.7\%$ to $93.1\%$ by using two different learning rates~(\ref{sec:our-tlr}). This result was further improved to $99.86\%$ by selecting networks with candidate selection~(\ref{sec:sim-exp-candidates}). This confirmed that hidden distance and convexity of hidden representations are important attributes of BAL. 
 
-On the other hand, many of the analysed models compared less to BAL. We tried the alternative GeneRec learning rules~(\ref{sec:models-generec-modifications}) on BAL, calling these models \emph{BAL GeneRec Learning Rules (BAL GLR)}. There was no instance which learned the task with any other rule. Also, success rate of \emph{BAL-recirc}~(\ref{sec:our-bal-recirc}) was lower than success rate of BAL. We experimented with \emph{momentum} in Section~\ref{sec:results-momentum} or BAL with symmetric weights, but both without significant improvement in success rate.
+On the other hand, many of the analysed models compared less to BAL. We tried the alternative GeneRec learning rules~(\ref{sec:models-generec-modifications}) on BAL, calling these models \emph{BAL GeneRec Learning Rules (BAL GLR)}, but there was no instance which was able to achieve $patSucc^F > 0$. Also, success rate of \emph{BAL-recirc}~(\ref{sec:our-bal-recirc}) was lower than success rate of BAL. We experimented with \emph{momentum} in Section~\ref{sec:results-momentum} or BAL with symmetric weights, but both without significant improvement in success rate.
 
 \begin{table}[H] 
   \centering
@@ -12,29 +12,29 @@ On the other hand, many of the analysed models compared less to BAL. We tried th
     \hline
     Algorithm (section)&$\lambda_h$&$\lambda_v$&$patSucc^F$ &Epochs\\ %&SEM(success) \\
     \hline
-    BP~(\ref{sec:models-bp}) &2.4 &2.4 &100&60\\ %&5.1\\
+    BP~(\ref{sec:models-bp}) &2.4 &2.4 &100\%&60\\ %&5.1\\
     \hline
-    GR~(\ref{sec:models-generec}) &0.6 &0.6 &90&418\\ %&28\\
+    GR~(\ref{sec:models-generec}) &0.6 &0.6 &90\%&418\\ %&28\\
     \hline
-    GR Sym~(\ref{eq:models-generec-learning-rule-sym}) &1.4 &1.4 &56&88\\ %&2.9\\
+    GR Sym~(\ref{eq:models-generec-learning-rule-sym}) &1.4 &1.4 &56\%&88\\ %&2.9\\
     \hline
-    GR Mid~(\ref{eq:models-generec-learning-rule-mid}) &2.4 &2.4 &92&60\\ %&3.4\\
+    GR Mid~(\ref{eq:models-generec-learning-rule-mid}) &2.4 &2.4 &92\%&60\\ %&3.4\\
     \hline
-    CHL~(\ref{sec:models-chl}) &1.2 &1.2 &56&77\\ %&1.8\\
+    CHL~(\ref{sec:models-chl}) &1.2 &1.2 &56\%&77\\ %&1.8\\
     \hline
-    BAL~(\ref{sec:models-bal})&0.9 &0.9 &62.7& 5136.11\\ %&2.0e+08\\
+    BAL~(\ref{sec:models-bal})&0.9 &0.9 &62.7\%& 5136.11\\ %&2.0e+08\\
     \hline
-    BAL TLR~(\ref{sec:our-tlr})&0.0002  & 500&93.12&5845.01\\ %&1.52e+08\\
+    BAL TLR~(\ref{sec:our-tlr})&0.0002  & 500&93.12\%&5845.01\\ %&1.52e+08\\
     \hline
-    BAL TLR Can~(\ref{sec:sim-exp-candidates})&0.0002&500&99.86&150.417\\ %&5,070,000\\
+    BAL TLR Can~(\ref{sec:sim-exp-candidates})&0.0002&500&99.86\%&150.417\\ %&5,070,000\\
     \hline
-    BAL Recirc~(\ref{sec:our-bal-recirc})&0.0001&1.0&36.0&1221.6\\ %&4.31e+07\\
+    BAL Recirc~(\ref{sec:our-bal-recirc})&0.0001&1.0&36\%&1221.6\\ %&4.31e+07\\
     \hline
-    BAL GLR~(\ref{sec:models-generec-modifications})& any & 0 & 0 & N/A \\
+    BAL GLR~(\ref{sec:models-generec-modifications})& any & any & 0\% & N/A \\
     \hline 
     \end{tabular}
-  \caption{Comparison of different models on the \emph{4-2-4 encoder} task. Results for BP, GR, GR Sym, Gr Mid and CHL are taken from~\citet{o1996bio}.} 
+  \caption{Comparison of different models on the \emph{4-2-4 encoder} task. Results for BP, GR, GR Sym, GR Mid and CHL are taken from~\citet{o1996bio}.} 
   \label{tab:results-cmp-auto4}
 \end{table}
 
-When we want to compare execution time based on \emph{epochs} in Table~\ref{tab:results-cmp-auto4}, we must be aware of that GeneRec and BAL-recirc epochs take longer than epochs of others. This is because the recirculation step~(\ref{sec:models-generec-activation}), for which about 3--33 iterations are needed for activation to settle~(\ref{sec:generec-fluctuation}). Thus the 418 epochs of GeneRec are comparable to the 5845 epochs of TLR in terms of execution time. 
+Note that, if we want to compare execution time based on \emph{epochs} in Table~\ref{tab:results-cmp-auto4}, then we must be aware of that GeneRec and BAL-recirc epochs take longer than epochs of other models. This is because the recirculation step~(\ref{sec:models-generec-activation}), for which about 3 to 33 iterations are needed for activation to settle~(\ref{sec:generec-fluctuation}). Thus the 418 epochs of GeneRec are comparable to the 5845 epochs of TLR in terms of execution time. 

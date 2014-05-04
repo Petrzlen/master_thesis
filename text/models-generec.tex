@@ -2,11 +2,11 @@
 \label{sec:models-generec} 
 
 \paragraph{Introduction.} 
-The \emph{Generalized recirculation algorithm}, or \emph{GeneRec}, was developed by~\citet{o1996bio}. It~is a supervised algorithm which in comparison with backpropagation~(\ref{sec:models-bp}) is argued to be a more biologically plausible model as error is computed locally as a difference between activations~\citep{o1998six, o2001generalization, da2011advances, schneider2009application}. It extends the recirculation algorithm~(\ref{sec:models-recirc}) by a hidden layer and uses pahses as CHL~(\ref{sec:models-chl}) for weight update. This allows GeneRec to learn arbitrary mappings and not only conntent-based memories as the recirculation algorithm. For the error computation a backward weight matrix from output layer to hidden layer is used and the learning rule is derived from the CHL learning rule~(\ref{eq:models-chl-learning-rule}). It could be proven that GeneRec, as Backpropagation, could learn arbitrary input--output mappings~\citep{o1996bio}. 
+The \emph{Generalized recirculation algorithm}, or \emph{GeneRec}, was introduced by~\citet{o1996bio}. It~is a supervised learning algorithm which in comparison with backpropagation~(\ref{sec:models-bp}) is argued to be a more biologically plausible model as error is computed locally as a difference between activations~\citep{o1998six, o2001generalization, da2011advances, schneider2009application}. It extends the recirculation algorithm~(\ref{sec:models-recirc}) by having a hidden layer of units and uses ``$+$'' and ``$-$'' phases as CHL~(\ref{sec:models-chl}) for weight update. This allows GeneRec to learn arbitrary mappings and not only conntent-based memories as the recirculation algorithm. For the error computation a backward weight matrix from output layer to hidden layer is used and the learning rule is derived from the CHL learning rule~(\ref{eq:models-chl-learning-rule}). It could be proven that GeneRec, as Backpropagation, could learn arbitrary input--output mappings~\citep{o1996bio}. 
 
 \paragraph{Activation.} 
 \label{sec:models-generec-activation} 
-The main difference between CHL and GeneRec is that GeneRec has layers and it~is based more on recurrent neural networks than on the Hopfield networks. Therefore, as shown in Table~\ref{tab:models-generec}, we can compute the activations sequentially. We can see the inspiration from the recirculation algorithm~(\ref{sec:models-recirc}) and a correspondence between $T$ and GeneRec phases. In particular $s^{-} \approx T=0$, $h^{-} \approx T=1$, $o^{-} \approx T=2$ and $h^{+}$ corresponds to $T=3$. The activation flow is depicted in Figure~\ref{fig:models-generec-phase}.
+The main difference between CHL and GeneRec is that GeneRec has layers and it~is based more on recurrent neural networks than on the Hopfield networks. Therefore, as shown in Table~\ref{tab:models-generec}, we can compute the activations sequentially. We can see the inspiration from the recirculation algorithm~(\ref{sec:models-recirc}) and a correspondence between $T$ in recirculation and phases in GeneRec. In particular $s^{-} \approx T=0$, $h^{-} \approx T=1$, $o^{-} \approx T=2$ and $h^{+}$ corresponds to $T=3$. The activation flow is depicted in Figure~\ref{fig:models-generec-phase}.
 \begin{table}[H]
   \centering
   \begin{tabular}{|cccc|}
@@ -23,10 +23,10 @@ The main difference between CHL and GeneRec is that GeneRec has layers and it~is
            &  +  & - & $o^{+}_k$ = \mbox{target output} \\ %OPT label one line up 
     \hline
   \end{tabular}
-  \caption{Equilibrium network variables in GeneRec model~\citet{o1996bio}.}
+  \caption{Equilibrium network variables in GeneRec~\citep{o1996bio}.}
   \label{tab:models-generec}
 \end{table}
-In case of the \emph{plus} phase only the hidden activations are necessary to compute what could be achieved by computing $\phi(\eta_i)$. In case of the \emph{minus} phase where only inputs are clamped it~is necessary to find an \emph{equilibrium} activation state for which the equations~\ref{tab:models-generec} hold. As dicussed in recurrent networks~(\ref{sec:theory-recurrent}) there are several approaches. In our implementation we choose the \emph{iterative method} with following rules for computing activations $a_i$: 
+In case of the \emph{plus} phase only the hidden activations are necessary to compute and that could be achieved by computing $\phi(\eta_i)$. In case of the \emph{minus} phase, where only inputs are clamped it~is necessary to find an \emph{equilibrium} activation state for which the equations~(\ref{tab:models-generec}) hold. There are several approaches as dicussed in recurrent networks~(\ref{sec:theory-recurrent}). In our implementation we choose the \emph{iterative method} with the following rules for computing activations $a_i$: 
 \begin{align}
   \label{eq:models-generec-activation}
   a_i(t+1) &= \left\{
@@ -43,7 +43,7 @@ In case of the \emph{plus} phase only the hidden activations are necessary to co
 \right. \\
 \end{align} 
 \label{sec:generec-fluctuation}
-where $a_i(t)$ is the activation of $i$--th unit in discrete time $t$. The rules~(\ref{eq:models-generec-activation}) while are iterated while $|a_i(t+1) a_i(t)| > \epsilon$ for some unit $i$. For the successful networks it was enough to have about 3--33 iterations. On the contrary, especially for BAL-recirc~(\ref{sec:our-bal-recirc}), the process was not able to converge. In such case we took the average of last two activations, which reduced the ratio of diverging networks. But still we encountered \emph{fluctuation}~(\ref{sec:our-fluctuation}) with arbitrary size. This method is further discussed in~\citet{orru2008sabio}.
+where $a_i(t)$ is the activation of $i$--th unit in discrete time $t$. The rules~(\ref{eq:models-generec-activation}) are iterated while $|a_i(t+1) a_i(t)| > \epsilon$ for some unit $i$, where $\epsilon \in \mathbb{R}^{+}$. For the successful networks it was enough to have 3 to 33 iterations. On the contrary, especially for BAL-recirc~(\ref{sec:our-bal-recirc}), the process was not able to converge. In such case we took the average of last two activations, which reduced the ratio of diverging networks. But still we encountered \emph{fluctuation}~(\ref{sec:our-fluctuation}) with arbitrary size. This method is further discussed in~\citet{orru2008sabio}.
 
 \begin{figure}[H]
   \centering
@@ -60,25 +60,24 @@ where $a_i(t)$ is the activation of $i$--th unit in discrete time $t$. The rules
 GeneRec uses three weight matrices $W^{IH}$, $W^{HO}$ and $W^{OH}$ for the input--hidden, hidden--output and output--hidden weights. It also has the ``$-$'' and ``$+$'' phases as CHL with same meaning, i.e. in the \emph{minus} phase only the input vector is clamped and in the \emph{plus} phase both input and target vectors are clamped as seen in Table~\ref{tab:models-generec}. Generec uses the non symmetric version of the CHL rule for all three weight matrices: 
 \begin{equation}
   \label{eq:models-generec-learning-rule}
-  \Delta w_{ij} = \lambda a^{-}_i(a^{+}_j - a^{-}_j)
+  \Delta w_{ij} = \lambda a^{-}_i(a^{+}_j - a^{-}_j),
 \end{equation}
-where $a^{-}_p$ denotes the presynaptic and $a^{-}_q$ denotes the postsynaptic unit activation in minus phase, $a^{+}_p$ is the presynaptic activation from plus phase and $\lambda$ denotes the learning rate. So for example when updating $W^{HI}$ then $a^{-}_i = h^{-}_i$, $a^{-}_j = o^{-}_j$ and $a^{+}_j = t_k$. 
+where $a^{-}_i$ denotes the presynaptic and $a^{-}_j$ denotes the postsynaptic unit activation in minus phase, $a^{+}_i$ is the postsynaptic activation from plus phase and $\lambda$ denotes the learning rate. For example, when updating $W^{HO}$ then $a^{-}_i = h^{-}_i$, $a^{-}_j = o^{-}_j$ and $a^{+}_j = t_k$. 
 
 
 \paragraph{Modifications.}
 \label{sec:our-learning-rules}
 \label{sec:models-generec-modifications} 
-It~is important to note that~\citet{o1996bio} proved that GeneRec converges if the learning rule~(\ref{eq:models-generec-learning-rule}) is a valid approximation to the error derivate and the weights beeing symmetric, i.e. $W^{HO} = W^{OH^{T}}$.~\citet{o1996bio} based on CHL and the midpoint method for gradient computation proposed two more learning rules for GeneRec:
+It~is important to note that~\citet{o1996bio} proved that GeneRec converges if the learning rule~(\ref{eq:models-generec-learning-rule}) is a valid approximation to the error derivate and the weights are symmetric, i.e. $W^{HO} = (W^{OH})^{T}$.~\citet{o1996bio} based on CHL and the midpoint method for gradient computation proposed two more learning rules for GeneRec:
 \begin{align}
   \label{eq:models-generec-learning-rule-mid}
   \frac{1}{\lambda} \Delta w_{ij} &=  \frac{1}{2}(a^{-}_i + a^{+}_i)(a^{+}_j - a^{-}_j) \\
   \label{eq:models-generec-learning-rule-sym}
   \frac{1}{\lambda} \Delta w_{ij} &=  (a^{+}_j a^{-}_i - a^{-}_j a^{+}_i) - 2a^{-}_j a^{-}_i
 \end{align}
-where~\ref{eq:models-generec-learning-rule-mid} is called the \emph{midpoint learning rule} and~\ref{eq:models-generec-learning-rule-sym} is called the \emph{symmetric learning rule} which aims to preserve the weight symmetry. By combining rules~(\ref{eq:models-generec-learning-rule-mid}) and~(\ref{eq:models-generec-learning-rule-sym}) we get the following rule: 
+where~(\ref{eq:models-generec-learning-rule-mid}) is called the \emph{midpoint learning rule} and~(\ref{eq:models-generec-learning-rule-sym}) is called the \emph{symmetric learning rule} which aims to preserve the weight symmetry. By combining rules~(\ref{eq:models-generec-learning-rule-mid}) and~(\ref{eq:models-generec-learning-rule-sym}) we get the \emph{CHL} learning rule ~(\ref{eq:models-chl-learning-rule}). Thus we see that GeneRec is closely related to CHL.
 \begin{equation}
   \label{eq:models-generec-learning-rule-chl}
   \frac{1}{\lambda} \Delta w_{ij} = (a^{+}_i a^{+}_j) - (a^{-}_i a^{-}_j)
-\end{equation}
-which is indeed the CHL learning rule~(\ref{eq:models-chl-learning-rule}). Thus we see that GeneRec is closely related to CHL. 
+\end{equation} 
 

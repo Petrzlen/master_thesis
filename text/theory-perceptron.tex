@@ -2,7 +2,7 @@
 \subsubsection{Perceptron}
 \label{sec:models-perceptron}
 
-The theory behind artificial neural networks started with the model of \emph{Perceptron} introduced by~\citet{mcculloch1943logical}. It is a simple model which transforms a vector of inputs $s$ to an output value $y$. The notation as depicted in Figure~\ref{fig:perceptron}: $x$ is the \emph{input vector} where always $x_0=1$, $w_{0k}$ is the \emph{weight} vector, $\Sigma$ is the \emph{summing} junction, $\eta_k$ is the \emph{net input}, $\phi$ is the \emph{activation function}, $\theta_k$ is the \emph{treshold}, $y_k$ is the \emph{output} and $b_k$ is the \emph{bias}.
+The theory of artificial neural networks started with the model of \emph{Perceptron} introduced by~\citet{mcculloch1943logical}. It is a simple model which transforms a vector of inputs $s$ to an output value $y$. The notation used is depicted in Figure~\ref{fig:perceptron}: $x$ is the \emph{input vector} where always $x_0=1$, $w_{0k}$ is the \emph{weight} vector, $\Sigma$ is the \emph{summing} junction, $\eta_k$ is the \emph{net input}, $\phi$ is the \emph{activation function}, $\theta_k$ is the \emph{treshold}, $y_k$ is the \emph{output} and $b_k$ is the \emph{bias}.
 
 \begin{figure}[H]
   \centering
@@ -11,7 +11,7 @@ The theory behind artificial neural networks started with the model of \emph{Per
   \label{fig:perceptron}
 \end{figure}
 
-The whole transformation of the input vector to the output activation could be written as follows: 
+We can write the whole transformation of the input vectors to the output activation $y_k$: 
 \begin{equation}
 \label{eq:perceptron} 
 y_k =
@@ -23,7 +23,7 @@ y_k =
 \right.
 \end{equation} 
 
-Equation~(\ref{eq:perceptron}) describes a simple \emph{binary treshold perceptron}. One could observe that the binary perceptron divides the vector space $\mathbb{R}^N$ by a $(n-1)$--dimensional hyperplane. This behaviour was studied by~\citet{rosenblatt1958perceptron}. Now we see the importance of bias which is the absolute term in the equation of the hyperplane. \label{sec:linear-sep} This leads to the fact that for one perceptron is impossible to classify non--\emph{linearly separable} vectors. 
+Equation~(\ref{eq:perceptron}) describes a simple \emph{binary treshold perceptron}. One could observe that the binary perceptron divides the vector space $\mathbb{R}^N$ by a $(n-1)$--dimensional hyperplane, where the bias is the absolute term~\citep{rosenblatt1958perceptron}.  \label{sec:linear-sep} This leads to the fact that for one perceptron is impossible to classify non--\emph{linearly separable} vectors. Now we see the importance of bias which is the absolute term in the equation of the hyperplane.
 
 \paragraph{Learning.} 
 The goal of a perceptron is to \emph{learn} the mapping given by the set $T = \{(X_j, t_j)\}$ of pairs, where $X_j$ is the input vector $(x_{j0},x_{j1}, \ldots, x_{jN})$ and $t_j$ is the corresponding target. It could be formalized as minimizing the error function: 
@@ -41,7 +41,7 @@ which gives us the \emph{update rule} going opposite the gradient:
 \label{eq:perceptron-learning-rule} 
 \Delta w_{ik} = \lambda (t_k - y_k)y_k(1 - y_k)x_i,
 \end{equation} 
-where $\lambda$ is the \emph{learning rate}. Using the learning rule~(\ref{eq:perceptron-learning-rule}) we can design the Algorithm~\ref{alg:perceptron-learning} called \emph{training phase}. It applies the \emph{weight update rule}~(\ref{eq:perceptron-learning-rule}) in loop for each sample in $T$. One main loop is called \emph{epoch}.
+where $\lambda$ is the \emph{learning rate}. Using the learning rule~(\ref{eq:perceptron-learning-rule}) we can design \emph{training} algorithm shown in Algorithm~\ref{alg:perceptron-learning}. It applies the \emph{weight update rule}~(\ref{eq:perceptron-learning-rule}) in loop for each sample in $T$. One main loop is called \emph{epoch}.
 
 \begin{algorithm}[h]
   \begin{algorithmic}
@@ -54,9 +54,10 @@ where $\lambda$ is the \emph{learning rate}. Using the learning rule~(\ref{eq:pe
       \EndFor
     \EndFor
   \end{algorithmic}
-  \caption{Perceptron training.}  
+  \caption{Perceptron training pseudocode.}  
   \label{alg:perceptron-learning}
 \end{algorithm} 
 
 \paragraph{Continuous perceptron.}
-We put additional constraints for the activation function $\phi : \mathbb{R} \mapsto (0,1)$ that $\phi$ is differentiable, monotonously increasing and satisfying two asymptotic conditions $t(-\infty)=0$ and $t(\infty)=1$.  Usually, the activation function is realized by the logistic function $1 / (1 + \exp{-\eta})$. To allow real numbered results from the range $(0,1)$, we drop the treshold function and simply output $\phi(\eta_k)$. 
+\label{sec:theory-perceptron-continuous} 
+Till now, the Perceptron could give only discrete outputs. We put additional constraints for the activation function $\phi : \mathbb{R} \mapsto (0,1)$ that $\phi$ is differentiable, monotonously increasing and satisfying two asymptotic conditions $t(-\infty)=0$ and $t(\infty)=1$.  Usually, the activation function is realized by the logistic function $1 / (1 + \exp{-\eta})$. To allow real numbered results from the range $(0,1)$, we drop the treshold function and simply output $\phi(\eta_k)$. 

@@ -3,7 +3,7 @@
 \label{sec:models-bal} 
 % If your work builds on top of an existing one, this is the place to describe the existing work in more detail, pointing out the parts that you extend or improve and why you extend or improve these parts.
 
-Design of Bidirectional Activation-based Learning algorithm (BAL) by~\citet{farkas2013bal} is motivated by the biological plausibility of GeneRec. BAL inherits the learning rule of GeneRec \ref{eq:models-generec-learning-rule} and also the two phases. But unlike GeneRec, BAL aims to learn bidirectional mapping between inputs and outputs and for this purpose it uses four weights $W^{IH}$, $W^{HO}$, $W^{OH}$ and $W^{HI}$. The design of BAL is symmetric as shown in Table~\ref{tab:models-bal-activation} and thus we avoid calling inputs, outpus, minus phase or plus phase. We rather choose \emph{forward} and \emph{backward} which could be interchanged. This brings us different notation where $a^{\rm F}$ denotes forward activations, $a^{\rm B}$ backward activations, \Bx is the first activation layer, i.e. \emph{front layer}, \By is the third activation layer, i.e. \emph{back layer}, $F$ means \emph{forward pass} and $B$ means \emph{backward pass}. Layers \Bx and \By are \emph{visible} and layer \By is hidden. Note that all non- timulus units have learnable biases and their weights are updated in a same way as regular weights.
+Design of Bidirectional Activation-based Learning algorithm (BAL) by~\citet{farkas2013bal} is motivated by the biological plausibility of GeneRec. BAL inherits the learning rule~(\ref{eq:models-generec-learning-rule}) of GeneRec and also the two phases. But unlike GeneRec, BAL aims to learn bidirectional mapping between inputs and outputs and for this purpose it uses four weights $W^{IH}$, $W^{HO}$, $W^{OH}$ and $W^{HI}$. The design of BAL is symmetric as shown in Table~\ref{tab:models-bal-activation} and thus we avoid calling inputs, outpus, minus phase or plus phase. We rather choose \emph{forward} and \emph{backward} which could be interchanged. This brings us different notation where $a^{\rm F}$ denotes forward activations, $a^{\rm B}$ backward activations, $x$ is the first activation layer, i.e. \emph{front layer}, $y$ is the third activation layer, i.e. \emph{back layer}, $F$ means \emph{forward pass} and $B$ means \emph{backward pass}. Layers $x$ and $y$ are \emph{visible} and layer $y$ is hidden. Note that all non- timulus units have learnable biases and their weights are updated in a same way as regular weights.
 
 \begin{table}[H]
   \centering
@@ -11,25 +11,25 @@ Design of Bidirectional Activation-based Learning algorithm (BAL) by~\citet{fark
     \hline
     Layer & Phase & Net Input & Activation\\
     \hline
-    \Bx & F & - & $x^{\rm F}_i$ = stimulus\\ [1ex]
-    \Bh & F & \hspace{0.3cm}$\eta^{\rm F}_j = \sum_i w_{ij}^{IH}x^{F}_i$\hspace{0.3cm} & $h^{\rm F}_j = \sigma(\eta^{\rm F}_j)$\hspace{0.3cm}\\ [1ex]
-    \By & F & $\eta^{\rm F}_k = \sum_j w_{jk}^{HO}h^{F}_j$ & $y^{\rm F}_k = \sigma(\eta^{\rm F}_k)$\\ [1ex]
+    $x$ & F & - & $x^{\rm F}_i$ = forward stimulus\\ [1ex]
+    $h$ & F & \hspace{0.3cm}$\eta^{\rm F}_j = \sum_i w_{ij}^{IH}x^{F}_i$\hspace{0.3cm} & $h^{\rm F}_j = \sigma(\eta^{\rm F}_j)$\hspace{0.3cm}\\ [1ex]
+    $y$ & F & $\eta^{\rm F}_k = \sum_j w_{jk}^{HO}h^{F}_j$ & $y^{\rm F}_k = \sigma(\eta^{\rm F}_k)$\\ [1ex]
     \hline
-    \By & B & - & $y^{\rm B}_k$ = stimulus\\ [1ex]
-    \Bh & B & $\eta^{\rm B}_j = \sum_k w_{kj}^{OH}y^{\rm B}_k$ & $h^{\rm B}_j = \sigma(\eta^{\rm B}_j)$\\ [1ex]
-    \Bx & B  & $\eta^{\rm B}_i = \sum_j w_{ji}^{HI}h^{\rm B}_j$ & $x^{\rm B}_i = \sigma(\eta^{\rm B}_i)$\\
+    $y$ & B & - & $y^{\rm B}_k$ = backward stimulus\\ [1ex]
+    $h$ & B & $\eta^{\rm B}_j = \sum_k w_{kj}^{OH}y^{\rm B}_k$ & $h^{\rm B}_j = \sigma(\eta^{\rm B}_j)$\\ [1ex]
+    $x$ & B  & $\eta^{\rm B}_i = \sum_j w_{ji}^{HI}h^{\rm B}_j$ & $x^{\rm B}_i = \sigma(\eta^{\rm B}_i)$\\
     \hline
   \end{tabular}
   \caption{Activation phases and states in BAL~\citep{farkas2013bal}. } 
   \label{tab:models-bal-activation}
 \end{table}
 
-In the first phase called \emph{forward pass} the \emph{forward stimulus} is clamped and forward activations are computed. In the same way, in the second phase called \emph{backward pass} the \emph{backward stimulus} is clamped and backward activations are computed. We can imagine the backward pass as a reconstruction of the target pattern for the forward pass. For the \emph{forward} learning rule the \emph{difference} between the forward pass and the backward pass is used as shown in equation~(\ref{eq:models-bal-learning-rule-forward}). 
+In the first phase, called \emph{forward pass}, the \emph{forward stimulus} is clamped and forward activations are computed. In the same way, in the second phase, called \emph{backward pass}, the \emph{backward stimulus} is clamped and backward activations are computed. We can imagine the backward pass as a reconstruction of the target pattern for the forward pass. For the \emph{forward} learning rule the \emph{difference} between the forward pass and the backward pass is used as shown in equation~(\ref{eq:models-bal-learning-rule-forward}). 
 \begin{equation}
   \label{eq:models-bal-learning-rule-forward}
-  \Delta w_{ij}^{\rm F} = \lambda \ a_i^{\rm F}(a_j^{\rm B} - a_j^{\rm F}),
+  \Delta w_{ij}^{\rm F} = \lambda \ a_i^{\rm F}(a_j^{\rm B} - a_j^{\rm F}).
 \end{equation}
-The \emph{backward} learning rule is same as the forward learning rule~(\ref{eq:models-bal-learning-rule-forward}). We will reference them together as BAL \emph{learning rule}. 
+The \emph{backward} learning rule~(\ref{eq:models-bal-learning-rule-backward}) is same as the forward learning rule~(\ref{eq:models-bal-learning-rule-forward}). We will reference them together as BAL \emph{learning rule}. 
 \begin{equation}
   \label{eq:models-bal-learning-rule-backward}
   \Delta w_{ij}^{\rm B} = \lambda \ a_i^{\rm B}(a_j^{\rm F} - a_j^{\rm B}). 
