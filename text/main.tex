@@ -54,6 +54,9 @@
 \usepackage[authoryear]{natbib}
 
 %\newcommand{\quotes}[1]{``#1''}
+
+\newcommand{\Printic}[1]{}
+\newcommand{\Electronic}[1]{#1}
     
 %========== PRINT                            
 \hypersetup{
@@ -66,15 +69,17 @@
 %    urlbordercolor=black, %	color of frame around URL links
 }
            
-%========== ELECTRONIC                           
-%\hypersetup{%  http://www.tug.org/applications/hyperref/
-%    bookmarksnumbered,
-%    pdfstartview={FitH},
-    %citecolor=black,
-%    colorlinks=true,       % false: boxed links; true: colored links
-%    linkcolor=black,          % color of internal links
-%    citecolor=blue,        % color of links to bibliography
-%}
+%========== ELECTRONIC        
+\Electronic{                   
+  \hypersetup{%  http://www.tug.org/applications/hyperref/
+      bookmarksnumbered,
+      pdfstartview={FitH},
+     %citecolor=black,
+      colorlinks=true,       % false: boxed links; true: colored links
+      linkcolor=red,          % color of internal links
+      citecolor=blue,        % color of links to bibliography
+  }
+}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%% CUSTOMIZACIA BEGIN %%%%%%%%%%%%%%%
@@ -106,12 +111,14 @@
     
 % ==================== 1. Title ========================
 %You should be very careful choosing a title for your thesis. It should exactly describe what your thesis is about. You should avoid long title because it is difficult to remember. Also the title shouldn’t be too short and mention just about a general problem or a field. Example title might be “Dynamic Thread Scheduling in Heterogeneous Multi Processors” or “Static Analysis for Unprotected Concurrent Memory Accesses” or “Detecting and Executing Parallel Code in GPUs”.
-\cleardoublepage
+\Printic{\cleardoublepage}
+\Electronic{\newpage}
 %\thispagestyle{empty}
 %\addtolength{\hoffset}{4mm}
-\setlength{\oddsidemargin}{5mm}
-\setlength{\evensidemargin}{-5mm}
-
+\Printic{
+  \setlength{\oddsidemargin}{5mm}
+  \setlength{\evensidemargin}{-5mm}
+}
 %    \input{title}
 
     
@@ -130,7 +137,8 @@
 
 % ==================== 3. Acknowledgements ========================
 %It’s good to acknowledge the people who helped or participated in direct or indirect way to your thesis. Here is the place to thank to your supervisor and colleagues.
-\cleardoublepage
+\Printic{\cleardoublepage}
+\Electronic{\newpage}
 %\thispagestyle{empty}
 \thispagestyle{plain}
 
@@ -138,19 +146,22 @@
 
 % ==================== 4. Abstract  ========================
 %Abstract is very important part of the thesis. It will be most read by people and should be written with a great care. The abstract should mention:
-
-\cleardoublepage
+\Printic{\cleardoublepage}
+\Electronic{\newpage}
 %\thispagestyle{empty}
 
     \input{abstract}
-    
-\cleardoublepage
+
+\Printic{\cleardoublepage}
+\Electronic{\newpage}
 %\thispagestyle{empty}
 
     \input{abstrakt}
     
 % ==================== 5. Table of Contents ========================
-\cleardoublepage
+\Printic{\cleardoublepage}
+\Electronic{\newpage}
+
 \setcounter{page}{1}
 \pagenumbering{arabic}
 \pagestyle{fancy}
